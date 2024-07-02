@@ -16,9 +16,49 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         // Use this method to optionally configure and attach the UIWindow `window` to the provided UIWindowScene `scene`.
         // If using a storyboard, the `window` property will automatically be initialized and attached to the scene.
         // This delegate does not imply the connecting scene or session are new (see `application:configurationForConnectingSceneSession` instead).
-        guard let _ = (scene as? UIWindowScene) else { return }
+        guard let windowScene = (scene as? UIWindowScene) else { return }
+        
+        window = UIWindow(frame: windowScene.coordinateSpace.bounds)
+        window?.windowScene = windowScene
+        window?.rootViewController = createTabbar()
+        window?.makeKeyAndVisible()
+        
+        configureNavigationBar()
+        }
+    
+    func createPhotoVC() -> UINavigationController {
+        let photoVC = PhotoVC()
+        photoVC.title = "📸 Take a Sophie Photo"
+        photoVC.tabBarItem = UITabBarItem(title: "Camera", image: UIImage(systemName: "camera"), selectedImage: UIImage(systemName: "camera.fill"))
+        
+        return UINavigationController(rootViewController: photoVC)
+    }
+    
+    func createFeedVC() -> UINavigationController {
+        let feedVC = FeedVC()
+        feedVC.title = "🐶 Top Sophie Photos"
+        feedVC.tabBarItem = UITabBarItem(title: "Feed", image: UIImage(systemName: "list.bullet.circle"), selectedImage: UIImage(systemName: "list.bullet.circle.fill"))
+        
+        return UINavigationController(rootViewController: feedVC)
+    }
+    
+    
+    
+    func createTabbar() -> UITabBarController {
+        let tabBar = UITabBarController()
+        UITabBar.appearance().tintColor = .systemPurple
+        tabBar.viewControllers = [createPhotoVC(),createFeedVC()]
+        UITabBar.appearance().backgroundColor = .tertiarySystemFill
+    
+        
+        return tabBar
     }
 
+    func configureNavigationBar() {
+        UINavigationBar.appearance().tintColor = .systemPurple
+    }
+    
+    
     func sceneDidDisconnect(_ scene: UIScene) {
         // Called as the scene is being released by the system.
         // This occurs shortly after the scene enters the background, or when its session is discarded.
