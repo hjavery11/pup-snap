@@ -1,16 +1,14 @@
 //
-//  ViewController.swift
+//  PhotoVC.swift
 //  SophiePhotos
 //
 //  Created by Harrison Javery on 7/1/24.
 //
-
 import UIKit
 import FirebaseStorage
 
 class PhotoVC: UIViewController, UINavigationControllerDelegate, UIImagePickerControllerDelegate {
     
-
     let hintText = UILabel()
     let referenceImageView = UIImageView(image: UIImage(named: "sophie"))
     let cameraPreview = UIImageView()
@@ -19,19 +17,18 @@ class PhotoVC: UIViewController, UINavigationControllerDelegate, UIImagePickerCo
     let submitButton = UIButton()
     let spinnerChild = SpinnerVC()
     
-    var placeholderImage = UIImage()
-
     
-    init() {
-        super.init(nibName: nil, bundle: nil)
-        placeholderImage = UIImage(systemName: "photo")!
-    }
+    let imageWidth: CGFloat = 85 * 3 // easily keep the 3:4 ratio using a base value
+    let imageHeight: CGFloat = 85 * 4
     
-    required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
+    let buttonFont: CGFloat = 16
+    let largeConfig = UIImage.SymbolConfiguration(pointSize: 44, weight: .bold, scale: .default)
     
-
+    var placeholderImage = UIImage(systemName: "photo")
+    
+    // Reference to the height constraint of referenceImageView
+    var referenceImageViewHeightConstraint: NSLayoutConstraint?
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .systemBackground
@@ -43,6 +40,57 @@ class PhotoVC: UIViewController, UINavigationControllerDelegate, UIImagePickerCo
         setupHintText()
         createSubmitButton()
         createClearButton()
+        setupConstraints()
+    }
+   
+    func setupConstraints() {
+        setupCameraPreviewConstraints()
+        setupClearButtonConstraints()
+        setupSubmitButtonConstraints()
+        setupReferenceImageViewConstraints()
+        setupHintTextConstraints()
+    }
+    
+    func setupCameraPreviewConstraints() {
+        NSLayoutConstraint.activate([
+            cameraPreview.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 20),
+            cameraPreview.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            cameraPreview.widthAnchor.constraint(equalToConstant: imageWidth),
+            cameraPreview.heightAnchor.constraint(equalToConstant: imageHeight)
+        ])
+    }
+    
+    func setupClearButtonConstraints() {
+        NSLayoutConstraint.activate([
+            clearButton.topAnchor.constraint(equalTo: cameraPreview.bottomAnchor, constant: 2),
+            clearButton.leadingAnchor.constraint(equalTo: cameraPreview.leadingAnchor, constant: 10),
+           
+        ])
+    }
+    
+    func setupSubmitButtonConstraints() {
+        NSLayoutConstraint.activate([
+            submitButton.topAnchor.constraint(equalTo: clearButton.topAnchor),
+            submitButton.trailingAnchor.constraint(equalTo: cameraPreview.trailingAnchor, constant: -10),
+          
+        ])
+    }
+    
+    func setupReferenceImageViewConstraints() {
+        NSLayoutConstraint.activate([
+            referenceImageView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -12),
+            referenceImageView.centerXAnchor.constraint(equalTo: cameraPreview.centerXAnchor, constant: -50),
+            referenceImageView.widthAnchor.constraint(equalToConstant: 548 / 5.5),
+            referenceImageView.heightAnchor.constraint(equalToConstant: 900 / 5.5)
+        ])
+    }
+    
+
+    func setupHintTextConstraints() {
+        NSLayoutConstraint.activate([
+            hintText.leadingAnchor.constraint(equalTo: referenceImageView.trailingAnchor),
+            hintText.bottomAnchor.constraint(equalTo: referenceImageView.bottomAnchor, constant: -5)
+        ])
     }
     
     func showSpinner() {
@@ -62,16 +110,6 @@ class PhotoVC: UIViewController, UINavigationControllerDelegate, UIImagePickerCo
         view.addSubview(referenceImageView)
         referenceImageView.translatesAutoresizingMaskIntoConstraints = false
         referenceImageView.isOpaque = true
-
-  
-        
-        NSLayoutConstraint.activate([
-            referenceImageView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -10),
-            referenceImageView.widthAnchor.constraint(equalToConstant: 548 / 5), // using base dimensions to ensure it stays in aspect ratio
-            referenceImageView.heightAnchor.constraint(equalToConstant: 900 / 5),
-            referenceImageView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 50)
-            
-        ])
     }
     
     func setupHintText() {
@@ -79,33 +117,38 @@ class PhotoVC: UIViewController, UINavigationControllerDelegate, UIImagePickerCo
         hintText.text = "*Image provided for reference"
         hintText.translatesAutoresizingMaskIntoConstraints = false
         hintText.font = UIFont.preferredFont(forTextStyle: .footnote)
-        
-        NSLayoutConstraint.activate([
-            hintText.bottomAnchor.constraint(equalTo: referenceImageView.bottomAnchor),
-            hintText.leadingAnchor.constraint(equalTo: referenceImageView.trailingAnchor, constant: 5)
-        ])
     }
     
-    func setupCameraPreview(){
+    func setupCameraPreview() {
         view.addSubview(cameraPreview)
         cameraPreview.translatesAutoresizingMaskIntoConstraints = false
         cameraPreview.image = placeholderImage
+        cameraPreview.contentMode = .scaleAspectFit
         cameraPreview.tintColor = .label
-        cameraPreview.layer.cornerRadius = 10
         let gesture = UITapGestureRecognizer(target: self, action: #selector(previewClicked))
         cameraPreview.isUserInteractionEnabled = true
         cameraPreview.addGestureRecognizer(gesture)
-
         
-        NSLayoutConstraint.activate([
-            cameraPreview.centerYAnchor.constraint(equalTo: view.centerYAnchor, constant: -60),
-            cameraPreview.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            cameraPreview.widthAnchor.constraint(equalTo: view.widthAnchor, multiplier: 0.85),
-            cameraPreview.heightAnchor.constraint(equalTo: cameraPreview.widthAnchor, multiplier: 3.0/4.0)
-        ])
+        cameraPreview.layer.cornerRadius = 12
+        cameraPreview.layer.masksToBounds = true
+       
     }
     
-    @objc func previewClicked(sender:UITapGestureRecognizer){
+    func handlePreviewBorder(_ enable: Bool) {
+        if enable {
+            cameraPreview.layer.borderWidth = 1
+            cameraPreview.layer.borderColor = UIColor.systemGray2.cgColor
+        } else {
+            cameraPreview.layer.borderWidth = 0
+            cameraPreview.layer.borderColor = nil
+        }
+    }
+    
+    @objc func previewClicked(sender: UITapGestureRecognizer) {
+        if isRunningOnEmulator() {
+            displayUserPhoto(UIImage(named: "emulator-photo")!)
+            return
+        }
         if UIImagePickerController.isSourceTypeAvailable(.camera) {
             present(cameraVC, animated: true)
         } else {
@@ -113,8 +156,6 @@ class PhotoVC: UIViewController, UINavigationControllerDelegate, UIImagePickerCo
             alert.addAction(UIAlertAction(title: "Ok", style: .default, handler: nil))
             self.present(alert, animated: true, completion: nil)
         }
-        
-       
     }
     
     func setupCameraView() {
@@ -123,126 +164,114 @@ class PhotoVC: UIViewController, UINavigationControllerDelegate, UIImagePickerCo
         cameraVC.delegate = self
         cameraVC.cameraFlashMode = .off
     }
-
+    
     func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
         picker.dismiss(animated: true)
-        
-      
         
         guard let image = info[.editedImage] as? UIImage else {
             return
         }
         
-
+        displayUserPhoto(image)
+    }
+    
+    func displayUserPhoto(_ image: UIImage) {
         cameraPreview.image = image
-        cameraPreview.layer.cornerRadius = 10
-     
+        handlePreviewBorder(true)
+        
+        
         clearButton.alpha = 1
         submitButton.alpha = 1
         view.updateConstraints()
-      
-        
-       
     }
-
+    
     func createClearButton() {
         view.addSubview(clearButton)
-        clearButton.setImage(UIImage(systemName: "xmark"), for: .normal)
-        clearButton.tintColor = .white
-        clearButton.setTitle(" Clear Image", for: .normal)
+        clearButton.setImage(UIImage(systemName: "xmark.circle",withConfiguration: largeConfig), for: .normal)
+        clearButton.tintColor = .systemRed
         clearButton.translatesAutoresizingMaskIntoConstraints = false
-        clearButton.backgroundColor = .systemRed
-        clearButton.layer.cornerRadius = 10
-        
+
+        clearButton.imageView?.contentMode = .scaleAspectFill
         
         clearButton.addTarget(self, action: #selector(clearImage), for: .touchUpInside)
         clearButton.alpha = 0
-        
-        
-        NSLayoutConstraint.activate([
-            clearButton.topAnchor.constraint(equalTo: cameraPreview.bottomAnchor, constant: 12),
-            clearButton.leadingAnchor.constraint(equalTo: cameraPreview.leadingAnchor),
-            clearButton.heightAnchor.constraint(equalTo: submitButton.heightAnchor),
-            clearButton.widthAnchor.constraint(equalToConstant: 125)
-        ])
     }
     
     func createSubmitButton() {
         view.addSubview(submitButton)
-        submitButton.setTitle("Submit", for: .normal)
-        submitButton.tintColor = .white
+        submitButton.setImage(UIImage(systemName: "checkmark.circle", withConfiguration: largeConfig), for: .normal)
+        submitButton.tintColor = .systemGreen
         submitButton.translatesAutoresizingMaskIntoConstraints = false
-        submitButton.backgroundColor = .systemBlue
-        submitButton.layer.cornerRadius = 10
+        
+        clearButton.imageView?.contentMode = .scaleAspectFill
+
         submitButton.alpha = 0
         submitButton.addTarget(self, action: #selector(addPhoto), for: .touchUpInside)
-        
-        NSLayoutConstraint.activate([
-            submitButton.topAnchor.constraint(equalTo: cameraPreview.bottomAnchor, constant: 12),
-            submitButton.trailingAnchor.constraint(equalTo: cameraPreview.trailingAnchor),
-            submitButton.widthAnchor.constraint(equalToConstant: 100)
-        ])
     }
     
     @objc func addPhoto() {
-           guard let image = cameraPreview.image else { return }
+        guard let image = cameraPreview.image else { return }
         
         showSpinner()
-           
-           let uploadTask = NetworkManager.shared.uploadPhoto(
-               image: image,
-               progressHandler: { percentComplete in
-                   print("Upload progress: \(percentComplete)%")
-               },
-               successHandler: {
-                   self.hideSpinner()
-                   print("Upload completed successfully")
-                   DispatchQueue.main.async {
-                       let alert = UIAlertController(title: "Upload Successful", message: "Your photo has been uploaded successfully.", preferredStyle: .alert)
-                       let okAction = UIAlertAction(title: "OK", style: .default) { _ in
-                           self.clearImage()
-                       }
-                       alert.addAction(okAction)
-                       self.present(alert, animated: true, completion: nil)
-                   }
-               },
-               failureHandler: { error in
-                   DispatchQueue.main.async {
-                       self.hideSpinner()
-                       let alert = UIAlertController(title: "Upload Failed", message: error.localizedDescription, preferredStyle: .alert)
-                       alert.addAction(UIAlertAction(title: "OK", style: .default, handler: nil))
-                       self.present(alert, animated: true, completion: nil)
-                   }
-                   switch StorageErrorCode(rawValue: (error as NSError).code)! {
-                   case .objectNotFound:
-                       print("File doesn't exist")
-                   case .unauthorized:
-                       print("User doesn't have permission to access file")
-                   case .cancelled:
-                       print("User canceled the upload")
-                   case .unknown:
-                       print("Unknown error occurred, inspect the server response")
-                   default:
-                       print("A separate error occurred, retry the upload")
-                   }
-               }
-           )
+        
+        let uploadTask = NetworkManager.shared.uploadPhoto(
+            image: image,
+            progressHandler: { percentComplete in
+                print("Upload progress: \(percentComplete)%")
+            },
+            successHandler: {
+                self.hideSpinner()
+                print("Upload completed successfully")
+                DispatchQueue.main.async {
+                    let alert = UIAlertController(title: "Upload Successful", message: "Your photo has been uploaded successfully.", preferredStyle: .alert)
+                    let okAction = UIAlertAction(title: "OK", style: .default) { _ in
+                        self.clearImage()
+                    }
+                    alert.addAction(okAction)
+                    self.present(alert, animated: true, completion: nil)
+                }
+            },
+            failureHandler: { error in
+                DispatchQueue.main.async {
+                    self.hideSpinner()
+                    let alert = UIAlertController(title: "Upload Failed", message: error.localizedDescription, preferredStyle: .alert)
+                    alert.addAction(UIAlertAction(title: "OK", style: .default, handler: nil))
+                    self.present(alert, animated: true, completion: nil)
+                }
+                switch StorageErrorCode(rawValue: (error as NSError).code)! {
+                case .objectNotFound:
+                    print("File doesn't exist")
+                case .unauthorized:
+                    print("User doesn't have permission to access file")
+                case .cancelled:
+                    print("User canceled the upload")
+                case .unknown:
+                    print("Unknown error occurred, inspect the server response")
+                default:
+                    print("A separate error occurred, retry the upload")
+                }
+            }
+        )
         
         _ = uploadTask
-       }
-
-
+    }
     
     @objc func clearImage() {
         cameraPreview.image = placeholderImage
+        handlePreviewBorder(false)
         clearButton.alpha = 0
         submitButton.alpha = 0
-    
     }
     
     func tabSelected() {
-       // do nothing for now
+        // do nothing for now
     }
     
+    func isRunningOnEmulator() -> Bool {
+        var isEmulator = false
+#if targetEnvironment(simulator)
+        isEmulator = true
+#endif
+        return isEmulator
+    }
 }
-
