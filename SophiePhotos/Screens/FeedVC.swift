@@ -114,17 +114,20 @@ class FeedVC: UIViewController {
             print("error making cell")
             return
         }
-        let imageView = UIImageView(image: image)
-        let newImageView = UIImageView(image: imageView.image)
-        newImageView.frame = UIScreen.main.bounds
-        newImageView.backgroundColor = .black
-        newImageView.contentMode = .scaleAspectFit
-        newImageView.isUserInteractionEnabled = true
-        let tap = UITapGestureRecognizer(target: self, action: #selector(dismissFullscreenImage))
-        newImageView.addGestureRecognizer(tap)
-        self.view.addSubview(newImageView)
-        self.navigationController?.isNavigationBarHidden = true
-        self.tabBarController?.tabBar.isHidden = true
+        let fullScreenVC = FullScreenPhotoVC(image: image)
+        self.present(fullScreenVC, animated: true)
+        
+//        let imageView = UIImageView(image: image)
+//        let newImageView = UIImageView(image: imageView.image)
+//        newImageView.frame = UIScreen.main.bounds
+//        newImageView.backgroundColor = .black
+//        newImageView.contentMode = .scaleAspectFit
+//        newImageView.isUserInteractionEnabled = true
+//        let tap = UITapGestureRecognizer(target: self, action: #selector(dismissFullscreenImage))
+//        newImageView.addGestureRecognizer(tap)
+//        self.view.addSubview(newImageView)
+//        self.navigationController?.isNavigationBarHidden = true
+//        self.tabBarController?.tabBar.isHidden = true
         
     }
     
@@ -135,7 +138,6 @@ class FeedVC: UIViewController {
     }
     
     func tabSelected() {
-        print("Feed VC selected")
         checkForNewImages()
     }
     

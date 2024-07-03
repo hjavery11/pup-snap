@@ -16,6 +16,7 @@ class FullScreenPhotoVC: UIViewController {
 
     
     weak var delegate: FullScreenPhotoVCDelegate?
+    var activityIndicator = UIActivityIndicatorView(style: .large)
     var closeButton = UIButton()
     var imageView = UIImageView()
     
@@ -24,10 +25,35 @@ class FullScreenPhotoVC: UIViewController {
         imageView.image = image
     }
     
+    init(url: String) {
+        super.init(nibName: nil, bundle: nil)
+        fetchImage(url: url)
+    }
+    
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
     
+    func fetchImage(url: String) {
+        //start loading
+        activityIndicator.startAnimating()
+        
+       
+            NetworkManager.shared.getPhoto(url) { [weak self] image in
+                guard let self = self else {return}
+                DispatchQueue.main.async {
+                    //stop loading
+                    self.activityIndicator.stopAnimating()
+                    
+                    if let image = image {
+                        self.imageView.image = image
+                    } else {
+                        print("Failed to fetch image")
+                    }
+                }
+            }
+        
+    }
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -61,10 +87,24 @@ class FullScreenPhotoVC: UIViewController {
             closeButton.heightAnchor.constraint(equalToConstant: 40),
             closeButton.widthAnchor.constraint(equalToConstant: 40)
         ])
+        
+        
+        setupLoading()
+    }
+    
+    func setupLoading() {
+        //configure loading spinner
+        activityIndicator.translatesAutoresizingMaskIntoConstraints = false
+        activityIndicator.hidesWhenStopped = true
+        view.addSubview(activityIndicator)
+        NSLayoutConstraint.activate([
+            activityIndicator.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            activityIndicator.centerYAnchor.constraint(equalTo: view.centerYAnchor)
+        ])
     }
     
     @objc func closeButtonTapped() {
-        self.dismiss(animated: false) {
+        self.dismiss(animated: true) {
             self.delegate?.didDismissFullScreenPhotoVC()
         }
     }

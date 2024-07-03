@@ -10,7 +10,6 @@ import UIKit
 class SceneDelegate: UIResponder, UIWindowSceneDelegate, UITabBarControllerDelegate, FullScreenPhotoVCDelegate {
     
     var window: UIWindow?
-    var activityIndicator = UIActivityIndicatorView(style: .large)
     
     
     func scene(_ scene: UIScene, willConnectTo session: UISceneSession, options connectionOptions: UIScene.ConnectionOptions) {
@@ -28,16 +27,6 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate, UITabBarControllerDeleg
         
         configureNavigationBar()
         
-        //configure loading spinner
-        activityIndicator.translatesAutoresizingMaskIntoConstraints = false
-        activityIndicator.hidesWhenStopped = true
-        if let window = window {
-            window.addSubview(activityIndicator)
-            NSLayoutConstraint.activate([
-                activityIndicator.centerXAnchor.constraint(equalTo: window.centerXAnchor),
-                activityIndicator.centerYAnchor.constraint(equalTo: window.centerYAnchor)
-            ])
-        }
         
         
         // Add observer for the notification
@@ -88,42 +77,19 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate, UITabBarControllerDeleg
     
     @objc func presentFullScreenPhotoVC(_ notification: Notification) {
         guard let userInfo = notification.userInfo, let filePath = userInfo["filePath"] as? String else { return }
+        let fullScreenVC = FullScreenPhotoVC(url: filePath)
+        //fullScreenVC.modalPresentationStyle = .fullScreen
+        fullScreenVC.delegate = self
         
-        //start loading
-        activityIndicator.startAnimating()
+        let navigationController = UINavigationController(rootViewController: fullScreenVC)
+       // navigationController.modalPresentationStyle = .fullScreen
         
-        // Hide the root view controller's view
-        if let rootViewController = window?.rootViewController {
-            rootViewController.view.isHidden = true
-        }
-        
-        
-        DispatchQueue.main.asyncAfter(deadline: .now() + 5) { // 5 second delay
-            NetworkManager.shared.getPhoto(filePath) { [weak self] image in
-                guard let self = self else { return }
-                DispatchQueue.main.async {
-                    // Stop the activity indicator
-                    self.activityIndicator.stopAnimating()
-                    
-                    if let image = image {
-                        let photoVC = FullScreenPhotoVC(image: image)
-                        photoVC.modalPresentationStyle = .fullScreen
-                        photoVC.delegate = self
-                        self.window?.rootViewController?.present(photoVC, animated: true, completion: nil)
-                    } else {
-                        print("Failed to fetch image")
-                        // Show the root view controller's view again if the image fetch fails
-                        self.window?.rootViewController?.view.isHidden = false
-                    }
-                }
-            }
-        }
-        
+        window?.rootViewController?.present(navigationController, animated: true, completion: nil)
         
     }
     
     func didDismissFullScreenPhotoVC() {
-        window?.rootViewController?.view.isHidden = false
+        window?.rootViewController?.dismiss(animated: true, completion: nil)
     }
     
     func sceneDidDisconnect(_ scene: UIScene) {
