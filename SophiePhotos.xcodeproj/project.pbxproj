@@ -17,7 +17,6 @@
 		FA35906D2C34D3BE00E417B1 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = FA35906C2C34D3BE00E417B1 /* GoogleService-Info.plist */; };
 		FA3590702C34D44800E417B1 /* FirebaseStorage in Frameworks */ = {isa = PBXBuildFile; productRef = FA35906F2C34D44800E417B1 /* FirebaseStorage */; };
 		FA3590722C34D65C00E417B1 /* NetworkManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA3590712C34D65C00E417B1 /* NetworkManager.swift */; };
-		FA3590742C34D6AB00E417B1 /* Photo.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA3590732C34D6AB00E417B1 /* Photo.swift */; };
 		FA3590762C34D95C00E417B1 /* FirebaseHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA3590752C34D95C00E417B1 /* FirebaseHelper.swift */; };
 		FA3590782C34E14B00E417B1 /* SpinnerVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA3590772C34E14B00E417B1 /* SpinnerVC.swift */; };
 /* End PBXBuildFile section */
@@ -34,7 +33,6 @@
 		FA35906A2C34A46E00E417B1 /* SophiePhotoCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SophiePhotoCell.swift; sourceTree = "<group>"; };
 		FA35906C2C34D3BE00E417B1 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		FA3590712C34D65C00E417B1 /* NetworkManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkManager.swift; sourceTree = "<group>"; };
-		FA3590732C34D6AB00E417B1 /* Photo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Photo.swift; sourceTree = "<group>"; };
 		FA3590752C34D95C00E417B1 /* FirebaseHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirebaseHelper.swift; sourceTree = "<group>"; };
 		FA3590772C34E14B00E417B1 /* SpinnerVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpinnerVC.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -70,21 +68,60 @@
 		FA35904C2C33B2AC00E417B1 /* SophiePhotos */ = {
 			isa = PBXGroup;
 			children = (
+				FA35907F2C34FA4200E417B1 /* Models */,
+				FA35907E2C34FA3800E417B1 /* Utilities */,
+				FA35907C2C34FA2300E417B1 /* Custom Views */,
+				FA35907B2C34FA1700E417B1 /* Screens */,
 				FA35904D2C33B2AC00E417B1 /* AppDelegate.swift */,
 				FA35904F2C33B2AC00E417B1 /* SceneDelegate.swift */,
-				FA3590512C33B2AC00E417B1 /* PhotoVC.swift */,
-				FA3590612C33B30000E417B1 /* FeedVC.swift */,
 				FA3590562C33B2AD00E417B1 /* Assets.xcassets */,
 				FA3590582C33B2AD00E417B1 /* LaunchScreen.storyboard */,
 				FA35905B2C33B2AD00E417B1 /* Info.plist */,
-				FA35906A2C34A46E00E417B1 /* SophiePhotoCell.swift */,
 				FA35906C2C34D3BE00E417B1 /* GoogleService-Info.plist */,
-				FA3590712C34D65C00E417B1 /* NetworkManager.swift */,
-				FA3590732C34D6AB00E417B1 /* Photo.swift */,
-				FA3590752C34D95C00E417B1 /* FirebaseHelper.swift */,
-				FA3590772C34E14B00E417B1 /* SpinnerVC.swift */,
 			);
 			path = SophiePhotos;
+			sourceTree = "<group>";
+		};
+		FA35907B2C34FA1700E417B1 /* Screens */ = {
+			isa = PBXGroup;
+			children = (
+				FA3590512C33B2AC00E417B1 /* PhotoVC.swift */,
+				FA3590612C33B30000E417B1 /* FeedVC.swift */,
+			);
+			path = "\U0010Screens";
+			sourceTree = "<group>";
+		};
+		FA35907C2C34FA2300E417B1 /* Custom Views */ = {
+			isa = PBXGroup;
+			children = (
+				FA35907D2C34FA2F00E417B1 /* Cells */,
+				FA3590772C34E14B00E417B1 /* SpinnerVC.swift */,
+			);
+			path = "Custom Views";
+			sourceTree = "<group>";
+		};
+		FA35907D2C34FA2F00E417B1 /* Cells */ = {
+			isa = PBXGroup;
+			children = (
+				FA35906A2C34A46E00E417B1 /* SophiePhotoCell.swift */,
+			);
+			path = Cells;
+			sourceTree = "<group>";
+		};
+		FA35907E2C34FA3800E417B1 /* Utilities */ = {
+			isa = PBXGroup;
+			children = (
+				FA3590752C34D95C00E417B1 /* FirebaseHelper.swift */,
+				FA3590712C34D65C00E417B1 /* NetworkManager.swift */,
+			);
+			path = Utilities;
+			sourceTree = "<group>";
+		};
+		FA35907F2C34FA4200E417B1 /* Models */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = Models;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -165,7 +202,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				FA3590762C34D95C00E417B1 /* FirebaseHelper.swift in Sources */,
-				FA3590742C34D6AB00E417B1 /* Photo.swift in Sources */,
 				FA3590722C34D65C00E417B1 /* NetworkManager.swift in Sources */,
 				FA3590782C34E14B00E417B1 /* SpinnerVC.swift in Sources */,
 				FA3590622C33B30000E417B1 /* FeedVC.swift in Sources */,
