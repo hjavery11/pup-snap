@@ -13,6 +13,7 @@
 		FA3590572C33B2AD00E417B1 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = FA3590562C33B2AD00E417B1 /* Assets.xcassets */; };
 		FA35905A2C33B2AD00E417B1 /* Base in Resources */ = {isa = PBXBuildFile; fileRef = FA3590592C33B2AD00E417B1 /* Base */; };
 		FA3590622C33B30000E417B1 /* FeedVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA3590612C33B30000E417B1 /* FeedVC.swift */; };
+		FA35906B2C34A46E00E417B1 /* SophiePhotoCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA35906A2C34A46E00E417B1 /* SophiePhotoCell.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -24,6 +25,7 @@
 		FA3590592C33B2AD00E417B1 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		FA35905B2C33B2AD00E417B1 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		FA3590612C33B30000E417B1 /* FeedVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedVC.swift; sourceTree = "<group>"; };
+		FA35906A2C34A46E00E417B1 /* SophiePhotoCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SophiePhotoCell.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -63,6 +65,7 @@
 				FA3590562C33B2AD00E417B1 /* Assets.xcassets */,
 				FA3590582C33B2AD00E417B1 /* LaunchScreen.storyboard */,
 				FA35905B2C33B2AD00E417B1 /* Info.plist */,
+				FA35906A2C34A46E00E417B1 /* SophiePhotoCell.swift */,
 			);
 			path = SophiePhotos;
 			sourceTree = "<group>";
@@ -138,6 +141,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				FA3590622C33B30000E417B1 /* FeedVC.swift in Sources */,
+				FA35906B2C34A46E00E417B1 /* SophiePhotoCell.swift in Sources */,
 				FA3590522C33B2AC00E417B1 /* PhotoVC.swift in Sources */,
 				FA35904E2C33B2AC00E417B1 /* AppDelegate.swift in Sources */,
 				FA3590502C33B2AC00E417B1 /* SceneDelegate.swift in Sources */,
@@ -290,7 +294,7 @@
 				INFOPLIST_KEY_NSCameraUsageDescription = "Please allow access to camera to use this app";
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
-				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -317,7 +321,7 @@
 				INFOPLIST_KEY_NSCameraUsageDescription = "Please allow access to camera to use this app";
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
-				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",

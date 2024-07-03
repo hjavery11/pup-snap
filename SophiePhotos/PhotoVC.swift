@@ -15,20 +15,31 @@ class PhotoVC: UIViewController, UINavigationControllerDelegate, UIImagePickerCo
     let cameraPreview = UIImageView()
     let cameraVC = UIImagePickerController()
     let clearButton = UIButton()
- 
+    let submitButton = UIButton()
     
-    let placeholderImage = UIImage(named: "placeholder_image")
+    var placeholderImage = UIImage()
+
     
+    init() {
+        super.init(nibName: nil, bundle: nil)
+        placeholderImage = UIImage(systemName: "photo")!
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
     
 
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .systemBackground
         navigationController?.navigationBar.prefersLargeTitles = true
-        setupSophiePhoto()
-        setupHintText()
+        
         setupCameraPreview()
         setupCameraView()
+        setupSophiePhoto()
+        setupHintText()
+        createSubmitButton()
         createClearButton()
     }
     
@@ -38,13 +49,14 @@ class PhotoVC: UIViewController, UINavigationControllerDelegate, UIImagePickerCo
         view.addSubview(referenceImageView)
         referenceImageView.translatesAutoresizingMaskIntoConstraints = false
         referenceImageView.isOpaque = true
+
   
         
         NSLayoutConstraint.activate([
-            referenceImageView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
-            referenceImageView.centerYAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 85),
-            referenceImageView.widthAnchor.constraint(equalToConstant: 200),
-            referenceImageView.heightAnchor.constraint(equalToConstant: 175)
+            referenceImageView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -10),
+            referenceImageView.widthAnchor.constraint(equalToConstant: 548 / 5), // using base dimensions to ensure it stays in aspect ratio
+            referenceImageView.heightAnchor.constraint(equalToConstant: 900 / 5),
+            referenceImageView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 50)
             
         ])
     }
@@ -57,7 +69,7 @@ class PhotoVC: UIViewController, UINavigationControllerDelegate, UIImagePickerCo
         
         NSLayoutConstraint.activate([
             hintText.bottomAnchor.constraint(equalTo: referenceImageView.bottomAnchor),
-            hintText.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -10)
+            hintText.leadingAnchor.constraint(equalTo: referenceImageView.trailingAnchor, constant: 5)
         ])
     }
     
@@ -65,16 +77,18 @@ class PhotoVC: UIViewController, UINavigationControllerDelegate, UIImagePickerCo
         view.addSubview(cameraPreview)
         cameraPreview.translatesAutoresizingMaskIntoConstraints = false
         cameraPreview.image = placeholderImage
+        cameraPreview.tintColor = .label
+        cameraPreview.layer.cornerRadius = 10
         let gesture = UITapGestureRecognizer(target: self, action: #selector(previewClicked))
         cameraPreview.isUserInteractionEnabled = true
-     
         cameraPreview.addGestureRecognizer(gesture)
-        
+
         
         NSLayoutConstraint.activate([
-            cameraPreview.topAnchor.constraint(equalTo: referenceImageView.bottomAnchor, constant: 25),
-            cameraPreview.widthAnchor.constraint(equalTo: view.widthAnchor),
-            cameraPreview.heightAnchor.constraint(equalTo: view.widthAnchor, multiplier: 0.75)
+            cameraPreview.centerYAnchor.constraint(equalTo: view.centerYAnchor, constant: -60),
+            cameraPreview.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            cameraPreview.widthAnchor.constraint(equalTo: view.widthAnchor, multiplier: 0.85),
+            cameraPreview.heightAnchor.constraint(equalTo: cameraPreview.widthAnchor, multiplier: 3.0/4.0)
         ])
     }
     
@@ -100,37 +114,70 @@ class PhotoVC: UIViewController, UINavigationControllerDelegate, UIImagePickerCo
     func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
         picker.dismiss(animated: true)
         
+      
+        
         guard let image = info[.editedImage] as? UIImage else {
             return
         }
         
+
         cameraPreview.image = image
+        cameraPreview.layer.cornerRadius = 10
+     
         clearButton.alpha = 1
+        submitButton.alpha = 1
+        view.updateConstraints()
       
         
-        print(image.size)
+       
     }
 
     func createClearButton() {
         view.addSubview(clearButton)
         clearButton.setImage(UIImage(systemName: "xmark"), for: .normal)
-        clearButton.tintColor = .systemRed
+        clearButton.tintColor = .white
         clearButton.setTitle(" Clear Image", for: .normal)
-        clearButton.setTitleColor(.systemRed, for: .normal)
         clearButton.translatesAutoresizingMaskIntoConstraints = false
+        clearButton.backgroundColor = .systemRed
+        clearButton.layer.cornerRadius = 10
+        
         
         clearButton.addTarget(self, action: #selector(clearImage), for: .touchUpInside)
         clearButton.alpha = 0
         
+        
         NSLayoutConstraint.activate([
-            clearButton.topAnchor.constraint(equalTo: cameraPreview.bottomAnchor, constant: 20),
-            clearButton.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -10)
+            clearButton.topAnchor.constraint(equalTo: cameraPreview.bottomAnchor, constant: 12),
+            clearButton.leadingAnchor.constraint(equalTo: cameraPreview.leadingAnchor),
+            clearButton.heightAnchor.constraint(equalTo: submitButton.heightAnchor),
+            clearButton.widthAnchor.constraint(equalToConstant: 125)
         ])
     }
     
+    func createSubmitButton() {
+        view.addSubview(submitButton)
+        submitButton.setTitle("Submit", for: .normal)
+        submitButton.tintColor = .white
+        submitButton.translatesAutoresizingMaskIntoConstraints = false
+        submitButton.backgroundColor = .systemBlue
+        submitButton.layer.cornerRadius = 10
+        submitButton.alpha = 0
+        submitButton.addTarget(self, action: #selector(addPhoto), for: .touchUpInside)
+        
+        NSLayoutConstraint.activate([
+            submitButton.topAnchor.constraint(equalTo: cameraPreview.bottomAnchor, constant: 12),
+            submitButton.trailingAnchor.constraint(equalTo: cameraPreview.trailingAnchor),
+            submitButton.widthAnchor.constraint(equalToConstant: 100)
+        ])
+    }
+    
+    @objc func addPhoto() {
+        print("photo added")
+    }
     @objc func clearImage() {
         cameraPreview.image = placeholderImage
         clearButton.alpha = 0
+        submitButton.alpha = 0
     
     }
     
