@@ -13,9 +13,11 @@ class FeedVC: UIViewController {
         case main
     }
     
-    let imageArray: [UIImage] = [UIImage(named: "sophie-photo-1")!,UIImage(named:"sophie-photo-2")!,UIImage(named:"sophie-photo-3")!,UIImage(named:"sophie-photo-4")!]
+    var imageArray: [UIImage] = []
     var collectionView: UICollectionView!
     var dataSource: UICollectionViewDiffableDataSource<Section, UIImage>!
+
+    let spinnerChild = SpinnerVC()
     
     
     
@@ -24,18 +26,42 @@ class FeedVC: UIViewController {
         view.backgroundColor = .systemBackground
         navigationController?.navigationBar.prefersLargeTitles = true
         
-        configureCollectionView()
-        configureDataSource()
-        applySnapshot()
+        
+        createLoadingView()
+        Task {
+          await fetchPhotos()
+            configureCollectionView()
+            configureDataSource()
+            applySnapshot()
+            dismissLoadingView()
+        }
+      
         
     }
     
+    func createLoadingView() {
+        // add spinner to view
+        addChild(spinnerChild)
+        spinnerChild.view.frame = view.frame
+        view.addSubview(spinnerChild.view)
+        spinnerChild.didMove(toParent: self)
+    }
     
+    func dismissLoadingView() {
+        spinnerChild.willMove(toParent: nil)
+        spinnerChild.view.removeFromSuperview()
+        spinnerChild.removeFromParent()
+    }
     func configureCollectionView() {
         collectionView = UICollectionView(frame: view.bounds, collectionViewLayout: createThreeColumnFlowLayout())
         view.addSubview(collectionView)
         collectionView.register(SophiePhotoCell.self, forCellWithReuseIdentifier: SophiePhotoCell.reuseID)
     }
+    
+    func fetchPhotos() async {
+          imageArray = await NetworkManager.shared.getPhotos()
+    }
+    
     
     func createThreeColumnFlowLayout() -> UICollectionViewFlowLayout {
         let width = view.bounds.width

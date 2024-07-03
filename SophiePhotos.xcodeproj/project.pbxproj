@@ -14,6 +14,12 @@
 		FA35905A2C33B2AD00E417B1 /* Base in Resources */ = {isa = PBXBuildFile; fileRef = FA3590592C33B2AD00E417B1 /* Base */; };
 		FA3590622C33B30000E417B1 /* FeedVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA3590612C33B30000E417B1 /* FeedVC.swift */; };
 		FA35906B2C34A46E00E417B1 /* SophiePhotoCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA35906A2C34A46E00E417B1 /* SophiePhotoCell.swift */; };
+		FA35906D2C34D3BE00E417B1 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = FA35906C2C34D3BE00E417B1 /* GoogleService-Info.plist */; };
+		FA3590702C34D44800E417B1 /* FirebaseStorage in Frameworks */ = {isa = PBXBuildFile; productRef = FA35906F2C34D44800E417B1 /* FirebaseStorage */; };
+		FA3590722C34D65C00E417B1 /* NetworkManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA3590712C34D65C00E417B1 /* NetworkManager.swift */; };
+		FA3590742C34D6AB00E417B1 /* Photo.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA3590732C34D6AB00E417B1 /* Photo.swift */; };
+		FA3590762C34D95C00E417B1 /* FirebaseHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA3590752C34D95C00E417B1 /* FirebaseHelper.swift */; };
+		FA3590782C34E14B00E417B1 /* SpinnerVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA3590772C34E14B00E417B1 /* SpinnerVC.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -26,6 +32,11 @@
 		FA35905B2C33B2AD00E417B1 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		FA3590612C33B30000E417B1 /* FeedVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedVC.swift; sourceTree = "<group>"; };
 		FA35906A2C34A46E00E417B1 /* SophiePhotoCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SophiePhotoCell.swift; sourceTree = "<group>"; };
+		FA35906C2C34D3BE00E417B1 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
+		FA3590712C34D65C00E417B1 /* NetworkManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkManager.swift; sourceTree = "<group>"; };
+		FA3590732C34D6AB00E417B1 /* Photo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Photo.swift; sourceTree = "<group>"; };
+		FA3590752C34D95C00E417B1 /* FirebaseHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirebaseHelper.swift; sourceTree = "<group>"; };
+		FA3590772C34E14B00E417B1 /* SpinnerVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpinnerVC.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -33,6 +44,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				FA3590702C34D44800E417B1 /* FirebaseStorage in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -66,6 +78,11 @@
 				FA3590582C33B2AD00E417B1 /* LaunchScreen.storyboard */,
 				FA35905B2C33B2AD00E417B1 /* Info.plist */,
 				FA35906A2C34A46E00E417B1 /* SophiePhotoCell.swift */,
+				FA35906C2C34D3BE00E417B1 /* GoogleService-Info.plist */,
+				FA3590712C34D65C00E417B1 /* NetworkManager.swift */,
+				FA3590732C34D6AB00E417B1 /* Photo.swift */,
+				FA3590752C34D95C00E417B1 /* FirebaseHelper.swift */,
+				FA3590772C34E14B00E417B1 /* SpinnerVC.swift */,
 			);
 			path = SophiePhotos;
 			sourceTree = "<group>";
@@ -86,6 +103,9 @@
 			dependencies = (
 			);
 			name = SophiePhotos;
+			packageProductDependencies = (
+				FA35906F2C34D44800E417B1 /* FirebaseStorage */,
+			);
 			productName = SophiePhotos;
 			productReference = FA35904A2C33B2AC00E417B1 /* SophiePhotos.app */;
 			productType = "com.apple.product-type.application";
@@ -114,6 +134,9 @@
 				Base,
 			);
 			mainGroup = FA3590412C33B2AC00E417B1;
+			packageReferences = (
+				FA35906E2C34D44800E417B1 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */,
+			);
 			productRefGroup = FA35904B2C33B2AC00E417B1 /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
@@ -129,6 +152,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				FA3590572C33B2AD00E417B1 /* Assets.xcassets in Resources */,
+				FA35906D2C34D3BE00E417B1 /* GoogleService-Info.plist in Resources */,
 				FA35905A2C33B2AD00E417B1 /* Base in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -140,6 +164,10 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				FA3590762C34D95C00E417B1 /* FirebaseHelper.swift in Sources */,
+				FA3590742C34D6AB00E417B1 /* Photo.swift in Sources */,
+				FA3590722C34D65C00E417B1 /* NetworkManager.swift in Sources */,
+				FA3590782C34E14B00E417B1 /* SpinnerVC.swift in Sources */,
 				FA3590622C33B30000E417B1 /* FeedVC.swift in Sources */,
 				FA35906B2C34A46E00E417B1 /* SophiePhotoCell.swift in Sources */,
 				FA3590522C33B2AC00E417B1 /* PhotoVC.swift in Sources */,
@@ -357,6 +385,25 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		FA35906E2C34D44800E417B1 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/firebase/firebase-ios-sdk";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 10.28.1;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		FA35906F2C34D44800E417B1 /* FirebaseStorage */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = FA35906E2C34D44800E417B1 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseStorage;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = FA3590422C33B2AC00E417B1 /* Project object */;
 }
