@@ -7,15 +7,17 @@
 
 import UIKit
 
-class FeedVC: UIViewController {
+class FeedVC: UIViewController, FullScreenPhotoVCDelegate {
     
     enum Section {
         case main
     }
     
+    
     var imageArray: [UIImage] = []
     var collectionView: UICollectionView!
     var dataSource: UICollectionViewDiffableDataSource<Section, UIImage>?
+    var currentImageIndex: Int?
     
     let spinnerChild = SpinnerVC()
     
@@ -114,21 +116,15 @@ class FeedVC: UIViewController {
             print("error making cell")
             return
         }
+        guard let indexPath = collectionView.indexPath(for: cell) else {
+            return
+        }
+        
+        currentImageIndex = indexPath.item
+        
         let fullScreenVC = FullScreenPhotoVC(image: image)
+        fullScreenVC.delegate = self
         self.present(fullScreenVC, animated: true)
-        
-//        let imageView = UIImageView(image: image)
-//        let newImageView = UIImageView(image: imageView.image)
-//        newImageView.frame = UIScreen.main.bounds
-//        newImageView.backgroundColor = .black
-//        newImageView.contentMode = .scaleAspectFit
-//        newImageView.isUserInteractionEnabled = true
-//        let tap = UITapGestureRecognizer(target: self, action: #selector(dismissFullscreenImage))
-//        newImageView.addGestureRecognizer(tap)
-//        self.view.addSubview(newImageView)
-//        self.navigationController?.isNavigationBarHidden = true
-//        self.tabBarController?.tabBar.isHidden = true
-        
     }
     
     @objc func dismissFullscreenImage(_ sender: UITapGestureRecognizer) {
@@ -150,6 +146,81 @@ class FeedVC: UIViewController {
             }
         }
     }
+    
+    func didDismissFullScreenPhotoVC() {
+        print("full screen image dismissed")
+    }
+    
+    func didSwipeImage(in viewController: FullScreenPhotoVC, to direction: UISwipeGestureRecognizer.Direction) {
+        switch direction {
+        case .left:
+            displayPriorImage(currentVC: viewController)
+        case .right:
+            displayNextImage(currentVC: viewController)
+        default:
+            //do nothing
+            break
+        }
+    }
+    
+    func displayPriorImage(currentVC: FullScreenPhotoVC) {
+        guard let currentImageIndex = currentImageIndex else { return }
+        let priorIndex = currentImageIndex - 1
+        guard priorIndex >= 0, priorIndex < imageArray.count else { return }
+        
+        let priorImage = imageArray[priorIndex]
+        self.currentImageIndex = priorIndex
+        
+        let currentImageView = currentVC.imageView
+        
+        // Create a new image view for the prior image
+        let newImageView = UIImageView(image: priorImage)
+        newImageView.contentMode = .scaleAspectFit
+        newImageView.frame = currentImageView.bounds
+        newImageView.frame.origin.x = currentImageView.frame.width
+        
+        currentImageView.superview?.addSubview(newImageView)
+        
+        UIView.animate(withDuration: 0.2, animations: {
+            newImageView.frame.origin.x = 0
+            currentImageView.frame.origin.x = -currentImageView.frame.width
+        }, completion: { _ in
+            currentImageView.image = priorImage
+            currentImageView.frame.origin.x = 0
+            newImageView.removeFromSuperview()
+        })
+    }
+
+    
+    func displayNextImage(currentVC: FullScreenPhotoVC) {
+        guard let currentImageIndex = currentImageIndex else { return }
+        let nextIndex = currentImageIndex + 1
+        guard nextIndex >= 0, nextIndex < imageArray.count else { return }
+        
+        let nextImage = imageArray[nextIndex]
+        self.currentImageIndex = nextIndex
+        
+        let currentImageView = currentVC.imageView
+        
+        // Create a new image view for the next image
+        let newImageView = UIImageView(image: nextImage)
+        newImageView.contentMode = .scaleAspectFit
+        newImageView.frame = currentImageView.bounds
+        newImageView.frame.origin.x = -currentImageView.frame.width
+        
+        currentImageView.superview?.addSubview(newImageView)
+        
+        UIView.animate(withDuration: 0.2, animations: {
+            newImageView.frame.origin.x = 0
+            currentImageView.frame.origin.x = currentImageView.frame.width
+        }, completion: { _ in
+            currentImageView.image = nextImage
+            currentImageView.frame.origin.x = 0
+            newImageView.removeFromSuperview()
+        })
+    }
+
+
     
 }
 

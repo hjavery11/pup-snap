@@ -9,6 +9,7 @@ import UIKit
 
 protocol FullScreenPhotoVCDelegate: AnyObject {
     func didDismissFullScreenPhotoVC()
+    func didSwipeImage(in viewController: FullScreenPhotoVC, to direction: UISwipeGestureRecognizer.Direction)
 }
 
 
@@ -58,6 +59,17 @@ class FullScreenPhotoVC: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         configure()
+        addGestures()
+       
+    }
+    
+    func addGestures() {
+        let leftGesture = UISwipeGestureRecognizer(target: self , action: #selector(self.userDidSwipe))
+        leftGesture.direction = [.left]
+        let rightGesture = UISwipeGestureRecognizer(target: self, action: #selector(self.userDidSwipe))
+        rightGesture.direction = [.right]
+        self.view.addGestureRecognizer(leftGesture)
+        self.view.addGestureRecognizer(rightGesture)
     }
     
     private func configure() {
@@ -109,7 +121,10 @@ class FullScreenPhotoVC: UIViewController {
         }
     }
     
-
+    @objc func userDidSwipe(sender: UISwipeGestureRecognizer) {
+        self.delegate?.didSwipeImage(in: self, to: sender.direction)
+        
+    }
 
 
 }

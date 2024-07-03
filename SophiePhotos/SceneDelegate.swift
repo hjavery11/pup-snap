@@ -7,7 +7,10 @@
 
 import UIKit
 
-class SceneDelegate: UIResponder, UIWindowSceneDelegate, UITabBarControllerDelegate, FullScreenPhotoVCDelegate {
+class SceneDelegate: UIResponder, UIWindowSceneDelegate, UITabBarControllerDelegate {
+    
+    
+    
     
     var window: UIWindow?
     
@@ -78,8 +81,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate, UITabBarControllerDeleg
     @objc func presentFullScreenPhotoVC(_ notification: Notification) {
         guard let userInfo = notification.userInfo, let filePath = userInfo["filePath"] as? String else { return }
         let fullScreenVC = FullScreenPhotoVC(url: filePath)
-        //fullScreenVC.modalPresentationStyle = .fullScreen
-        fullScreenVC.delegate = self
+        //fullScreenVC.modalPresentationStyle = .fullScreen    
         
         let navigationController = UINavigationController(rootViewController: fullScreenVC)
        // navigationController.modalPresentationStyle = .fullScreen
@@ -88,9 +90,6 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate, UITabBarControllerDeleg
         
     }
     
-    func didDismissFullScreenPhotoVC() {
-        window?.rootViewController?.dismiss(animated: true, completion: nil)
-    }
     
     func sceneDidDisconnect(_ scene: UIScene) {
         // Called as the scene is being released by the system.

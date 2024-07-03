@@ -160,7 +160,7 @@ class PhotoVC: UIViewController, UINavigationControllerDelegate, UIImagePickerCo
     
     func setupCameraView() {
         cameraVC.sourceType = .camera
-        cameraVC.allowsEditing = true
+        cameraVC.allowsEditing = false
         cameraVC.delegate = self
         cameraVC.cameraFlashMode = .off
     }
@@ -168,7 +168,7 @@ class PhotoVC: UIViewController, UINavigationControllerDelegate, UIImagePickerCo
     func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
         picker.dismiss(animated: true)
         
-        guard let image = info[.editedImage] as? UIImage else {
+        guard let image = info[.originalImage] as? UIImage else {
             return
         }
         
@@ -177,6 +177,7 @@ class PhotoVC: UIViewController, UINavigationControllerDelegate, UIImagePickerCo
     
     func displayUserPhoto(_ image: UIImage) {
         cameraPreview.image = image
+      
         handlePreviewBorder(true)
         
         
