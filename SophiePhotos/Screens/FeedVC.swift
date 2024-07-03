@@ -39,6 +39,7 @@ class FeedVC: UIViewController, FullScreenPhotoVCDelegate {
         }
         
         
+        
     }
     
     func createLoadingView() {
@@ -124,7 +125,11 @@ class FeedVC: UIViewController, FullScreenPhotoVCDelegate {
         
         let fullScreenVC = FullScreenPhotoVC(image: image)
         fullScreenVC.delegate = self
-        self.present(fullScreenVC, animated: true)
+        if let navController = self.navigationController {
+            navController.pushViewController(fullScreenVC, animated: true)
+        }
+        //modally present insteead of using nav controller
+       // self.present(fullScreenVC, animated: true)
     }
     
     @objc func dismissFullscreenImage(_ sender: UITapGestureRecognizer) {
@@ -147,16 +152,14 @@ class FeedVC: UIViewController, FullScreenPhotoVCDelegate {
         }
     }
     
-    func didDismissFullScreenPhotoVC() {
-        print("full screen image dismissed")
-    }
+    
     
     func didSwipeImage(in viewController: FullScreenPhotoVC, to direction: UISwipeGestureRecognizer.Direction) {
         switch direction {
         case .left:
-            displayPriorImage(currentVC: viewController)
-        case .right:
             displayNextImage(currentVC: viewController)
+        case .right:
+            displayPriorImage(currentVC: viewController)
         default:
             //do nothing
             break
@@ -177,13 +180,13 @@ class FeedVC: UIViewController, FullScreenPhotoVCDelegate {
         let newImageView = UIImageView(image: priorImage)
         newImageView.contentMode = .scaleAspectFit
         newImageView.frame = currentImageView.bounds
-        newImageView.frame.origin.x = currentImageView.frame.width
+        newImageView.frame.origin.x = -currentImageView.frame.width
         
         currentImageView.superview?.addSubview(newImageView)
         
         UIView.animate(withDuration: 0.2, animations: {
             newImageView.frame.origin.x = 0
-            currentImageView.frame.origin.x = -currentImageView.frame.width
+            currentImageView.frame.origin.x = currentImageView.frame.width
         }, completion: { _ in
             currentImageView.image = priorImage
             currentImageView.frame.origin.x = 0
@@ -206,13 +209,13 @@ class FeedVC: UIViewController, FullScreenPhotoVCDelegate {
         let newImageView = UIImageView(image: nextImage)
         newImageView.contentMode = .scaleAspectFit
         newImageView.frame = currentImageView.bounds
-        newImageView.frame.origin.x = -currentImageView.frame.width
+        newImageView.frame.origin.x = currentImageView.frame.width
         
         currentImageView.superview?.addSubview(newImageView)
         
         UIView.animate(withDuration: 0.2, animations: {
             newImageView.frame.origin.x = 0
-            currentImageView.frame.origin.x = currentImageView.frame.width
+            currentImageView.frame.origin.x = -currentImageView.frame.width
         }, completion: { _ in
             currentImageView.image = nextImage
             currentImageView.frame.origin.x = 0

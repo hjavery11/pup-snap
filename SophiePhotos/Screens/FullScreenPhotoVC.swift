@@ -8,7 +8,6 @@
 import UIKit
 
 protocol FullScreenPhotoVCDelegate: AnyObject {
-    func didDismissFullScreenPhotoVC()
     func didSwipeImage(in viewController: FullScreenPhotoVC, to direction: UISwipeGestureRecognizer.Direction)
 }
 
@@ -87,18 +86,18 @@ class FullScreenPhotoVC: UIViewController {
             imageView.heightAnchor.constraint(equalTo: view.heightAnchor)
         ])
         
-        closeButton.setImage(UIImage(systemName: "xmark"), for: .normal)
-        closeButton.tintColor = .white
-        closeButton.translatesAutoresizingMaskIntoConstraints = false
-        closeButton.addTarget(self, action: #selector(closeButtonTapped), for: .touchUpInside)
-        view.addSubview(closeButton)
-        
-        NSLayoutConstraint.activate([
-            closeButton.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 10),
-            closeButton.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 10),
-            closeButton.heightAnchor.constraint(equalToConstant: 40),
-            closeButton.widthAnchor.constraint(equalToConstant: 40)
-        ])
+//        closeButton.setImage(UIImage(systemName: "xmark"), for: .normal)
+//        closeButton.tintColor = .white
+//        closeButton.translatesAutoresizingMaskIntoConstraints = false
+//        closeButton.addTarget(self, action: #selector(closeButtonTapped), for: .touchUpInside)
+//        view.addSubview(closeButton)
+//        
+//        NSLayoutConstraint.activate([
+//            closeButton.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 10),
+//            closeButton.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 10),
+//            closeButton.heightAnchor.constraint(equalToConstant: 40),
+//            closeButton.widthAnchor.constraint(equalToConstant: 40)
+//        ])
         
         
         setupLoading()
@@ -115,11 +114,11 @@ class FullScreenPhotoVC: UIViewController {
         ])
     }
     
-    @objc func closeButtonTapped() {
-        self.dismiss(animated: true) {
-            self.delegate?.didDismissFullScreenPhotoVC()
-        }
-    }
+//    @objc func closeButtonTapped() {
+//        self.dismiss(animated: true) {
+//            self.delegate?.didDismissFullScreenPhotoVC()
+//        }
+//    }
     
     @objc func userDidSwipe(sender: UISwipeGestureRecognizer) {
         self.delegate?.didSwipeImage(in: self, to: sender.direction)
