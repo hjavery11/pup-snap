@@ -1,6 +1,6 @@
 # Sophie Photos App
 
-![Photo of Sophie](SophiePhotos/sophie.jpg))
+![Photo of Sophie](SophiePhotos/sophiegirl.jpg))
 
 ## Easily track the cutest photos of the world's cutest dog, Sophie
 
