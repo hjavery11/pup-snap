@@ -7,7 +7,7 @@
 
 import UIKit
 
-class SceneDelegate: UIResponder, UIWindowSceneDelegate, UITabBarControllerDelegate, DeepLinkPhotoVCDelegate {
+class SceneDelegate: UIResponder, UIWindowSceneDelegate, UITabBarControllerDelegate, FullScreenPhotoVCDelegate {
     
     var window: UIWindow?
     var activityIndicator = UIActivityIndicatorView(style: .large)
@@ -41,7 +41,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate, UITabBarControllerDeleg
         
         
         // Add observer for the notification
-        NotificationCenter.default.addObserver(self, selector: #selector(presentDeepLinkPhotoVC(_:)), name: NSNotification.Name("PresentDeepLinkPhotoVC"), object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(presentFullScreenPhotoVC(_:)), name: NSNotification.Name("PresentFullScreenPhotoVC"), object: nil)
     }
     
     func createPhotoVC() -> UINavigationController {
@@ -86,7 +86,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate, UITabBarControllerDeleg
         }
     }
     
-    @objc func presentDeepLinkPhotoVC(_ notification: Notification) {
+    @objc func presentFullScreenPhotoVC(_ notification: Notification) {
         guard let userInfo = notification.userInfo, let filePath = userInfo["filePath"] as? String else { return }
         
         //start loading
@@ -106,7 +106,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate, UITabBarControllerDeleg
                     self.activityIndicator.stopAnimating()
                     
                     if let image = image {
-                        let photoVC = DeepLinkPhotoVC(image: image)
+                        let photoVC = FullScreenPhotoVC(image: image)
                         photoVC.modalPresentationStyle = .fullScreen
                         photoVC.delegate = self
                         self.window?.rootViewController?.present(photoVC, animated: true, completion: nil)
@@ -122,7 +122,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate, UITabBarControllerDeleg
         
     }
     
-    func didDismissDeepLinkPhotoVC() {
+    func didDismissFullScreenPhotoVC() {
         window?.rootViewController?.view.isHidden = false
     }
     

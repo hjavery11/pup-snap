@@ -113,7 +113,7 @@ extension AppDelegate: UNUserNotificationCenterDelegate {
         if let filePath = userInfo["filePath"] as? String {
             print("Received file path: \(filePath)")
             // Post notification with the file path to handle presentation in SceneDelegate
-            NotificationCenter.default.post(name: NSNotification.Name("PresentDeepLinkPhotoVC"), object: nil, userInfo: ["filePath": filePath])
+            NotificationCenter.default.post(name: NSNotification.Name("PresentFullScreenPhotoVC"), object: nil, userInfo: ["filePath": filePath])
         }
         completionHandler()
     }

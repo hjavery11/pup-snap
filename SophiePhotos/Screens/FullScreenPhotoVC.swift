@@ -1,5 +1,5 @@
 //
-//  DeepLinkPhotoVC.swift
+//  FullScreenPhotoVC.swift
 //  SophiePhotos
 //
 //  Created by Harrison Javery on 7/2/24.
@@ -7,15 +7,15 @@
 
 import UIKit
 
-protocol DeepLinkPhotoVCDelegate: AnyObject {
-    func didDismissDeepLinkPhotoVC()
+protocol FullScreenPhotoVCDelegate: AnyObject {
+    func didDismissFullScreenPhotoVC()
 }
 
 
-class DeepLinkPhotoVC: UIViewController {
+class FullScreenPhotoVC: UIViewController {
 
     
-    weak var delegate: DeepLinkPhotoVCDelegate?
+    weak var delegate: FullScreenPhotoVCDelegate?
     var closeButton = UIButton()
     var imageView = UIImageView()
     
@@ -65,7 +65,7 @@ class DeepLinkPhotoVC: UIViewController {
     
     @objc func closeButtonTapped() {
         self.dismiss(animated: false) {
-            self.delegate?.didDismissDeepLinkPhotoVC()
+            self.delegate?.didDismissFullScreenPhotoVC()
         }
     }
     
