@@ -1,6 +1,6 @@
 # Sophie Photos App
 
-![Photo of Sophie]([SophiePhotos/sophie.jpg](https://github.com/hjavery11/sophie-photos/blob/613ad9d78d1f732d82836705cf8ce3b8c2572a69/SophiePhotos/sophie.jpg))
+![Photo of Sophie](SophiePhotos/sophie.jpg))
 
 ## Easily track the cutest photos of the world's cutest dog, Sophie
 
