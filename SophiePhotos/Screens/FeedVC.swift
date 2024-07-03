@@ -15,7 +15,7 @@ class FeedVC: UIViewController {
     
     var imageArray: [UIImage] = []
     var collectionView: UICollectionView!
-    var dataSource: UICollectionViewDiffableDataSource<Section, UIImage>!
+    var dataSource: UICollectionViewDiffableDataSource<Section, UIImage>?
 
     let spinnerChild = SpinnerVC()
     
@@ -98,7 +98,7 @@ class FeedVC: UIViewController {
         var snapshot = NSDiffableDataSourceSnapshot<Section, UIImage>()
         snapshot.appendSections([.main])
         snapshot.appendItems(imageArray)
-        dataSource.apply(snapshot, animatingDifferences: true)
+        dataSource?.apply(snapshot, animatingDifferences: true)
     }
     
     @objc func previewClicked(sender:UITapGestureRecognizer){

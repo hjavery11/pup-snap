@@ -19,6 +19,8 @@
 		FA3590722C34D65C00E417B1 /* NetworkManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA3590712C34D65C00E417B1 /* NetworkManager.swift */; };
 		FA3590762C34D95C00E417B1 /* FirebaseHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA3590752C34D95C00E417B1 /* FirebaseHelper.swift */; };
 		FA3590782C34E14B00E417B1 /* SpinnerVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA3590772C34E14B00E417B1 /* SpinnerVC.swift */; };
+		FA3590812C35037A00E417B1 /* FirebaseFunctions in Frameworks */ = {isa = PBXBuildFile; productRef = FA3590802C35037A00E417B1 /* FirebaseFunctions */; };
+		FA3590832C35037A00E417B1 /* FirebaseMessaging in Frameworks */ = {isa = PBXBuildFile; productRef = FA3590822C35037A00E417B1 /* FirebaseMessaging */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -35,6 +37,7 @@
 		FA3590712C34D65C00E417B1 /* NetworkManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkManager.swift; sourceTree = "<group>"; };
 		FA3590752C34D95C00E417B1 /* FirebaseHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirebaseHelper.swift; sourceTree = "<group>"; };
 		FA3590772C34E14B00E417B1 /* SpinnerVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpinnerVC.swift; sourceTree = "<group>"; };
+		FA3590842C350A7800E417B1 /* SophiePhotos.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = SophiePhotos.entitlements; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -42,7 +45,9 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				FA3590832C35037A00E417B1 /* FirebaseMessaging in Frameworks */,
 				FA3590702C34D44800E417B1 /* FirebaseStorage in Frameworks */,
+				FA3590812C35037A00E417B1 /* FirebaseFunctions in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -68,6 +73,7 @@
 		FA35904C2C33B2AC00E417B1 /* SophiePhotos */ = {
 			isa = PBXGroup;
 			children = (
+				FA3590842C350A7800E417B1 /* SophiePhotos.entitlements */,
 				FA35907F2C34FA4200E417B1 /* Models */,
 				FA35907E2C34FA3800E417B1 /* Utilities */,
 				FA35907C2C34FA2300E417B1 /* Custom Views */,
@@ -142,6 +148,8 @@
 			name = SophiePhotos;
 			packageProductDependencies = (
 				FA35906F2C34D44800E417B1 /* FirebaseStorage */,
+				FA3590802C35037A00E417B1 /* FirebaseFunctions */,
+				FA3590822C35037A00E417B1 /* FirebaseMessaging */,
 			);
 			productName = SophiePhotos;
 			productReference = FA35904A2C33B2AC00E417B1 /* SophiePhotos.app */;
@@ -350,6 +358,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = SophiePhotos/SophiePhotos.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = 6P3ZM853J8;
@@ -377,6 +386,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = SophiePhotos/SophiePhotos.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = 6P3ZM853J8;
@@ -438,6 +448,16 @@
 			isa = XCSwiftPackageProductDependency;
 			package = FA35906E2C34D44800E417B1 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
 			productName = FirebaseStorage;
+		};
+		FA3590802C35037A00E417B1 /* FirebaseFunctions */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = FA35906E2C34D44800E417B1 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseFunctions;
+		};
+		FA3590822C35037A00E417B1 /* FirebaseMessaging */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = FA35906E2C34D44800E417B1 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseMessaging;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};
