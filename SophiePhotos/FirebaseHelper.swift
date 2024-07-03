@@ -29,14 +29,13 @@ class FirebaseHelper {
     }
     
     func fetchAllImages() async throws -> [UIImage] {
-       
         
         var images: [UIImage] = []
         do {
             let result = try await storageRef.listAll()
             for item in result.items {
                 let cacheKey = NSString(string: item.fullPath)
-               
+                
                 //check in memory cache see if we have the image in cache first
                 if let cachedImage = cache.object(forKey: cacheKey) {
                     images.append(cachedImage)
@@ -64,9 +63,67 @@ class FirebaseHelper {
             }
         } catch {
             print("Error listing items: \(error)")
-        }    
+        }
         return images
     }
+    
+    func uploadImage(image: UIImage, progressHandler: @escaping (Double) -> Void, successHandler: @escaping () -> Void, failureHandler: @escaping (Error) -> Void) -> StorageUploadTask? {
+        guard let imageData = image.pngData() else {
+            print("Failed to get image data")
+            return nil
+        }
+        
+        //create a reference to the file
+        let imageRef = storageRef.child((UUID().uuidString) + ".png")
+        
+        //upload the file to the path images/[UUID].png
+        let uploadTask = imageRef.putData(imageData, metadata: nil) { metadata, error in
+            guard let _ = metadata else {
+                print("Upload error: \(String(describing: error?.localizedDescription))")
+                failureHandler(error!)
+                return
+            }
+            
+            imageRef.downloadURL { url, error in
+                guard let downloadURL = url else {
+                    print("Download URL error: \(String(describing: error?.localizedDescription))")
+                    failureHandler(error!)
+                    return
+                }
+                
+                print("Download URL: \(downloadURL.absoluteString)")
+                successHandler()
+            }
+            
+        }
+      
+        
+        //monitor upload progress
+        uploadTask.observe(.progress) { snapshot in
+            let percentComplete = 100.0 * Double(snapshot.progress!.completedUnitCount) / Double(snapshot.progress!.totalUnitCount)
+            print("Upload progress: \(percentComplete)")
+            progressHandler(percentComplete)
+        }
+        
+        //handle upload failure
+        
+        uploadTask.observe(.failure) { snapshot in
+            if let error = snapshot.error {
+                failureHandler(error)
+            }
+        }
+        
+        return uploadTask
+        
+    }
+    
+    
+    
+    
+    
+    
+    
+    
     
     
     private func downloadImageToLocalFile(from reference: StorageReference, to localURL: URL) async throws {

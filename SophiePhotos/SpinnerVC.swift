@@ -14,8 +14,9 @@ class SpinnerVC: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         view = UIView()
-        spinner.color = .systemPurple
+        view.backgroundColor = UIColor(white:0, alpha: 0.7)
         
+        spinner.color = .systemPurple        
         spinner.translatesAutoresizingMaskIntoConstraints = false
         spinner.startAnimating()
         view.addSubview(spinner)

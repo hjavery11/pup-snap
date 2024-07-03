@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import FirebaseStorage
 
 class PhotoVC: UIViewController, UINavigationControllerDelegate, UIImagePickerControllerDelegate {
     
@@ -16,6 +17,7 @@ class PhotoVC: UIViewController, UINavigationControllerDelegate, UIImagePickerCo
     let cameraVC = UIImagePickerController()
     let clearButton = UIButton()
     let submitButton = UIButton()
+    let spinnerChild = SpinnerVC()
     
     var placeholderImage = UIImage()
 
@@ -43,7 +45,18 @@ class PhotoVC: UIViewController, UINavigationControllerDelegate, UIImagePickerCo
         createClearButton()
     }
     
-
+    func showSpinner() {
+        addChild(spinnerChild)
+        spinnerChild.view.frame = view.frame
+        view.addSubview(spinnerChild.view)
+        spinnerChild.didMove(toParent: self)
+    }
+    
+    func hideSpinner() {
+        spinnerChild.willMove(toParent: nil)
+        spinnerChild.view.removeFromSuperview()
+        spinnerChild.removeFromParent()
+    }
     
     func setupSophiePhoto() {
         view.addSubview(referenceImageView)
@@ -172,13 +185,63 @@ class PhotoVC: UIViewController, UINavigationControllerDelegate, UIImagePickerCo
     }
     
     @objc func addPhoto() {
-        print("photo added")
-    }
+           guard let image = cameraPreview.image else { return }
+        
+        showSpinner()
+           
+           let uploadTask = NetworkManager.shared.uploadPhoto(
+               image: image,
+               progressHandler: { percentComplete in
+                   print("Upload progress: \(percentComplete)%")
+               },
+               successHandler: {
+                   self.hideSpinner()
+                   print("Upload completed successfully")
+                   DispatchQueue.main.async {
+                       let alert = UIAlertController(title: "Upload Successful", message: "Your photo has been uploaded successfully.", preferredStyle: .alert)
+                       let okAction = UIAlertAction(title: "OK", style: .default) { _ in
+                           self.clearImage()
+                       }
+                       alert.addAction(okAction)
+                       self.present(alert, animated: true, completion: nil)
+                   }
+               },
+               failureHandler: { error in
+                   DispatchQueue.main.async {
+                       self.hideSpinner()
+                       let alert = UIAlertController(title: "Upload Failed", message: error.localizedDescription, preferredStyle: .alert)
+                       alert.addAction(UIAlertAction(title: "OK", style: .default, handler: nil))
+                       self.present(alert, animated: true, completion: nil)
+                   }
+                   switch StorageErrorCode(rawValue: (error as NSError).code)! {
+                   case .objectNotFound:
+                       print("File doesn't exist")
+                   case .unauthorized:
+                       print("User doesn't have permission to access file")
+                   case .cancelled:
+                       print("User canceled the upload")
+                   case .unknown:
+                       print("Unknown error occurred, inspect the server response")
+                   default:
+                       print("A separate error occurred, retry the upload")
+                   }
+               }
+           )
+        
+        _ = uploadTask
+       }
+
+
+    
     @objc func clearImage() {
         cameraPreview.image = placeholderImage
         clearButton.alpha = 0
         submitButton.alpha = 0
     
+    }
+    
+    func tabSelected() {
+       // do nothing for now
     }
     
 }

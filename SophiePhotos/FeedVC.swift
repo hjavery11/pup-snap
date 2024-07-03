@@ -116,8 +116,7 @@ class FeedVC: UIViewController {
         newImageView.addGestureRecognizer(tap)
         self.view.addSubview(newImageView)
         self.navigationController?.isNavigationBarHidden = true
-        self.tabBarController?.tabBar.isHidden = true
-        
+        self.tabBarController?.tabBar.isHidden = true        
         
     }
     
@@ -127,6 +126,20 @@ class FeedVC: UIViewController {
         sender.view?.removeFromSuperview()
     }
     
+    func tabSelected() {
+        print("Feed VC selected")
+        checkForNewImages()
+    }
+    
+    func checkForNewImages() {
+        Task {
+            let newImages = await NetworkManager.shared.getPhotos()
+            if newImages.count != imageArray.count {
+                imageArray = newImages
+                applySnapshot()
+            }
+        }
+    }
     
 }
 

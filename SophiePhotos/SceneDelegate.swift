@@ -7,7 +7,7 @@
 
 import UIKit
 
-class SceneDelegate: UIResponder, UIWindowSceneDelegate {
+class SceneDelegate: UIResponder, UIWindowSceneDelegate, UITabBarControllerDelegate {
 
     var window: UIWindow?
 
@@ -20,7 +20,10 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         
         window = UIWindow(frame: windowScene.coordinateSpace.bounds)
         window?.windowScene = windowScene
-        window?.rootViewController = createTabbar()
+        let tabBarController = createTabbar()
+        tabBarController.delegate = self
+        window?.rootViewController = tabBarController
+        
         window?.makeKeyAndVisible()
         
         configureNavigationBar()
@@ -58,6 +61,15 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         UINavigationBar.appearance().tintColor = .systemPurple
     }
     
+    func tabBarController(_ tabBarController: UITabBarController, didSelect viewController: UIViewController) {       
+        if let navController = viewController as? UINavigationController, let topVC = navController.topViewController {
+            if let photoVC = topVC as? PhotoVC {
+                photoVC.tabSelected() // call func inside VC
+            } else if let feedVC = topVC as? FeedVC {
+                feedVC.tabSelected()
+            }
+        }
+    }
     
     func sceneDidDisconnect(_ scene: UIScene) {
         // Called as the scene is being released by the system.
