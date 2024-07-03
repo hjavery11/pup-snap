@@ -16,7 +16,7 @@ class FeedVC: UIViewController {
     var imageArray: [UIImage] = []
     var collectionView: UICollectionView!
     var dataSource: UICollectionViewDiffableDataSource<Section, UIImage>?
-
+    
     let spinnerChild = SpinnerVC()
     
     
@@ -29,13 +29,13 @@ class FeedVC: UIViewController {
         
         createLoadingView()
         Task {
-          await fetchPhotos()
+            await fetchPhotos()
             configureCollectionView()
             configureDataSource()
             applySnapshot()
             dismissLoadingView()
         }
-      
+        
         
     }
     
@@ -53,13 +53,21 @@ class FeedVC: UIViewController {
         spinnerChild.removeFromParent()
     }
     func configureCollectionView() {
-        collectionView = UICollectionView(frame: view.bounds, collectionViewLayout: createThreeColumnFlowLayout())
+        collectionView = UICollectionView(frame: .zero, collectionViewLayout: createThreeColumnFlowLayout())
         view.addSubview(collectionView)
         collectionView.register(SophiePhotoCell.self, forCellWithReuseIdentifier: SophiePhotoCell.reuseID)
+        collectionView.translatesAutoresizingMaskIntoConstraints = false
+        
+        NSLayoutConstraint.activate([
+            collectionView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
+            collectionView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor),
+            collectionView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor),
+            collectionView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor)
+        ])
     }
     
     func fetchPhotos() async {
-          imageArray = await NetworkManager.shared.getPhotos()
+        imageArray = await NetworkManager.shared.getPhotos()
     }
     
     
@@ -116,7 +124,7 @@ class FeedVC: UIViewController {
         newImageView.addGestureRecognizer(tap)
         self.view.addSubview(newImageView)
         self.navigationController?.isNavigationBarHidden = true
-        self.tabBarController?.tabBar.isHidden = true        
+        self.tabBarController?.tabBar.isHidden = true
         
     }
     

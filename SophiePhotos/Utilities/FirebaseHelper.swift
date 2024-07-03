@@ -67,6 +67,21 @@ class FirebaseHelper {
         return images
     }
     
+    func fetchImage(url: String, completion: @escaping (UIImage?) -> Void) {
+        let photoRef = storage.reference().child(url)
+        //start download
+        photoRef.getData(maxSize: 10 * 1024 * 1024) { data, error in
+            if let error = error {
+                print("Issue loading image: \(url) with error: \(error.localizedDescription)")
+                completion(nil)
+            } else if let data = data, let image = UIImage(data:data){
+               completion(image)
+            } else {
+                completion(nil)
+            }
+        }
+    }
+    
     func uploadImage(image: UIImage, progressHandler: @escaping (Double) -> Void, successHandler: @escaping () -> Void, failureHandler: @escaping (Error) -> Void) -> StorageUploadTask? {
         guard let imageData = image.pngData() else {
             print("Failed to get image data")

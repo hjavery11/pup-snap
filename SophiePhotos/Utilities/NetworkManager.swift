@@ -26,6 +26,13 @@ class NetworkManager {
         return firebaseHelper.uploadImage(image: image, progressHandler: progressHandler, successHandler: successHandler, failureHandler: failureHandler)
     }
     
+    func getPhoto(_ url: String, completion: @escaping (UIImage?) -> Void) {
+        firebaseHelper.fetchImage(url: url) { image in
+            completion(image)
+        }
+       
+    }
+    
     
     
 }
