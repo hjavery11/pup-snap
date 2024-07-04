@@ -11,6 +11,7 @@ class SophiePhotoCell: UICollectionViewCell {
     
     static let reuseID = "SophiePhotoCell"
     let thumbnailImageView = UIImageView()
+    var imageURL: String = ""
     
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -41,7 +42,8 @@ class SophiePhotoCell: UICollectionViewCell {
     
     
     
-    func set(image: UIImage) {
+    func set(image: UIImage, imageURL: String) {
         thumbnailImageView.image = image
+        self.imageURL = imageURL
     }
 }

@@ -9,12 +9,15 @@ import UIKit
 
 class FeedVC: UIViewController, FullScreenPhotoVCDelegate {
     
+    
+    
     enum Section {
         case main
     }
     
     
     var imageArray: [UIImage] = []
+    var urlArray: [String] = []
     var collectionView: UICollectionView!
     var dataSource: UICollectionViewDiffableDataSource<Section, UIImage>?
     var currentImageIndex: Int?
@@ -70,7 +73,9 @@ class FeedVC: UIViewController, FullScreenPhotoVCDelegate {
     }
     
     func fetchPhotos() async {
-        imageArray = await NetworkManager.shared.getPhotos()
+        let (images, urls) = await NetworkManager.shared.getPhotos()
+        imageArray = images
+        urlArray = urls
     }
     
     
@@ -94,8 +99,8 @@ class FeedVC: UIViewController, FullScreenPhotoVCDelegate {
                 fatalError("Cannot create new cell")
             }
             
-            
-            cell.set(image: image)
+            let imageURL = self.urlArray[indexPath.item]
+            cell.set(image: image, imageURL: imageURL)
             cell.isUserInteractionEnabled = true
             let gesture = UITapGestureRecognizer(target: self, action: #selector(self.previewClicked))
             
@@ -123,20 +128,20 @@ class FeedVC: UIViewController, FullScreenPhotoVCDelegate {
         
         currentImageIndex = indexPath.item
         
-        let fullScreenVC = FullScreenPhotoVC(image: image)
+        let imageURL = cell.imageURL
+        
+        
+        
+        let fullScreenVC = FullScreenPhotoVC(imageURL: imageURL, image: image, indexPath: indexPath)
         fullScreenVC.delegate = self
         if let navController = self.navigationController {
             navController.pushViewController(fullScreenVC, animated: true)
+        } else {
+            self.present(fullScreenVC, animated: true)
         }
-        //modally present insteead of using nav controller
-       // self.present(fullScreenVC, animated: true)
+        
     }
     
-    @objc func dismissFullscreenImage(_ sender: UITapGestureRecognizer) {
-        self.navigationController?.isNavigationBarHidden = false
-        self.tabBarController?.tabBar.isHidden = false
-        sender.view?.removeFromSuperview()
-    }
     
     func tabSelected() {
         checkForNewImages()
@@ -144,13 +149,33 @@ class FeedVC: UIViewController, FullScreenPhotoVCDelegate {
     
     func checkForNewImages() {
         Task {
-            let newImages = await NetworkManager.shared.getPhotos()
+            let (newImages, newUrls) = await NetworkManager.shared.getPhotos()
             if newImages.count != imageArray.count {
                 imageArray = newImages
+                urlArray = newUrls
                 applySnapshot()
             }
         }
     }
+    
+    func deleteImage(at indexPath: IndexPath) {    
+        Task{
+            do{
+                try await NetworkManager.shared.deletePhoto(imageURL: urlArray[indexPath.item])
+                imageArray.remove(at: indexPath.item)
+                urlArray.remove(at: indexPath.item)
+               
+                applySnapshot()
+               
+            } catch{
+                print("Error occured deleting photo: \(error.localizedDescription)")
+            }
+           
+        }
+      
+    
+    }
+    
     
     
     
@@ -172,6 +197,12 @@ class FeedVC: UIViewController, FullScreenPhotoVCDelegate {
         guard priorIndex >= 0, priorIndex < imageArray.count else { return }
         
         let priorImage = imageArray[priorIndex]
+        let priorURL = urlArray[priorIndex]
+        let newIndexPath = IndexPath(item: priorIndex, section: currentVC.indexPath?.section ?? 0) // future proof of more than 0 sections
+        
+        currentVC.imageURL = priorURL
+        currentVC.indexPath = newIndexPath
+        
         self.currentImageIndex = priorIndex
         
         let currentImageView = currentVC.imageView
@@ -192,8 +223,9 @@ class FeedVC: UIViewController, FullScreenPhotoVCDelegate {
             currentImageView.frame.origin.x = 0
             newImageView.removeFromSuperview()
         })
+        
     }
-
+    
     
     func displayNextImage(currentVC: FullScreenPhotoVC) {
         guard let currentImageIndex = currentImageIndex else { return }
@@ -201,6 +233,9 @@ class FeedVC: UIViewController, FullScreenPhotoVCDelegate {
         guard nextIndex >= 0, nextIndex < imageArray.count else { return }
         
         let nextImage = imageArray[nextIndex]
+        let nextURL = urlArray[nextIndex]
+        
+        currentVC.imageURL = nextURL
         self.currentImageIndex = nextIndex
         
         let currentImageView = currentVC.imageView
@@ -222,8 +257,8 @@ class FeedVC: UIViewController, FullScreenPhotoVCDelegate {
             newImageView.removeFromSuperview()
         })
     }
-
-
+    
+    
     
 }
 
@@ -235,7 +270,6 @@ class FeedVC: UIViewController, FullScreenPhotoVCDelegate {
 //  Created by Harrison Javery on 7/2/24.
 //
 
-import UIKit
 
 extension UIEdgeInsets {
     init(_ padding: CGFloat) {

@@ -9,6 +9,7 @@ import UIKit
 
 protocol FullScreenPhotoVCDelegate: AnyObject {
     func didSwipeImage(in viewController: FullScreenPhotoVC, to direction: UISwipeGestureRecognizer.Direction)
+    func deleteImage(at indexPath: IndexPath)
 }
 
 
@@ -20,19 +21,71 @@ class FullScreenPhotoVC: UIViewController {
     var closeButton = UIButton()
     var imageView = UIImageView()
     
-    init(image: UIImage) {
+    var imageURL: String
+    var indexPath: IndexPath?
+    
+    
+    
+    init(imageURL: String, image: UIImage? = nil, indexPath: IndexPath? = nil){
+        self.imageURL = imageURL
+        self.indexPath = indexPath
         super.init(nibName: nil, bundle: nil)
-        imageView.image = image
+       
+        //check which init
+        if let image = image {
+            self.imageView.image = image
+        } else {
+            fetchImage(url:imageURL)
+        }
     }
     
-    init(url: String) {
-        super.init(nibName: nil, bundle: nil)
-        fetchImage(url: url)
-    }
     
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
+    
+    
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        view.backgroundColor = .systemBackground
+        
+        configureImageView()
+        if let _ = self.indexPath {
+            configureNavBar()
+        }      
+        setupLoading()
+        addGestures()
+        
+       
+    }
+    
+    func configureImageView() {
+        imageView.translatesAutoresizingMaskIntoConstraints = false
+        imageView.contentMode = .scaleAspectFit
+        
+        view.addSubview(imageView)
+        
+        NSLayoutConstraint.activate([
+            imageView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            imageView.centerYAnchor.constraint(equalTo: view.centerYAnchor),
+            imageView.widthAnchor.constraint(equalTo: view.widthAnchor),
+            imageView.heightAnchor.constraint(equalTo: view.heightAnchor)
+        ])
+    }
+    
+    func configureNavBar() {
+        let deleteButton = UIBarButtonItem(barButtonSystemItem: .trash, target: self, action: #selector(userTappedDelete))
+        navigationItem.rightBarButtonItem = deleteButton
+    }
+    func addGestures() {
+        let leftGesture = UISwipeGestureRecognizer(target: self , action: #selector(self.userDidSwipe))
+        leftGesture.direction = [.left]
+        let rightGesture = UISwipeGestureRecognizer(target: self, action: #selector(self.userDidSwipe))
+        rightGesture.direction = [.right]
+        self.view.addGestureRecognizer(leftGesture)
+        self.view.addGestureRecognizer(rightGesture)
+    }
+   
     
     func fetchImage(url: String) {
         //start loading
@@ -55,53 +108,6 @@ class FullScreenPhotoVC: UIViewController {
         
     }
     
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        configure()
-        addGestures()
-       
-    }
-    
-    func addGestures() {
-        let leftGesture = UISwipeGestureRecognizer(target: self , action: #selector(self.userDidSwipe))
-        leftGesture.direction = [.left]
-        let rightGesture = UISwipeGestureRecognizer(target: self, action: #selector(self.userDidSwipe))
-        rightGesture.direction = [.right]
-        self.view.addGestureRecognizer(leftGesture)
-        self.view.addGestureRecognizer(rightGesture)
-    }
-    
-    private func configure() {
-        view.backgroundColor = .black
-       
-        imageView.translatesAutoresizingMaskIntoConstraints = false
-        imageView.contentMode = .scaleAspectFit
-        
-        view.addSubview(imageView)
-        
-        NSLayoutConstraint.activate([
-            imageView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            imageView.centerYAnchor.constraint(equalTo: view.centerYAnchor),
-            imageView.widthAnchor.constraint(equalTo: view.widthAnchor),
-            imageView.heightAnchor.constraint(equalTo: view.heightAnchor)
-        ])
-        
-//        closeButton.setImage(UIImage(systemName: "xmark"), for: .normal)
-//        closeButton.tintColor = .white
-//        closeButton.translatesAutoresizingMaskIntoConstraints = false
-//        closeButton.addTarget(self, action: #selector(closeButtonTapped), for: .touchUpInside)
-//        view.addSubview(closeButton)
-//        
-//        NSLayoutConstraint.activate([
-//            closeButton.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 10),
-//            closeButton.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 10),
-//            closeButton.heightAnchor.constraint(equalToConstant: 40),
-//            closeButton.widthAnchor.constraint(equalToConstant: 40)
-//        ])
-        
-        
-        setupLoading()
-    }
     
     func setupLoading() {
         //configure loading spinner
@@ -114,14 +120,36 @@ class FullScreenPhotoVC: UIViewController {
         ])
     }
     
-//    @objc func closeButtonTapped() {
-//        self.dismiss(animated: true) {
-//            self.delegate?.didDismissFullScreenPhotoVC()
-//        }
-//    }
     
     @objc func userDidSwipe(sender: UISwipeGestureRecognizer) {
         self.delegate?.didSwipeImage(in: self, to: sender.direction)
+        
+    }
+    
+    @objc func userTappedDelete() {
+        let alert = UIAlertController(title: "Delete Photo", message: "Are you sure you want to permanantely delete this photo?", preferredStyle: .alert)
+        let yesAction = UIAlertAction(title: "Yes", style: .destructive) { _ in
+            self.deleteCurrentPhoto()
+        }
+        let noAction = UIAlertAction(title: "Cancel", style: .cancel){ _ in
+            alert.dismiss(animated: true)
+        }
+        alert.addAction(yesAction)
+        alert.addAction(noAction)
+        self.present(alert, animated: true)
+        
+       
+     
+    }
+    
+    func deleteCurrentPhoto() {
+        if let indexPath = indexPath {
+            self.navigationController?.popViewController(animated: true)
+            self.delegate?.deleteImage(at: indexPath)
+        } else {
+            print("no index path set to delete current photo")
+        }
+        
         
     }
 

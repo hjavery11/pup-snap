@@ -10,16 +10,22 @@ import FirebaseStorage
 
 class NetworkManager {
     static let shared = NetworkManager()
-    let firebaseHelper = FirebaseHelper()
+    private let firebaseHelper = FirebaseHelper()
     
     
     
     private init() {}
     
     
-    func getPhotos() async -> [UIImage] {
-        let imageArray = try! await firebaseHelper.fetchAllImages()
-        return imageArray
+    func getPhotos() async -> ([UIImage],[String]) {
+        do {
+            let (imageArray, urlArray) = try await firebaseHelper.fetchAllImages()
+            return (imageArray, urlArray)
+        } catch {
+            print("error on getting photos: \(error)")
+            return ([], [])
+        }
+       
     }
     
     func uploadPhoto(image: UIImage, progressHandler: @escaping (Double) -> Void, successHandler: @escaping () -> Void, failureHandler: @escaping (Error) -> Void) -> StorageUploadTask? {
@@ -31,6 +37,10 @@ class NetworkManager {
             completion(image)
         }
        
+    }
+    
+    func deletePhoto(imageURL: String) async throws{
+       try await firebaseHelper.deleteImage(url: imageURL)
     }
     
     

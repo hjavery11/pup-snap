@@ -80,7 +80,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate, UITabBarControllerDeleg
     
     @objc func presentFullScreenPhotoVC(_ notification: Notification) {
         guard let userInfo = notification.userInfo, let filePath = userInfo["filePath"] as? String else { return }
-        let fullScreenVC = FullScreenPhotoVC(url: filePath)
+        let fullScreenVC = FullScreenPhotoVC(imageURL: filePath)
         //fullScreenVC.modalPresentationStyle = .fullScreen    
         
         let navigationController = UINavigationController(rootViewController: fullScreenVC)

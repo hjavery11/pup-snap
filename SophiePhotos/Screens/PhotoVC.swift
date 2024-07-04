@@ -24,6 +24,8 @@ class PhotoVC: UIViewController, UINavigationControllerDelegate, UIImagePickerCo
     let buttonFont: CGFloat = 16
     let largeConfig = UIImage.SymbolConfiguration(pointSize: 44, weight: .bold, scale: .default)
     
+    var fontType: UIFont?
+    
     var placeholderImage = UIImage(systemName: "photo")
     
     // Reference to the height constraint of referenceImageView
@@ -32,7 +34,25 @@ class PhotoVC: UIViewController, UINavigationControllerDelegate, UIImagePickerCo
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .systemBackground
+        let deviceWidth = UIScreen.main.bounds.width
+        let largeTitleFontSize: CGFloat
+        
+        
+        //set font szie based off width of screen
+        if deviceWidth > 375 {
+            largeTitleFontSize = 34
+            fontType = UIFont.systemFont(ofSize: 12)
+        } else {
+            largeTitleFontSize = 28
+            fontType = UIFont.systemFont(ofSize: 10)
+        }
+        
+        
+        
         navigationController?.navigationBar.prefersLargeTitles = true
+        navigationController?.navigationBar.largeTitleTextAttributes = [
+            NSAttributedString.Key.font: UIFont.systemFont(ofSize: largeTitleFontSize, weight: .bold)
+        ]
         
         setupCameraPreview()
         setupCameraView()
@@ -75,23 +95,58 @@ class PhotoVC: UIViewController, UINavigationControllerDelegate, UIImagePickerCo
           
         ])
     }
-    
     func setupReferenceImageViewConstraints() {
+        let referenceImageViewContainer = UIView()
+        referenceImageViewContainer.translatesAutoresizingMaskIntoConstraints = false
+        referenceImageViewContainer.clipsToBounds = true
+        view.addSubview(referenceImageViewContainer)
+        
         NSLayoutConstraint.activate([
-            referenceImageView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -12),
-            referenceImageView.centerXAnchor.constraint(equalTo: cameraPreview.centerXAnchor, constant: -50),
+            referenceImageViewContainer.topAnchor.constraint(equalTo: submitButton.bottomAnchor, constant: 5),
+            referenceImageViewContainer.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor),
+            referenceImageViewContainer.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor),
+            referenceImageViewContainer.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor)
+        ])
+        
+        referenceImageView.translatesAutoresizingMaskIntoConstraints = false
+        referenceImageViewContainer.addSubview(referenceImageView)
+        
+        NSLayoutConstraint.activate([
+            referenceImageView.centerXAnchor.constraint(equalTo: referenceImageViewContainer.centerXAnchor),
+            referenceImageView.centerYAnchor.constraint(equalTo: referenceImageViewContainer.centerYAnchor),
             referenceImageView.widthAnchor.constraint(equalToConstant: 548 / 5.5),
             referenceImageView.heightAnchor.constraint(equalToConstant: 900 / 5.5)
         ])
     }
-    
+
+   
+          
+      
 
     func setupHintTextConstraints() {
-        NSLayoutConstraint.activate([
-            hintText.leadingAnchor.constraint(equalTo: referenceImageView.trailingAnchor),
-            hintText.bottomAnchor.constraint(equalTo: referenceImageView.bottomAnchor, constant: -5)
-        ])
+        // Initially set the constraints assuming `hintText` is positioned below `referenceImageView`
+        let topConstraint = hintText.topAnchor.constraint(equalTo: referenceImageView.bottomAnchor, constant: 0)
+        let trailingConstraint = hintText.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor)
+
+        NSLayoutConstraint.activate([topConstraint, trailingConstraint])
+
+        // Layout the view to apply the initial constraints
+        view.layoutIfNeeded()
+
+        // Check if `hintText` bottom is beyond the safe area bottom
+        if hintText.frame.minY < view.safeAreaLayoutGuide.layoutFrame.maxY {
+            print("should move hint text")
+            // If `hintText` is beyond the safe area, adjust the constraints
+            NSLayoutConstraint.deactivate([topConstraint])
+            NSLayoutConstraint.activate([
+                hintText.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor),
+                trailingConstraint // reapply the trailing constraint
+            ])
+        }
     }
+
+
+
     
     func showSpinner() {
         addChild(spinnerChild)
@@ -116,7 +171,7 @@ class PhotoVC: UIViewController, UINavigationControllerDelegate, UIImagePickerCo
         view.addSubview(hintText)
         hintText.text = "*Image provided for reference"
         hintText.translatesAutoresizingMaskIntoConstraints = false
-        hintText.font = UIFont.preferredFont(forTextStyle: .footnote)
+        hintText.font = fontType
     }
     
     func setupCameraPreview() {

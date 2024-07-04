@@ -16,6 +16,8 @@ class FirebaseHelper {
     // Create a storage reference from our storage service
     let storageRef: StorageReference
     
+    let baseStorageRef: StorageReference
+    
     private let cache = NSCache<NSString, UIImage>()
     
     
@@ -26,15 +28,20 @@ class FirebaseHelper {
         // Create a storage reference from our storage service
         storageRef = storage.reference().child("images")
         
+        baseStorageRef = storage.reference()
+        
+        
     }
     
-    func fetchAllImages() async throws -> [UIImage] {
+    func fetchAllImages() async throws -> ([UIImage],[String]) {
         
         var images: [UIImage] = []
+        var urls: [String] = []
         do {
             let result = try await storageRef.listAll()
             for item in result.items {
                 let cacheKey = NSString(string: item.fullPath)
+                urls.append(item.fullPath)
                 
                 //check in memory cache see if we have the image in cache first
                 if let cachedImage = cache.object(forKey: cacheKey) {
@@ -64,7 +71,7 @@ class FirebaseHelper {
         } catch {
             print("Error listing items: \(error)")
         }
-        return images
+        return (images, urls)
     }
     
     func fetchImage(url: String, completion: @escaping (UIImage?) -> Void) {
@@ -83,15 +90,15 @@ class FirebaseHelper {
     }
     
     func uploadImage(image: UIImage, progressHandler: @escaping (Double) -> Void, successHandler: @escaping () -> Void, failureHandler: @escaping (Error) -> Void) -> StorageUploadTask? {
-        guard let imageData = image.pngData() else {
+        guard let imageData = image.jpegData(compressionQuality: 0.8) else {
             print("Failed to get image data")
             return nil
         }
         
         //create a reference to the file
-        let imageRef = storageRef.child((UUID().uuidString) + ".png")
+        let imageRef = storageRef.child((UUID().uuidString) + ".jpg")
         
-        //upload the file to the path images/[UUID].png
+        //upload the file to the path images/[UUID].jpg
         let uploadTask = imageRef.putData(imageData, metadata: nil) { metadata, error in
             guard let _ = metadata else {
                 print("Upload error: \(String(describing: error?.localizedDescription))")
@@ -111,7 +118,6 @@ class FirebaseHelper {
             }
             
         }
-      
         
         //monitor upload progress
         uploadTask.observe(.progress) { snapshot in
@@ -132,10 +138,10 @@ class FirebaseHelper {
         
     }
     
-    
-    
-    
-    
+    func deleteImage(url: String) async throws {
+        let deleteRef = baseStorageRef.child(url)
+        try await deleteRef.delete()       
+    }
     
     
     
@@ -154,7 +160,7 @@ class FirebaseHelper {
     }
     
     private func saveImageToDisk(image: UIImage, fileName: String) {
-        if let data = image.pngData() {
+        if let data = image.jpegData(compressionQuality: 0.8) {
             let fileURL = getLocalFileURL(fileName: fileName)
             try? data.write(to: fileURL)
         }
