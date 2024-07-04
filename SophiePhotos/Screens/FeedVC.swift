@@ -9,13 +9,10 @@ import UIKit
 
 class FeedVC: UIViewController, FullScreenPhotoVCDelegate {
     
-    
-    
     enum Section {
         case main
     }
-    
-    
+
     var imageArray: [UIImage] = []
     var urlArray: [String] = []
     var collectionView: UICollectionView!
@@ -24,13 +21,10 @@ class FeedVC: UIViewController, FullScreenPhotoVCDelegate {
     
     let spinnerChild = SpinnerVC()
     
-    
-    
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .systemBackground
         navigationController?.navigationBar.prefersLargeTitles = true
-        
         
         createLoadingView()
         Task {
@@ -40,8 +34,6 @@ class FeedVC: UIViewController, FullScreenPhotoVCDelegate {
             applySnapshot()
             dismissLoadingView()
         }
-        
-        
         
     }
     
@@ -77,7 +69,6 @@ class FeedVC: UIViewController, FullScreenPhotoVCDelegate {
         imageArray = images
         urlArray = urls
     }
-    
     
     func createThreeColumnFlowLayout() -> UICollectionViewFlowLayout {
         let width = view.bounds.width
@@ -117,7 +108,7 @@ class FeedVC: UIViewController, FullScreenPhotoVCDelegate {
         dataSource?.apply(snapshot, animatingDifferences: true)
     }
     
-    @objc func previewClicked(sender:UITapGestureRecognizer){
+    @objc func previewClicked(sender: UITapGestureRecognizer) {
         guard let cell = sender.view as? SophiePhotoCell, let image = cell.thumbnailImageView.image else {
             print("error making cell")
             return
@@ -130,8 +121,6 @@ class FeedVC: UIViewController, FullScreenPhotoVCDelegate {
         
         let imageURL = cell.imageURL
         
-        
-        
         let fullScreenVC = FullScreenPhotoVC(imageURL: imageURL, image: image, indexPath: indexPath)
         fullScreenVC.delegate = self
         if let navController = self.navigationController {
@@ -141,7 +130,6 @@ class FeedVC: UIViewController, FullScreenPhotoVCDelegate {
         }
         
     }
-    
     
     func tabSelected() {
         checkForNewImages()
@@ -159,25 +147,21 @@ class FeedVC: UIViewController, FullScreenPhotoVCDelegate {
     }
     
     func deleteImage(at indexPath: IndexPath) {    
-        Task{
-            do{
+        Task {
+            do {
                 try await NetworkManager.shared.deletePhoto(imageURL: urlArray[indexPath.item])
                 imageArray.remove(at: indexPath.item)
                 urlArray.remove(at: indexPath.item)
                
                 applySnapshot()
                
-            } catch{
+            } catch {
                 print("Error occured deleting photo: \(error.localizedDescription)")
             }
            
         }
       
-    
     }
-    
-    
-    
     
     func didSwipeImage(in viewController: FullScreenPhotoVC, to direction: UISwipeGestureRecognizer.Direction) {
         switch direction {
@@ -186,7 +170,7 @@ class FeedVC: UIViewController, FullScreenPhotoVCDelegate {
         case .right:
             displayPriorImage(currentVC: viewController)
         default:
-            //do nothing
+            // do nothing
             break
         }
     }
@@ -214,18 +198,17 @@ class FeedVC: UIViewController, FullScreenPhotoVCDelegate {
         newImageView.frame.origin.x = -currentImageView.frame.width
         
         currentImageView.superview?.addSubview(newImageView)
-        
+        currentImageView.image = nil
         UIView.animate(withDuration: 0.2, animations: {
             newImageView.frame.origin.x = 0
             currentImageView.frame.origin.x = currentImageView.frame.width
         }, completion: { _ in
-            currentImageView.image = priorImage
             currentImageView.frame.origin.x = 0
             newImageView.removeFromSuperview()
         })
+        currentImageView.image = priorImage
         
     }
-    
     
     func displayNextImage(currentVC: FullScreenPhotoVC) {
         guard let currentImageIndex = currentImageIndex else { return }
@@ -247,29 +230,24 @@ class FeedVC: UIViewController, FullScreenPhotoVCDelegate {
         newImageView.frame.origin.x = currentImageView.frame.width
         
         currentImageView.superview?.addSubview(newImageView)
-        
+        currentImageView.image = nil
         UIView.animate(withDuration: 0.2, animations: {
             newImageView.frame.origin.x = 0
             currentImageView.frame.origin.x = -currentImageView.frame.width
         }, completion: { _ in
-            currentImageView.image = nextImage
             currentImageView.frame.origin.x = 0
             newImageView.removeFromSuperview()
         })
+        currentImageView.image = nextImage
     }
     
-    
-    
 }
-
-
 //
 //  UIEdgeInsets+Ext.swift
 //  GHFollowers
 //
 //  Created by Harrison Javery on 7/2/24.
 //
-
 
 extension UIEdgeInsets {
     init(_ padding: CGFloat) {

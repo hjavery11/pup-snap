@@ -1,0 +1,44 @@
+# Disable unwanted rules
+disabled_rules:
+  - line_length
+  - identifier_name
+  - type_body_length
+  - file_length
+  - trailing_whitespace
+
+# Opt-in to rules you care about
+opt_in_rules:
+  - vertical_whitespace
+  - control_statement
+  - type_name
+  - colon
+  - comma
+
+# Enable analyzer rules
+analyzer_rules:
+  - explicit_self
+
+# Paths to include during linting
+included: 
+  - Sources
+
+# Paths to exclude during linting
+excluded: 
+  - Carthage
+  - Pods
+  - Sources/ExcludedFolder
+  - Sources/ExcludedFile.swift
+  - Sources/*/ExcludedFile.swift # exclude files with a wildcard
+
+# Additional SwiftLint configuration
+allow_zero_lintable_files: false
+strict: false
+
+
+# Set the severity level of specific rules
+force_cast: warning
+force_try:
+  severity: warning
+
+# Set reporter type
+reporter: "xcode"

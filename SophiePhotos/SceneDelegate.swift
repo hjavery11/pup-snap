@@ -9,11 +9,7 @@ import UIKit
 
 class SceneDelegate: UIResponder, UIWindowSceneDelegate, UITabBarControllerDelegate {
     
-    
-    
-    
     var window: UIWindow?
-    
     
     func scene(_ scene: UIScene, willConnectTo session: UISceneSession, options connectionOptions: UIScene.ConnectionOptions) {
         // Use this method to optionally configure and attach the UIWindow `window` to the provided UIWindowScene `scene`.
@@ -29,8 +25,6 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate, UITabBarControllerDeleg
         window?.makeKeyAndVisible()
         
         configureNavigationBar()
-        
-        
         
         // Add observer for the notification
         NotificationCenter.default.addObserver(self, selector: #selector(presentFullScreenPhotoVC(_:)), name: NSNotification.Name("PresentFullScreenPhotoVC"), object: nil)
@@ -52,14 +46,11 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate, UITabBarControllerDeleg
         return UINavigationController(rootViewController: feedVC)
     }
     
-    
-    
     func createTabbar() -> UITabBarController {
         let tabBar = UITabBarController()
         UITabBar.appearance().tintColor = .systemPurple
-        tabBar.viewControllers = [createPhotoVC(),createFeedVC()]
+        tabBar.viewControllers = [createPhotoVC(), createFeedVC()]
         UITabBar.appearance().backgroundColor = .tertiarySystemFill
-        
         
         return tabBar
     }
@@ -81,7 +72,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate, UITabBarControllerDeleg
     @objc func presentFullScreenPhotoVC(_ notification: Notification) {
         guard let userInfo = notification.userInfo, let filePath = userInfo["filePath"] as? String else { return }
         let fullScreenVC = FullScreenPhotoVC(imageURL: filePath)
-        //fullScreenVC.modalPresentationStyle = .fullScreen    
+        // fullScreenVC.modalPresentationStyle = .fullScreen
         
         let navigationController = UINavigationController(rootViewController: fullScreenVC)
        // navigationController.modalPresentationStyle = .fullScreen
@@ -89,7 +80,6 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate, UITabBarControllerDeleg
         window?.rootViewController?.present(navigationController, animated: true, completion: nil)
         
     }
-    
     
     func sceneDidDisconnect(_ scene: UIScene) {
         // Called as the scene is being released by the system.
@@ -119,6 +109,4 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate, UITabBarControllerDeleg
         // to restore the scene back to its current state.
     }
     
-    
 }
-

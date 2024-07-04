@@ -22,6 +22,8 @@
 		FA3590812C35037A00E417B1 /* FirebaseFunctions in Frameworks */ = {isa = PBXBuildFile; productRef = FA3590802C35037A00E417B1 /* FirebaseFunctions */; };
 		FA3590832C35037A00E417B1 /* FirebaseMessaging in Frameworks */ = {isa = PBXBuildFile; productRef = FA3590822C35037A00E417B1 /* FirebaseMessaging */; };
 		FA3590862C35223300E417B1 /* FullScreenPhotoVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA3590852C35223300E417B1 /* FullScreenPhotoVC.swift */; };
+		FA63FF942C368A350070165E /* FirebaseCrashlytics in Frameworks */ = {isa = PBXBuildFile; productRef = FA63FF932C368A350070165E /* FirebaseCrashlytics */; };
+		FA63FF972C368B450070165E /* CrashlyticsCrashButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA63FF962C368B450070165E /* CrashlyticsCrashButton.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -40,6 +42,7 @@
 		FA3590772C34E14B00E417B1 /* SpinnerVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpinnerVC.swift; sourceTree = "<group>"; };
 		FA3590842C350A7800E417B1 /* SophiePhotos.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = SophiePhotos.entitlements; sourceTree = "<group>"; };
 		FA3590852C35223300E417B1 /* FullScreenPhotoVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FullScreenPhotoVC.swift; sourceTree = "<group>"; };
+		FA63FF962C368B450070165E /* CrashlyticsCrashButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CrashlyticsCrashButton.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -48,6 +51,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				FA3590832C35037A00E417B1 /* FirebaseMessaging in Frameworks */,
+				FA63FF942C368A350070165E /* FirebaseCrashlytics in Frameworks */,
 				FA3590702C34D44800E417B1 /* FirebaseStorage in Frameworks */,
 				FA3590812C35037A00E417B1 /* FirebaseFunctions in Frameworks */,
 			);
@@ -105,6 +109,7 @@
 			children = (
 				FA35907D2C34FA2F00E417B1 /* Cells */,
 				FA3590772C34E14B00E417B1 /* SpinnerVC.swift */,
+				FA63FF962C368B450070165E /* CrashlyticsCrashButton.swift */,
 			);
 			path = "Custom Views";
 			sourceTree = "<group>";
@@ -143,16 +148,19 @@
 				FA3590462C33B2AC00E417B1 /* Sources */,
 				FA3590472C33B2AC00E417B1 /* Frameworks */,
 				FA3590482C33B2AC00E417B1 /* Resources */,
+				FA63FF952C368AD30070165E /* ShellScript */,
 			);
 			buildRules = (
 			);
 			dependencies = (
+				FA63FFA92C3697920070165E /* PBXTargetDependency */,
 			);
 			name = SophiePhotos;
 			packageProductDependencies = (
 				FA35906F2C34D44800E417B1 /* FirebaseStorage */,
 				FA3590802C35037A00E417B1 /* FirebaseFunctions */,
 				FA3590822C35037A00E417B1 /* FirebaseMessaging */,
+				FA63FF932C368A350070165E /* FirebaseCrashlytics */,
 			);
 			productName = SophiePhotos;
 			productReference = FA35904A2C33B2AC00E417B1 /* SophiePhotos.app */;
@@ -184,6 +192,7 @@
 			mainGroup = FA3590412C33B2AC00E417B1;
 			packageReferences = (
 				FA35906E2C34D44800E417B1 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */,
+				FA63FFA72C3697450070165E /* XCRemoteSwiftPackageReference "SwiftLintPlugins" */,
 			);
 			productRefGroup = FA35904B2C33B2AC00E417B1 /* Products */;
 			projectDirPath = "";
@@ -207,6 +216,32 @@
 		};
 /* End PBXResourcesBuildPhase section */
 
+/* Begin PBXShellScriptBuildPhase section */
+		FA63FF952C368AD30070165E /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			alwaysOutOfDate = 1;
+			buildActionMask = 12;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"${DWARF_DSYM_FOLDER_PATH}/${DWARF_DSYM_FILE_NAME}",
+				"${DWARF_DSYM_FOLDER_PATH}/${DWARF_DSYM_FILE_NAME}",
+				"${DWARF_DSYM_FOLDER_PATH}/${DWARF_DSYM_FILE_NAME}/Contents/Info.plist",
+				"$(TARGET_BUILD_DIR)/$(UNLOCALIZED_RESOURCES_FOLDER_PATH)/GoogleService-Info.plist",
+				"$(TARGET_BUILD_DIR)/$(EXECUTABLE_PATH)",
+			);
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "# Type a script or drag a script file from your workspace to insert its path.\n\"${BUILD_DIR%/Build/*}/SourcePackages/checkouts/firebase-ios-sdk/Crashlytics/run\"\n";
+		};
+/* End PBXShellScriptBuildPhase section */
+
 /* Begin PBXSourcesBuildPhase section */
 		FA3590462C33B2AC00E417B1 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
@@ -221,10 +256,18 @@
 				FA35904E2C33B2AC00E417B1 /* AppDelegate.swift in Sources */,
 				FA3590502C33B2AC00E417B1 /* SceneDelegate.swift in Sources */,
 				FA3590862C35223300E417B1 /* FullScreenPhotoVC.swift in Sources */,
+				FA63FF972C368B450070165E /* CrashlyticsCrashButton.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		FA63FFA92C3697920070165E /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			productRef = FA63FFA82C3697920070165E /* SwiftLintBuildToolPlugin */;
+		};
+/* End PBXTargetDependency section */
 
 /* Begin PBXVariantGroup section */
 		FA3590582C33B2AD00E417B1 /* LaunchScreen.storyboard */ = {
@@ -374,11 +417,13 @@
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
+				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_BUNDLE_IDENTIFIER = com.HEJ.SophiePhotos;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
@@ -403,11 +448,13 @@
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
+				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_BUNDLE_IDENTIFIER = com.HEJ.SophiePhotos;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
@@ -448,6 +495,14 @@
 				minimumVersion = 10.28.1;
 			};
 		};
+		FA63FFA72C3697450070165E /* XCRemoteSwiftPackageReference "SwiftLintPlugins" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/SimplyDanny/SwiftLintPlugins";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 0.55.1;
+			};
+		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -465,6 +520,16 @@
 			isa = XCSwiftPackageProductDependency;
 			package = FA35906E2C34D44800E417B1 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
 			productName = FirebaseMessaging;
+		};
+		FA63FF932C368A350070165E /* FirebaseCrashlytics */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = FA35906E2C34D44800E417B1 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseCrashlytics;
+		};
+		FA63FFA82C3697920070165E /* SwiftLintBuildToolPlugin */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = FA63FFA72C3697450070165E /* XCRemoteSwiftPackageReference "SwiftLintPlugins" */;
+			productName = "plugin:SwiftLintBuildToolPlugin";
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

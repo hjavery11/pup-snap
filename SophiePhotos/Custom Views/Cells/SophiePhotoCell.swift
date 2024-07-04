@@ -8,29 +8,27 @@
 import UIKit
 
 class SophiePhotoCell: UICollectionViewCell {
-    
+
     static let reuseID = "SophiePhotoCell"
     let thumbnailImageView = UIImageView()
     var imageURL: String = ""
-    
+
     override init(frame: CGRect) {
         super.init(frame: frame)
         configure()
     }
-    
+
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-    
+
     private func configure() {
         addSubview(thumbnailImageView)
         thumbnailImageView.translatesAutoresizingMaskIntoConstraints = false
         thumbnailImageView.layoutIfNeeded()
         thumbnailImageView.layer.cornerRadius = 8
         thumbnailImageView.layer.masksToBounds = true
- 
-        
-        
+
         NSLayoutConstraint.activate([
             thumbnailImageView.topAnchor.constraint(equalTo: topAnchor),
             thumbnailImageView.leadingAnchor.constraint(equalTo: leadingAnchor),
@@ -39,9 +37,6 @@ class SophiePhotoCell: UICollectionViewCell {
         ])
     }
 
-    
-    
-    
     func set(image: UIImage, imageURL: String) {
         thumbnailImageView.image = image
         self.imageURL = imageURL

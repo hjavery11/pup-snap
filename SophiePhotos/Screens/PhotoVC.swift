@@ -17,7 +17,6 @@ class PhotoVC: UIViewController, UINavigationControllerDelegate, UIImagePickerCo
     let submitButton = UIButton()
     let spinnerChild = SpinnerVC()
     
-    
     let imageWidth: CGFloat = 85 * 3 // easily keep the 3:4 ratio using a base value
     let imageHeight: CGFloat = 85 * 4
     
@@ -25,6 +24,8 @@ class PhotoVC: UIViewController, UINavigationControllerDelegate, UIImagePickerCo
     let largeConfig = UIImage.SymbolConfiguration(pointSize: 44, weight: .bold, scale: .default)
     
     var fontType: UIFont?
+    var largeTitleFontSize: CGFloat?
+    let deviceWidth = UIScreen.main.bounds.width
     
     var placeholderImage = UIImage(systemName: "photo")
     
@@ -34,11 +35,34 @@ class PhotoVC: UIViewController, UINavigationControllerDelegate, UIImagePickerCo
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .systemBackground
-        let deviceWidth = UIScreen.main.bounds.width
-        let largeTitleFontSize: CGFloat
+        // set font size depending on screen width to fit title and hint text
+        setFontSize()
+        setNavigationBarTitle()
         
+        // add subviews
+        setupCameraPreview()
+        setupCameraView()
+        setupSophiePhoto()
+        setupHintText()
+        createSubmitButton()
+        createClearButton()
         
-        //set font szie based off width of screen
+        // set constraints
+        setupConstraints()
+        
+        // crashlytics button
+        // setupCrashButton()
+    }
+    
+    func setNavigationBarTitle() {
+        navigationController?.navigationBar.prefersLargeTitles = true
+        navigationController?.navigationBar.largeTitleTextAttributes = [
+            NSAttributedString.Key.font: UIFont.systemFont(ofSize: largeTitleFontSize ?? 12, weight: .bold)
+        ]
+    }
+    
+    func setFontSize() {
+        // set font size based off width of screen
         if deviceWidth > 375 {
             largeTitleFontSize = 34
             fontType = UIFont.systemFont(ofSize: 12)
@@ -46,23 +70,8 @@ class PhotoVC: UIViewController, UINavigationControllerDelegate, UIImagePickerCo
             largeTitleFontSize = 28
             fontType = UIFont.systemFont(ofSize: 10)
         }
-        
-        
-        
-        navigationController?.navigationBar.prefersLargeTitles = true
-        navigationController?.navigationBar.largeTitleTextAttributes = [
-            NSAttributedString.Key.font: UIFont.systemFont(ofSize: largeTitleFontSize, weight: .bold)
-        ]
-        
-        setupCameraPreview()
-        setupCameraView()
-        setupSophiePhoto()
-        setupHintText()
-        createSubmitButton()
-        createClearButton()
-        setupConstraints()
     }
-   
+    
     func setupConstraints() {
         setupCameraPreviewConstraints()
         setupClearButtonConstraints()
@@ -83,19 +92,18 @@ class PhotoVC: UIViewController, UINavigationControllerDelegate, UIImagePickerCo
     func setupClearButtonConstraints() {
         NSLayoutConstraint.activate([
             clearButton.topAnchor.constraint(equalTo: cameraPreview.bottomAnchor, constant: 2),
-            clearButton.leadingAnchor.constraint(equalTo: cameraPreview.leadingAnchor, constant: 10),
-           
+            clearButton.leadingAnchor.constraint(equalTo: cameraPreview.leadingAnchor, constant: 10)
         ])
     }
     
     func setupSubmitButtonConstraints() {
         NSLayoutConstraint.activate([
             submitButton.topAnchor.constraint(equalTo: clearButton.topAnchor),
-            submitButton.trailingAnchor.constraint(equalTo: cameraPreview.trailingAnchor, constant: -10),
-          
+            submitButton.trailingAnchor.constraint(equalTo: cameraPreview.trailingAnchor, constant: -10)
         ])
     }
     func setupReferenceImageViewConstraints() {
+        // use a UIView around reference image view so that we can clip it when it goes past the safe area on the bottom
         let referenceImageViewContainer = UIView()
         referenceImageViewContainer.translatesAutoresizingMaskIntoConstraints = false
         referenceImageViewContainer.clipsToBounds = true
@@ -118,21 +126,17 @@ class PhotoVC: UIViewController, UINavigationControllerDelegate, UIImagePickerCo
             referenceImageView.heightAnchor.constraint(equalToConstant: 900 / 5.5)
         ])
     }
-
-   
-          
-      
-
+    
     func setupHintTextConstraints() {
         // Initially set the constraints assuming `hintText` is positioned below `referenceImageView`
         let topConstraint = hintText.topAnchor.constraint(equalTo: referenceImageView.bottomAnchor, constant: 0)
         let trailingConstraint = hintText.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor)
-
+        
         NSLayoutConstraint.activate([topConstraint, trailingConstraint])
-
+        
         // Layout the view to apply the initial constraints
         view.layoutIfNeeded()
-
+        
         // Check if `hintText` bottom is beyond the safe area bottom
         if hintText.frame.minY < view.safeAreaLayoutGuide.layoutFrame.maxY {
             print("should move hint text")
@@ -144,9 +148,6 @@ class PhotoVC: UIViewController, UINavigationControllerDelegate, UIImagePickerCo
             ])
         }
     }
-
-
-
     
     func showSpinner() {
         addChild(spinnerChild)
@@ -180,16 +181,19 @@ class PhotoVC: UIViewController, UINavigationControllerDelegate, UIImagePickerCo
         cameraPreview.image = placeholderImage
         cameraPreview.contentMode = .scaleAspectFit
         cameraPreview.tintColor = .label
+        // load full screen photo view when image is tapped
         let gesture = UITapGestureRecognizer(target: self, action: #selector(previewClicked))
         cameraPreview.isUserInteractionEnabled = true
         cameraPreview.addGestureRecognizer(gesture)
         
         cameraPreview.layer.cornerRadius = 12
+        // need this to make corner radius work
         cameraPreview.layer.masksToBounds = true
-       
+        
     }
     
     func handlePreviewBorder(_ enable: Bool) {
+        // only want a border when a user image is populated
         if enable {
             cameraPreview.layer.borderWidth = 1
             cameraPreview.layer.borderColor = UIColor.systemGray2.cgColor
@@ -201,7 +205,7 @@ class PhotoVC: UIViewController, UINavigationControllerDelegate, UIImagePickerCo
     
     @objc func previewClicked(sender: UITapGestureRecognizer) {
         if isRunningOnEmulator() {
-            displayUserPhoto(UIImage(named: "emulator-photo")!)
+            displayUserPhoto(UIImage(named: "emulator-photo")!) // if emulator just set a default photo
             return
         }
         if UIImagePickerController.isSourceTypeAvailable(.camera) {
@@ -220,7 +224,7 @@ class PhotoVC: UIViewController, UINavigationControllerDelegate, UIImagePickerCo
         cameraVC.cameraFlashMode = .off
     }
     
-    func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
+    func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey: Any]) {
         picker.dismiss(animated: true)
         
         guard let image = info[.originalImage] as? UIImage else {
@@ -232,10 +236,9 @@ class PhotoVC: UIViewController, UINavigationControllerDelegate, UIImagePickerCo
     
     func displayUserPhoto(_ image: UIImage) {
         cameraPreview.image = image
-      
+        
         handlePreviewBorder(true)
-        
-        
+    
         clearButton.alpha = 1
         submitButton.alpha = 1
         view.updateConstraints()
@@ -243,10 +246,10 @@ class PhotoVC: UIViewController, UINavigationControllerDelegate, UIImagePickerCo
     
     func createClearButton() {
         view.addSubview(clearButton)
-        clearButton.setImage(UIImage(systemName: "xmark.circle",withConfiguration: largeConfig), for: .normal)
+        clearButton.setImage(UIImage(systemName: "xmark.circle", withConfiguration: largeConfig), for: .normal)
         clearButton.tintColor = .systemRed
         clearButton.translatesAutoresizingMaskIntoConstraints = false
-
+        
         clearButton.imageView?.contentMode = .scaleAspectFill
         
         clearButton.addTarget(self, action: #selector(clearImage), for: .touchUpInside)
@@ -260,7 +263,7 @@ class PhotoVC: UIViewController, UINavigationControllerDelegate, UIImagePickerCo
         submitButton.translatesAutoresizingMaskIntoConstraints = false
         
         clearButton.imageView?.contentMode = .scaleAspectFill
-
+        
         submitButton.alpha = 0
         submitButton.addTarget(self, action: #selector(addPhoto), for: .touchUpInside)
     }
@@ -330,4 +333,19 @@ class PhotoVC: UIViewController, UINavigationControllerDelegate, UIImagePickerCo
 #endif
         return isEmulator
     }
+    
+    func setupCrashButton() {
+        let crashButton = CrashlyticsCrashButton()
+        crashButton.translatesAutoresizingMaskIntoConstraints = false
+        view.addSubview(crashButton)
+        
+        // Set up constraints
+        NSLayoutConstraint.activate([
+            crashButton.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            crashButton.centerYAnchor.constraint(equalTo: view.centerYAnchor),
+            crashButton.widthAnchor.constraint(equalToConstant: 100),
+            crashButton.heightAnchor.constraint(equalToConstant: 30)
+        ])
+    }
+    
 }

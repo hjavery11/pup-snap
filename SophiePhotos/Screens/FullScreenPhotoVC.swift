@@ -12,10 +12,8 @@ protocol FullScreenPhotoVCDelegate: AnyObject {
     func deleteImage(at indexPath: IndexPath)
 }
 
-
 class FullScreenPhotoVC: UIViewController {
 
-    
     weak var delegate: FullScreenPhotoVCDelegate?
     var activityIndicator = UIActivityIndicatorView(style: .large)
     var closeButton = UIButton()
@@ -24,39 +22,35 @@ class FullScreenPhotoVC: UIViewController {
     var imageURL: String
     var indexPath: IndexPath?
     
-    
-    
-    init(imageURL: String, image: UIImage? = nil, indexPath: IndexPath? = nil){
+    init(imageURL: String, image: UIImage? = nil, indexPath: IndexPath? = nil) {
         self.imageURL = imageURL
         self.indexPath = indexPath
         super.init(nibName: nil, bundle: nil)
        
-        //check which init
+        // check which init
         if let image = image {
             self.imageView.image = image
         } else {
-            fetchImage(url:imageURL)
+            fetchImage(url: imageURL)
         }
     }
-    
     
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-    
     
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .systemBackground
         
         configureImageView()
-        if let _ = self.indexPath {
+        if self.indexPath != nil {
+            // only show nav bar if coming from feed view, otherwise its a push notification without nav bar
             configureNavBar()
         }      
         setupLoading()
         addGestures()
         
-       
     }
     
     func configureImageView() {
@@ -78,7 +72,7 @@ class FullScreenPhotoVC: UIViewController {
         navigationItem.rightBarButtonItem = deleteButton
     }
     func addGestures() {
-        let leftGesture = UISwipeGestureRecognizer(target: self , action: #selector(self.userDidSwipe))
+        let leftGesture = UISwipeGestureRecognizer(target: self, action: #selector(self.userDidSwipe))
         leftGesture.direction = [.left]
         let rightGesture = UISwipeGestureRecognizer(target: self, action: #selector(self.userDidSwipe))
         rightGesture.direction = [.right]
@@ -86,16 +80,14 @@ class FullScreenPhotoVC: UIViewController {
         self.view.addGestureRecognizer(rightGesture)
     }
    
-    
     func fetchImage(url: String) {
-        //start loading
+        // start loading
         activityIndicator.startAnimating()
         
-       
             NetworkManager.shared.getPhoto(url) { [weak self] image in
                 guard let self = self else {return}
                 DispatchQueue.main.async {
-                    //stop loading
+                    // stop loading
                     self.activityIndicator.stopAnimating()
                     
                     if let image = image {
@@ -108,9 +100,8 @@ class FullScreenPhotoVC: UIViewController {
         
     }
     
-    
     func setupLoading() {
-        //configure loading spinner
+        // configure loading spinner
         activityIndicator.translatesAutoresizingMaskIntoConstraints = false
         activityIndicator.hidesWhenStopped = true
         view.addSubview(activityIndicator)
@@ -119,7 +110,6 @@ class FullScreenPhotoVC: UIViewController {
             activityIndicator.centerYAnchor.constraint(equalTo: view.centerYAnchor)
         ])
     }
-    
     
     @objc func userDidSwipe(sender: UISwipeGestureRecognizer) {
         self.delegate?.didSwipeImage(in: self, to: sender.direction)
@@ -131,15 +121,12 @@ class FullScreenPhotoVC: UIViewController {
         let yesAction = UIAlertAction(title: "Yes", style: .destructive) { _ in
             self.deleteCurrentPhoto()
         }
-        let noAction = UIAlertAction(title: "Cancel", style: .cancel){ _ in
+        let noAction = UIAlertAction(title: "Cancel", style: .cancel) { _ in
             alert.dismiss(animated: true)
         }
         alert.addAction(yesAction)
         alert.addAction(noAction)
         self.present(alert, animated: true)
-        
-       
-     
     }
     
     func deleteCurrentPhoto() {
@@ -150,8 +137,6 @@ class FullScreenPhotoVC: UIViewController {
             print("no index path set to delete current photo")
         }
         
-        
     }
-
 
 }
