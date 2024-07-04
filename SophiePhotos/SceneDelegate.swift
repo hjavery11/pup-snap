@@ -24,8 +24,6 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate, UITabBarControllerDeleg
         window?.rootViewController = tabBarController
         window?.makeKeyAndVisible()
         
-        configureNavigationBar()
-        
         // Add observer for the notification
         NotificationCenter.default.addObserver(self, selector: #selector(presentFullScreenPhotoVC(_:)), name: NSNotification.Name("PresentFullScreenPhotoVC"), object: nil)
     }
@@ -41,9 +39,12 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate, UITabBarControllerDeleg
     func createFeedVC() -> UINavigationController {
         let feedVC = FeedVC()
         feedVC.title = "🐶 Top Sophie Photos"
+        let navController = UINavigationController(rootViewController: feedVC)
+        navController.navigationBar.prefersLargeTitles = true
+        feedVC.navigationItem.largeTitleDisplayMode = .always
         feedVC.tabBarItem = UITabBarItem(title: "Feed", image: UIImage(systemName: "list.bullet.circle"), selectedImage: UIImage(systemName: "list.bullet.circle.fill"))
         
-        return UINavigationController(rootViewController: feedVC)
+        return navController
     }
     
     func createTabbar() -> UITabBarController {
@@ -53,10 +54,6 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate, UITabBarControllerDeleg
         UITabBar.appearance().backgroundColor = .tertiarySystemFill
         
         return tabBar
-    }
-    
-    func configureNavigationBar() {
-        UINavigationBar.appearance().tintColor = .systemPurple
     }
     
     func tabBarController(_ tabBarController: UITabBarController, didSelect viewController: UIViewController) {

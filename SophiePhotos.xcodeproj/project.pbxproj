@@ -24,6 +24,10 @@
 		FA3590862C35223300E417B1 /* FullScreenPhotoVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA3590852C35223300E417B1 /* FullScreenPhotoVC.swift */; };
 		FA63FF942C368A350070165E /* FirebaseCrashlytics in Frameworks */ = {isa = PBXBuildFile; productRef = FA63FF932C368A350070165E /* FirebaseCrashlytics */; };
 		FA63FF972C368B450070165E /* CrashlyticsCrashButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA63FF962C368B450070165E /* CrashlyticsCrashButton.swift */; };
+		FA63FFAD2C372D370070165E /* PhotoEditorVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA63FFAC2C372D370070165E /* PhotoEditorVC.swift */; };
+		FA63FFB02C373ED40070165E /* SpeechBubbleView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA63FFAF2C373ED40070165E /* SpeechBubbleView.swift */; };
+		FA63FFB22C3745660070165E /* LineView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA63FFB12C3745660070165E /* LineView.swift */; };
+		FA63FFB52C37519F0070165E /* UIImageView+Ext.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA63FFB42C37519F0070165E /* UIImageView+Ext.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -43,6 +47,10 @@
 		FA3590842C350A7800E417B1 /* SophiePhotos.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = SophiePhotos.entitlements; sourceTree = "<group>"; };
 		FA3590852C35223300E417B1 /* FullScreenPhotoVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FullScreenPhotoVC.swift; sourceTree = "<group>"; };
 		FA63FF962C368B450070165E /* CrashlyticsCrashButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CrashlyticsCrashButton.swift; sourceTree = "<group>"; };
+		FA63FFAC2C372D370070165E /* PhotoEditorVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotoEditorVC.swift; sourceTree = "<group>"; };
+		FA63FFAF2C373ED40070165E /* SpeechBubbleView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpeechBubbleView.swift; sourceTree = "<group>"; };
+		FA63FFB12C3745660070165E /* LineView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LineView.swift; sourceTree = "<group>"; };
+		FA63FFB42C37519F0070165E /* UIImageView+Ext.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIImageView+Ext.swift"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -100,6 +108,7 @@
 				FA3590512C33B2AC00E417B1 /* PhotoVC.swift */,
 				FA3590612C33B30000E417B1 /* FeedVC.swift */,
 				FA3590852C35223300E417B1 /* FullScreenPhotoVC.swift */,
+				FA63FFAC2C372D370070165E /* PhotoEditorVC.swift */,
 			);
 			path = "\U0010Screens";
 			sourceTree = "<group>";
@@ -107,9 +116,11 @@
 		FA35907C2C34FA2300E417B1 /* Custom Views */ = {
 			isa = PBXGroup;
 			children = (
+				FA63FFAE2C373ECA0070165E /* SwiftUI */,
 				FA35907D2C34FA2F00E417B1 /* Cells */,
 				FA3590772C34E14B00E417B1 /* SpinnerVC.swift */,
 				FA63FF962C368B450070165E /* CrashlyticsCrashButton.swift */,
+				FA63FFB12C3745660070165E /* LineView.swift */,
 			);
 			path = "Custom Views";
 			sourceTree = "<group>";
@@ -125,6 +136,7 @@
 		FA35907E2C34FA3800E417B1 /* Utilities */ = {
 			isa = PBXGroup;
 			children = (
+				FA63FFB32C37518D0070165E /* Extensions */,
 				FA3590752C34D95C00E417B1 /* FirebaseHelper.swift */,
 				FA3590712C34D65C00E417B1 /* NetworkManager.swift */,
 			);
@@ -136,6 +148,22 @@
 			children = (
 			);
 			path = Models;
+			sourceTree = "<group>";
+		};
+		FA63FFAE2C373ECA0070165E /* SwiftUI */ = {
+			isa = PBXGroup;
+			children = (
+				FA63FFAF2C373ED40070165E /* SpeechBubbleView.swift */,
+			);
+			path = SwiftUI;
+			sourceTree = "<group>";
+		};
+		FA63FFB32C37518D0070165E /* Extensions */ = {
+			isa = PBXGroup;
+			children = (
+				FA63FFB42C37519F0070165E /* UIImageView+Ext.swift */,
+			);
+			path = Extensions;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -248,8 +276,12 @@
 			buildActionMask = 2147483647;
 			files = (
 				FA3590762C34D95C00E417B1 /* FirebaseHelper.swift in Sources */,
+				FA63FFAD2C372D370070165E /* PhotoEditorVC.swift in Sources */,
 				FA3590722C34D65C00E417B1 /* NetworkManager.swift in Sources */,
 				FA3590782C34E14B00E417B1 /* SpinnerVC.swift in Sources */,
+				FA63FFB22C3745660070165E /* LineView.swift in Sources */,
+				FA63FFB02C373ED40070165E /* SpeechBubbleView.swift in Sources */,
+				FA63FFB52C37519F0070165E /* UIImageView+Ext.swift in Sources */,
 				FA3590622C33B30000E417B1 /* FeedVC.swift in Sources */,
 				FA35906B2C34A46E00E417B1 /* SophiePhotoCell.swift in Sources */,
 				FA3590522C33B2AC00E417B1 /* PhotoVC.swift in Sources */,

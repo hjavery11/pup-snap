@@ -24,8 +24,8 @@ class FeedVC: UIViewController, FullScreenPhotoVCDelegate {
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .systemBackground
-        navigationController?.navigationBar.prefersLargeTitles = true
-        
+    
+        configureNavigationBar()
         createLoadingView()
         Task {
             await fetchPhotos()
@@ -35,6 +35,10 @@ class FeedVC: UIViewController, FullScreenPhotoVCDelegate {
             dismissLoadingView()
         }
         
+    }
+    
+    func configureNavigationBar() {
+        navigationController?.navigationBar.tintColor = .systemPurple
     }
     
     func createLoadingView() {

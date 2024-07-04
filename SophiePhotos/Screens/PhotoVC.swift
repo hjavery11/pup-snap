@@ -5,12 +5,15 @@
 //  Created by Harrison Javery on 7/1/24.
 //
 import UIKit
+import SwiftUI
 import FirebaseStorage
 
 class PhotoVC: UIViewController, UINavigationControllerDelegate, UIImagePickerControllerDelegate {
     
     let hintText = UILabel()
     let referenceImageView = UIImageView(image: UIImage(named: "sophie"))
+    let sophie = UIImageView(image: UIImage(named: "sophie-iso"))
+    let bubbleConnect = UIImageView(image: UIImage(named: "bubble-connector"))
     let cameraPreview = UIImageView()
     let cameraVC = UIImagePickerController()
     let clearButton = UIButton()
@@ -29,6 +32,9 @@ class PhotoVC: UIViewController, UINavigationControllerDelegate, UIImagePickerCo
     
     var placeholderImage = UIImage(systemName: "photo")
     
+    var lineView: LineView?
+    var speechBubbleHostingController: UIHostingController<SpeechBubbleView>?
+    
     // Reference to the height constraint of referenceImageView
     var referenceImageViewHeightConstraint: NSLayoutConstraint?
     
@@ -38,20 +44,53 @@ class PhotoVC: UIViewController, UINavigationControllerDelegate, UIImagePickerCo
         // set font size depending on screen width to fit title and hint text
         setFontSize()
         setNavigationBarTitle()
+        // views
+        setupSophie()
+        setupSpeechBubble()
+    }
+    
+    override func viewDidLayoutSubviews() {
+        super.viewDidLayoutSubviews()
+        setupConnector()
+    }
+    
+    func setupSophie() {
+        view.addSubview(sophie)
+        sophie.translatesAutoresizingMaskIntoConstraints = false
         
-        // add subviews
-        setupCameraPreview()
-        setupCameraView()
-        setupSophiePhoto()
-        setupHintText()
-        createSubmitButton()
-        createClearButton()
+        // Assuming the original image size is available, use its aspect ratio.
+        if let image = sophie.image {
+            let aspectRatio = image.size.width / image.size.height
+            NSLayoutConstraint.activate([
+                sophie.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor),
+                sophie.centerYAnchor.constraint(equalTo: view.safeAreaLayoutGuide.centerYAnchor),
+                sophie.widthAnchor.constraint(equalToConstant: 300),
+                sophie.heightAnchor.constraint(equalTo: sophie.widthAnchor, multiplier: 1/aspectRatio) // Maintain aspect ratio
+            ])
+        }
         
-        // set constraints
-        setupConstraints()
+        sophie.contentMode = .scaleAspectFit
+        sophie.clipsToBounds = true
+    }
+
+    func setupSpeechBubble() {
+        // show the SwiftUI speech bubble
+        let speechBubble = SpeechBubbleView(text: "Hello, I'm Sophie! \nTap on me to take a photo!")
+        let hostingController = UIHostingController(rootView: speechBubble)
+        addChild(hostingController)
+        hostingController.view.translatesAutoresizingMaskIntoConstraints = false
+        view.addSubview(hostingController.view)
         
-        // crashlytics button
-        // setupCrashButton()
+        let padding: CGFloat = 10
+        
+        NSLayoutConstraint.activate([
+            hostingController.view.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -padding),
+            hostingController.view.bottomAnchor.constraint(equalTo: sophie.topAnchor, constant: -padding)
+        ])
+        
+        hostingController.didMove(toParent: self)
+        self.speechBubbleHostingController = hostingController
+        
     }
     
     func setNavigationBarTitle() {
@@ -61,6 +100,23 @@ class PhotoVC: UIViewController, UINavigationControllerDelegate, UIImagePickerCo
         ]
     }
     
+    func setupConnector() {
+        guard let speechBubbleHostingController = self.speechBubbleHostingController else { return }
+        
+        view.addSubview(bubbleConnect)
+        bubbleConnect.translatesAutoresizingMaskIntoConstraints = false
+        
+        if let image = bubbleConnect.image {
+            let aspectRatio = image.size.width / image.size.height
+            NSLayoutConstraint.activate([
+                bubbleConnect.centerXAnchor.constraint(equalTo: speechBubbleHostingController.view.centerXAnchor),
+                bubbleConnect.topAnchor.constraint(equalTo: speechBubbleHostingController.view.bottomAnchor),
+                bubbleConnect.widthAnchor.constraint(equalToConstant: 30),
+                bubbleConnect.heightAnchor.constraint(equalTo: bubbleConnect.widthAnchor, multiplier: 1/aspectRatio) // Maintain aspect ratio
+            ])
+        }
+    }
+
     func setFontSize() {
         // set font size based off width of screen
         if deviceWidth > 375 {
@@ -69,83 +125,6 @@ class PhotoVC: UIViewController, UINavigationControllerDelegate, UIImagePickerCo
         } else {
             largeTitleFontSize = 28
             fontType = UIFont.systemFont(ofSize: 10)
-        }
-    }
-    
-    func setupConstraints() {
-        setupCameraPreviewConstraints()
-        setupClearButtonConstraints()
-        setupSubmitButtonConstraints()
-        setupReferenceImageViewConstraints()
-        setupHintTextConstraints()
-    }
-    
-    func setupCameraPreviewConstraints() {
-        NSLayoutConstraint.activate([
-            cameraPreview.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 20),
-            cameraPreview.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            cameraPreview.widthAnchor.constraint(equalToConstant: imageWidth),
-            cameraPreview.heightAnchor.constraint(equalToConstant: imageHeight)
-        ])
-    }
-    
-    func setupClearButtonConstraints() {
-        NSLayoutConstraint.activate([
-            clearButton.topAnchor.constraint(equalTo: cameraPreview.bottomAnchor, constant: 2),
-            clearButton.leadingAnchor.constraint(equalTo: cameraPreview.leadingAnchor, constant: 10)
-        ])
-    }
-    
-    func setupSubmitButtonConstraints() {
-        NSLayoutConstraint.activate([
-            submitButton.topAnchor.constraint(equalTo: clearButton.topAnchor),
-            submitButton.trailingAnchor.constraint(equalTo: cameraPreview.trailingAnchor, constant: -10)
-        ])
-    }
-    func setupReferenceImageViewConstraints() {
-        // use a UIView around reference image view so that we can clip it when it goes past the safe area on the bottom
-        let referenceImageViewContainer = UIView()
-        referenceImageViewContainer.translatesAutoresizingMaskIntoConstraints = false
-        referenceImageViewContainer.clipsToBounds = true
-        view.addSubview(referenceImageViewContainer)
-        
-        NSLayoutConstraint.activate([
-            referenceImageViewContainer.topAnchor.constraint(equalTo: submitButton.bottomAnchor, constant: 5),
-            referenceImageViewContainer.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor),
-            referenceImageViewContainer.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor),
-            referenceImageViewContainer.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor)
-        ])
-        
-        referenceImageView.translatesAutoresizingMaskIntoConstraints = false
-        referenceImageViewContainer.addSubview(referenceImageView)
-        
-        NSLayoutConstraint.activate([
-            referenceImageView.centerXAnchor.constraint(equalTo: referenceImageViewContainer.centerXAnchor),
-            referenceImageView.centerYAnchor.constraint(equalTo: referenceImageViewContainer.centerYAnchor),
-            referenceImageView.widthAnchor.constraint(equalToConstant: 548 / 5.5),
-            referenceImageView.heightAnchor.constraint(equalToConstant: 900 / 5.5)
-        ])
-    }
-    
-    func setupHintTextConstraints() {
-        // Initially set the constraints assuming `hintText` is positioned below `referenceImageView`
-        let topConstraint = hintText.topAnchor.constraint(equalTo: referenceImageView.bottomAnchor, constant: 0)
-        let trailingConstraint = hintText.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor)
-        
-        NSLayoutConstraint.activate([topConstraint, trailingConstraint])
-        
-        // Layout the view to apply the initial constraints
-        view.layoutIfNeeded()
-        
-        // Check if `hintText` bottom is beyond the safe area bottom
-        if hintText.frame.minY < view.safeAreaLayoutGuide.layoutFrame.maxY {
-            print("should move hint text")
-            // If `hintText` is beyond the safe area, adjust the constraints
-            NSLayoutConstraint.deactivate([topConstraint])
-            NSLayoutConstraint.activate([
-                hintText.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor),
-                trailingConstraint // reapply the trailing constraint
-            ])
         }
     }
     
@@ -160,19 +139,6 @@ class PhotoVC: UIViewController, UINavigationControllerDelegate, UIImagePickerCo
         spinnerChild.willMove(toParent: nil)
         spinnerChild.view.removeFromSuperview()
         spinnerChild.removeFromParent()
-    }
-    
-    func setupSophiePhoto() {
-        view.addSubview(referenceImageView)
-        referenceImageView.translatesAutoresizingMaskIntoConstraints = false
-        referenceImageView.isOpaque = true
-    }
-    
-    func setupHintText() {
-        view.addSubview(hintText)
-        hintText.text = "*Image provided for reference"
-        hintText.translatesAutoresizingMaskIntoConstraints = false
-        hintText.font = fontType
     }
     
     func setupCameraPreview() {
@@ -192,22 +158,11 @@ class PhotoVC: UIViewController, UINavigationControllerDelegate, UIImagePickerCo
         
     }
     
-    func handlePreviewBorder(_ enable: Bool) {
-        // only want a border when a user image is populated
-        if enable {
-            cameraPreview.layer.borderWidth = 1
-            cameraPreview.layer.borderColor = UIColor.systemGray2.cgColor
-        } else {
-            cameraPreview.layer.borderWidth = 0
-            cameraPreview.layer.borderColor = nil
-        }
-    }
-    
     @objc func previewClicked(sender: UITapGestureRecognizer) {
-        if isRunningOnEmulator() {
-            displayUserPhoto(UIImage(named: "emulator-photo")!) // if emulator just set a default photo
-            return
-        }
+//        if isRunningOnEmulator() {
+//            displayUserPhoto(UIImage(named: "emulator-photo")!) // if emulator just set a default photo
+//            return
+//        }
         if UIImagePickerController.isSourceTypeAvailable(.camera) {
             present(cameraVC, animated: true)
         } else {
@@ -222,23 +177,26 @@ class PhotoVC: UIViewController, UINavigationControllerDelegate, UIImagePickerCo
         cameraVC.allowsEditing = false
         cameraVC.delegate = self
         cameraVC.cameraFlashMode = .off
+    
     }
     
     func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey: Any]) {
-        picker.dismiss(animated: true)
-        
         guard let image = info[.originalImage] as? UIImage else {
             return
         }
         
         displayUserPhoto(image)
+        let editVC = PhotoEditorVC()
+        navigationController?.pushViewController(editVC, animated: true)
+    }
+    
+    func imagePickerControllerDidCancel(_ picker: UIImagePickerController) {
+        picker.dismiss(animated: true)
     }
     
     func displayUserPhoto(_ image: UIImage) {
         cameraPreview.image = image
         
-        handlePreviewBorder(true)
-    
         clearButton.alpha = 1
         submitButton.alpha = 1
         view.updateConstraints()
@@ -317,7 +275,6 @@ class PhotoVC: UIViewController, UINavigationControllerDelegate, UIImagePickerCo
     
     @objc func clearImage() {
         cameraPreview.image = placeholderImage
-        handlePreviewBorder(false)
         clearButton.alpha = 0
         submitButton.alpha = 0
     }
@@ -349,3 +306,37 @@ class PhotoVC: UIViewController, UINavigationControllerDelegate, UIImagePickerCo
     }
     
 }
+
+//keeping this here because it took a while to figure out how to draw a line between 2 view points, so in case I go back to this method
+
+//func addLineView() {
+//        let lineView = LineView()
+//        lineView.translatesAutoresizingMaskIntoConstraints = false
+//        view.addSubview(lineView)
+//        self.lineView = lineView
+//
+//        // The lineView should not interfere with the layout of other views.
+//        NSLayoutConstraint.activate([
+//            lineView.topAnchor.constraint(equalTo: view.topAnchor),
+//            lineView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
+//            lineView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+//            lineView.trailingAnchor.constraint(equalTo: view.trailingAnchor)
+//        ])
+//
+//        // Initial update of the line view
+//        updateLineView()
+//    }
+//
+//    func updateLineView() {
+//        guard let lineView = lineView,
+//              let speechBubbleView = speechBubbleHostingController?.view else { return }
+//
+//        // Convert the center points of both views to the coordinate space of the `lineView`
+//        let sophieCenterInLineView = sophie.convert(CGPoint(x: sophie.bounds.midX, y: sophie.bounds.midY), to: lineView)
+//        let bubbleCenterInLineView = speechBubbleView.convert(CGPoint(x: speechBubbleView.bounds.midX, y: speechBubbleView.bounds.midY), to: lineView)
+//
+//        print("Sophie Center: \(sophieCenterInLineView)")
+//        print("Bubble Center: \(bubbleCenterInLineView)")
+//
+//        lineView.setPoints(start: sophieCenterInLineView, end: bubbleCenterInLineView)
+//    }
