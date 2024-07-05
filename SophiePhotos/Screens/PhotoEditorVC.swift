@@ -7,8 +7,14 @@
 
 import UIKit
 
+protocol PhotoEditorVCDelegate: AnyObject {
+    func photoEditorDidRequestCamera(_ editor: PhotoEditorVC)
+    func photoEditorDidUpload(_ editor: PhotoEditorVC)
+}
+
 class PhotoEditorVC: UIViewController, UITextFieldDelegate {
     
+    var delegate: PhotoEditorVCDelegate?
     var image: UIImage
     let imageView = UIImageView()
     let bottomBar = UIView()
@@ -24,6 +30,8 @@ class PhotoEditorVC: UIViewController, UITextFieldDelegate {
     let configuration = UIImage.SymbolConfiguration(pointSize: 20, weight: .medium)
     let buttonPadding: CGFloat = 18
     let topNavPadding: CGFloat = 15
+    
+    let pageFont = "Avenir"
     
     init(image: UIImage) {
         self.image = image
@@ -68,12 +76,14 @@ class PhotoEditorVC: UIViewController, UITextFieldDelegate {
         imageView.layer.cornerRadius = 15
         imageView.clipsToBounds = true
         
+        // Add border to the imageView
+        imageView.layer.borderWidth = 0.5
+        imageView.layer.borderColor = UIColor.secondaryLabel.cgColor
+        
         view.addSubview(imageView)
         
         let padding: CGFloat = 80
-        
         let aspectRatio = image.size.width / image.size.height
-        
         let imageWidth = view.bounds.width - (padding * 2)
         let imageHeight = imageWidth / aspectRatio
         
@@ -84,7 +94,7 @@ class PhotoEditorVC: UIViewController, UITextFieldDelegate {
             imageView.heightAnchor.constraint(equalToConstant: imageHeight)
         ])
     }
-    
+
     func setupBottomActionBar() {
         bottomBar.translatesAutoresizingMaskIntoConstraints = false
         
@@ -166,7 +176,7 @@ class PhotoEditorVC: UIViewController, UITextFieldDelegate {
     
     func setupBottomActionItems() {
         submitButton.translatesAutoresizingMaskIntoConstraints = false
-        submitButton.setTitle("Next ", for: .normal)
+        submitButton.setTitle("Upload ", for: .normal)
         submitButton.backgroundColor = .systemBlue
         submitButton.layer.cornerRadius = 25
         submitButton.setImage(UIImage(systemName: "arrow.right"), for: .normal)
@@ -176,11 +186,15 @@ class PhotoEditorVC: UIViewController, UITextFieldDelegate {
         submitButton.titleLabel?.transform = CGAffineTransform(scaleX: -1.0, y: 1.0)
         submitButton.imageView?.transform = CGAffineTransform(scaleX: -1.0, y: 1.0)
         
+        submitButton.addTarget(self, action: #selector(addPhoto), for: .touchUpInside)
+        
         retakeButton.translatesAutoresizingMaskIntoConstraints = false
         retakeButton.setTitle("Retake", for: .normal)
         retakeButton.backgroundColor = .systemGray
         retakeButton.layer.cornerRadius = 25
         retakeButton.tintColor = .white
+        
+        retakeButton.addTarget(self, action: #selector(showCamera), for: .touchUpInside)
         
         
         view.addSubview(submitButton)
@@ -190,7 +204,7 @@ class PhotoEditorVC: UIViewController, UITextFieldDelegate {
         
         NSLayoutConstraint.activate([
             submitButton.trailingAnchor.constraint(equalTo: bottomBar.trailingAnchor, constant: -buttonPadding),
-            submitButton.widthAnchor.constraint(equalToConstant: 90),
+            submitButton.widthAnchor.constraint(equalToConstant: 110),
             submitButton.bottomAnchor.constraint(equalTo: bottomBar.bottomAnchor),
             submitButton.heightAnchor.constraint(equalTo: bottomBar.heightAnchor),
             
@@ -201,11 +215,26 @@ class PhotoEditorVC: UIViewController, UITextFieldDelegate {
         ])
     }
     
+    @objc func dismissEditor() {
+        dismiss(animated: true)
+    }
+    
+    @objc func addPhoto() {
+        dismiss(animated: true)
+        delegate?.photoEditorDidUpload(self)
+    }
+    
+    @objc func showCamera() {
+        delegate?.photoEditorDidRequestCamera(self)
+    }
+    
     func setupTopActionItems() {
         let closeImage = UIImage(systemName: "xmark", withConfiguration: configuration)
         closeButton.translatesAutoresizingMaskIntoConstraints = false
         closeButton.setImage(closeImage, for: .normal)
         closeButton.tintColor = .label
+        
+        closeButton.addTarget(self, action: #selector(dismissEditor), for: .touchUpInside)
         
         view.addSubview(closeButton)
         
@@ -227,7 +256,7 @@ class PhotoEditorVC: UIViewController, UITextFieldDelegate {
         captionField.clearButtonMode = .whileEditing
         captionField.returnKeyType = .done
         captionField.delegate = self
-        captionField.font = UIFont(name: "Avenir", size: 20)
+        captionField.font = UIFont(name: pageFont, size: 20)
         
         NSLayoutConstraint.activate([
             captionField.topAnchor.constraint(equalTo: imageView.bottomAnchor, constant: 35),
@@ -251,7 +280,7 @@ class PhotoEditorVC: UIViewController, UITextFieldDelegate {
     func setupCuteScale() {
         view.layoutIfNeeded()
         
-        let yConst = (bottomBar.frame.minY - imageView.frame.maxY) / 2.5 // calculate how to put rating scale in middle of caption and bottom bar
+        let yConst = (bottomBar.frame.minY - imageView.frame.maxY) / 2 // calculate how to put rating scale in middle of caption and bottom bar
         
         NSLayoutConstraint.activate([
             cuteScale.view.centerXAnchor.constraint(equalTo: view.centerXAnchor),
@@ -262,7 +291,51 @@ class PhotoEditorVC: UIViewController, UITextFieldDelegate {
         
         cuteScale.didMove(toParent: self)
         
-        
+        drawLabels()
     }
+    
+    func drawLabels() {
+        let labels = ["Meh", "Average", "Cutest"]
+        let positions = [0, 2, 4] // 1st, 3rd, and 5th star buttons
+        var labelViews: [UILabel] = []
+        var lineViews: [UIView] = []
+        
+        for (index, position) in positions.enumerated() {
+            guard position < cuteScale.starButtons.count else { continue }
+            let starButton = cuteScale.starButtons[position]
+            
+            // Label
+            let label = UILabel()
+            label.text = labels[index]
+            label.translatesAutoresizingMaskIntoConstraints = false
+            view.addSubview(label)
+            label.font = UIFont(name: pageFont, size: 20)
+            label.textColor = .label
+            label.layer.opacity = 0.7
+            labelViews.append(label)
+            
+            // Line
+            let line = UIView()
+            line.backgroundColor = .systemGray
+            line.translatesAutoresizingMaskIntoConstraints = false
+            view.addSubview(line)
+            line.layer.opacity = 0.5
+            lineViews.append(line)
+            
+            NSLayoutConstraint.activate([
+                // Label Constraints
+                label.bottomAnchor.constraint(equalTo: starButton.topAnchor, constant: -40),
+                label.centerXAnchor.constraint(equalTo: starButton.centerXAnchor),
+                
+                // Line Constraints
+                line.bottomAnchor.constraint(equalTo: starButton.topAnchor, constant: 10),
+                line.topAnchor.constraint(equalTo: label.bottomAnchor, constant: 5),
+                line.widthAnchor.constraint(equalToConstant: 1),
+                line.centerXAnchor.constraint(equalTo: starButton.centerXAnchor),
+            ])
+        }
+    }
+    
+    
 }
 

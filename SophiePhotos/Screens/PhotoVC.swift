@@ -8,7 +8,7 @@ import UIKit
 import SwiftUI
 import FirebaseStorage
 
-class PhotoVC: UIViewController, UINavigationControllerDelegate, UIImagePickerControllerDelegate {
+class PhotoVC: UIViewController, UINavigationControllerDelegate, UIImagePickerControllerDelegate, PhotoEditorVCDelegate {
     
     let hintText = UILabel()
     let referenceImageView = UIImageView(image: UIImage(named: "sophie"))
@@ -80,7 +80,7 @@ class PhotoVC: UIViewController, UINavigationControllerDelegate, UIImagePickerCo
         sophie.isUserInteractionEnabled = true
         sophie.addGestureRecognizer(gesture)
     }
-
+    
     func setupSpeechBubble() {
         // show the SwiftUI speech bubble
         let speechBubble = SpeechBubbleView(text: "Hello, I'm Sophie! \nTap on me to take a photo!")
@@ -125,7 +125,7 @@ class PhotoVC: UIViewController, UINavigationControllerDelegate, UIImagePickerCo
             ])
         }
     }
-
+    
     func setFontSize() {
         // set font size based off width of screen
         if deviceWidth > 375 {
@@ -165,7 +165,7 @@ class PhotoVC: UIViewController, UINavigationControllerDelegate, UIImagePickerCo
         cameraVC.allowsEditing = false
         cameraVC.delegate = self
         cameraVC.cameraFlashMode = .off
-    
+        
     }
     
     func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey: Any]) {
@@ -180,6 +180,7 @@ class PhotoVC: UIViewController, UINavigationControllerDelegate, UIImagePickerCo
     
     func displayImage(_ image: UIImage) {
         let editVC = PhotoEditorVC(image: image)
+        editVC.delegate = self
         editVC.modalPresentationStyle = .fullScreen
         self.present(editVC, animated: true)
     }
@@ -192,7 +193,18 @@ class PhotoVC: UIViewController, UINavigationControllerDelegate, UIImagePickerCo
             return
         }
         
-     
+        
+    }
+    
+    func photoEditorDidRequestCamera(_ editor: PhotoEditorVC) {
+        if UIImagePickerController.isSourceTypeAvailable(.camera) {
+            editor.dismiss(animated: true)
+            present(cameraVC, animated: true, completion: nil)
+        } else {
+            let alert = UIAlertController(title: "No Camera", message: "Camera is not available on this device", preferredStyle: .alert)
+            alert.addAction(UIAlertAction(title: "OK", style: .default, handler: nil))
+            present(alert, animated: true, completion: nil)
+        }
     }
     
     @objc func addPhoto() {
@@ -211,7 +223,7 @@ class PhotoVC: UIViewController, UINavigationControllerDelegate, UIImagePickerCo
                 DispatchQueue.main.async {
                     let alert = UIAlertController(title: "Upload Successful", message: "Your photo has been uploaded successfully.", preferredStyle: .alert)
                     let okAction = UIAlertAction(title: "OK", style: .default) { _ in
-                        self.clearImage()
+                        //self.clearImage()
                     }
                     alert.addAction(okAction)
                     self.present(alert, animated: true, completion: nil)
@@ -242,11 +254,49 @@ class PhotoVC: UIViewController, UINavigationControllerDelegate, UIImagePickerCo
         _ = uploadTask
     }
     
-    @objc func clearImage() {
-        cameraPreview.image = placeholderImage
-        clearButton.alpha = 0
-        submitButton.alpha = 0
+    func photoEditorDidUpload(_ editor: PhotoEditorVC) {
+        showSpinner()
+        
+        let image = editor.image
+        
+        let uploadTask = NetworkManager.shared.uploadPhoto(
+            image: image,
+            progressHandler: { percentComplete in
+                print("Upload progress: \(percentComplete)%")
+            },
+            successHandler: {
+                self.hideSpinner()
+                print("Upload completed successfully")
+                DispatchQueue.main.async {
+                    let alert = UIAlertController(title: "Upload Successful", message: "Your photo has been uploaded successfully.", preferredStyle: .alert)
+                    let okAction = UIAlertAction(title: "OK", style: .default)
+                    alert.addAction(okAction)
+                    self.present(alert, animated: true, completion: nil)
+                }
+            },
+            failureHandler: { error in
+                DispatchQueue.main.async {
+                    self.hideSpinner()
+                    let alert = UIAlertController(title: "Upload Failed", message: error.localizedDescription, preferredStyle: .alert)
+                    alert.addAction(UIAlertAction(title: "OK", style: .default, handler: nil))
+                    self.present(alert, animated: true, completion: nil)
+                }
+                switch StorageErrorCode(rawValue: (error as NSError).code)! {
+                case .objectNotFound:
+                    print("File doesn't exist")
+                case .unauthorized:
+                    print("User doesn't have permission to access file")
+                case .cancelled:
+                    print("User canceled the upload")
+                case .unknown:
+                    print("Unknown error occurred, inspect the server response")
+                default:
+                    print("A separate error occurred, retry the upload")
+                }
+            }
+        )
     }
+    
     
     func tabSelected() {
         // do nothing for now
