@@ -31,3 +31,6 @@
   
 
 - ****Sort your feed by cuteness****
+
+### Future Plans
+- ****Integrate pairing keys to allow anybody to use the app to share photos of their own dog
