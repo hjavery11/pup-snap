@@ -23,7 +23,7 @@ class FeedVC: UIViewController, FullScreenPhotoVCDelegate {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        view.backgroundColor = .systemBackground
+        view.backgroundColor = .systemGray6
     
         configureNavigationBar()
         createLoadingView()

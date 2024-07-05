@@ -10,7 +10,9 @@ import UIKit
 class LineView: UIView {
     
     /// A computed property that casts the view's backing layer to type CAShapeLayer for convenience.
-    var shapeLayer: CAShapeLayer { return self.layer as! CAShapeLayer }
+    var shapeLayer: CAShapeLayer? {
+            return self.layer as? CAShapeLayer
+        }
     
     /// This declaration causes the  LineView's backing layer to be a CAShapeLayer
     override class var layerClass: AnyClass {
@@ -26,9 +28,9 @@ class LineView: UIView {
     
     /// When we get added to a view, set up our shape layer's properties.
     override func didMoveToSuperview() {
-        shapeLayer.strokeColor = UIColor.black.cgColor
-        shapeLayer.fillColor = UIColor.clear.cgColor
-        shapeLayer.lineWidth = 2
+        shapeLayer?.strokeColor = UIColor.black.cgColor
+        shapeLayer?.fillColor = UIColor.clear.cgColor
+        shapeLayer?.lineWidth = 2
     }
     
     /// Start and end points of the line
@@ -48,7 +50,7 @@ class LineView: UIView {
         let path = UIBezierPath()
         path.move(to: startPoint)
         path.addLine(to: endPoint)
-        shapeLayer.path = path.cgPath
+        shapeLayer?.path = path.cgPath
     }
     /// Method to set start and end points
     func setPoints(start: CGPoint, end: CGPoint) {

@@ -30,18 +30,20 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate, UITabBarControllerDeleg
     
     func createPhotoVC() -> UINavigationController {
         let photoVC = PhotoVC()
-        photoVC.title = "📸 Take a Sophie Photo"
+        photoVC.title = "📸 Sophie Photo"
         photoVC.tabBarItem = UITabBarItem(title: "Camera", image: UIImage(systemName: "camera"), selectedImage: UIImage(systemName: "camera.fill"))
+        let navController = UINavigationController(rootViewController: photoVC)
+        let textAttributes = [NSAttributedString.Key.foregroundColor:UIColor.systemPurple]
+        navController.navigationBar.titleTextAttributes = textAttributes
+        navController.navigationBar.prefersLargeTitles = true
         
-        return UINavigationController(rootViewController: photoVC)
+        return navController
     }
     
     func createFeedVC() -> UINavigationController {
         let feedVC = FeedVC()
         feedVC.title = "🐶 Top Sophie Photos"
         let navController = UINavigationController(rootViewController: feedVC)
-        navController.navigationBar.prefersLargeTitles = true
-        feedVC.navigationItem.largeTitleDisplayMode = .always
         feedVC.tabBarItem = UITabBarItem(title: "Feed", image: UIImage(systemName: "list.bullet.circle"), selectedImage: UIImage(systemName: "list.bullet.circle.fill"))
         
         return navController

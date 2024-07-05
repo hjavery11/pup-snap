@@ -28,6 +28,7 @@
 		FA63FFB02C373ED40070165E /* SpeechBubbleView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA63FFAF2C373ED40070165E /* SpeechBubbleView.swift */; };
 		FA63FFB22C3745660070165E /* LineView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA63FFB12C3745660070165E /* LineView.swift */; };
 		FA63FFB52C37519F0070165E /* UIImageView+Ext.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA63FFB42C37519F0070165E /* UIImageView+Ext.swift */; };
+		FA63FFBF2C37E2710070165E /* RatingViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA63FFBE2C37E2710070165E /* RatingViewController.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -51,6 +52,7 @@
 		FA63FFAF2C373ED40070165E /* SpeechBubbleView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpeechBubbleView.swift; sourceTree = "<group>"; };
 		FA63FFB12C3745660070165E /* LineView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LineView.swift; sourceTree = "<group>"; };
 		FA63FFB42C37519F0070165E /* UIImageView+Ext.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIImageView+Ext.swift"; sourceTree = "<group>"; };
+		FA63FFBE2C37E2710070165E /* RatingViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RatingViewController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -121,6 +123,7 @@
 				FA3590772C34E14B00E417B1 /* SpinnerVC.swift */,
 				FA63FF962C368B450070165E /* CrashlyticsCrashButton.swift */,
 				FA63FFB12C3745660070165E /* LineView.swift */,
+				FA63FFBE2C37E2710070165E /* RatingViewController.swift */,
 			);
 			path = "Custom Views";
 			sourceTree = "<group>";
@@ -181,7 +184,6 @@
 			buildRules = (
 			);
 			dependencies = (
-				FA63FFA92C3697920070165E /* PBXTargetDependency */,
 			);
 			name = SophiePhotos;
 			packageProductDependencies = (
@@ -220,7 +222,6 @@
 			mainGroup = FA3590412C33B2AC00E417B1;
 			packageReferences = (
 				FA35906E2C34D44800E417B1 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */,
-				FA63FFA72C3697450070165E /* XCRemoteSwiftPackageReference "SwiftLintPlugins" */,
 			);
 			productRefGroup = FA35904B2C33B2AC00E417B1 /* Products */;
 			projectDirPath = "";
@@ -284,6 +285,7 @@
 				FA63FFB52C37519F0070165E /* UIImageView+Ext.swift in Sources */,
 				FA3590622C33B30000E417B1 /* FeedVC.swift in Sources */,
 				FA35906B2C34A46E00E417B1 /* SophiePhotoCell.swift in Sources */,
+				FA63FFBF2C37E2710070165E /* RatingViewController.swift in Sources */,
 				FA3590522C33B2AC00E417B1 /* PhotoVC.swift in Sources */,
 				FA35904E2C33B2AC00E417B1 /* AppDelegate.swift in Sources */,
 				FA3590502C33B2AC00E417B1 /* SceneDelegate.swift in Sources */,
@@ -293,13 +295,6 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
-
-/* Begin PBXTargetDependency section */
-		FA63FFA92C3697920070165E /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			productRef = FA63FFA82C3697920070165E /* SwiftLintBuildToolPlugin */;
-		};
-/* End PBXTargetDependency section */
 
 /* Begin PBXVariantGroup section */
 		FA3590582C33B2AD00E417B1 /* LaunchScreen.storyboard */ = {
@@ -527,14 +522,6 @@
 				minimumVersion = 10.28.1;
 			};
 		};
-		FA63FFA72C3697450070165E /* XCRemoteSwiftPackageReference "SwiftLintPlugins" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/SimplyDanny/SwiftLintPlugins";
-			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 0.55.1;
-			};
-		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -557,11 +544,6 @@
 			isa = XCSwiftPackageProductDependency;
 			package = FA35906E2C34D44800E417B1 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
 			productName = FirebaseCrashlytics;
-		};
-		FA63FFA82C3697920070165E /* SwiftLintBuildToolPlugin */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = FA63FFA72C3697450070165E /* XCRemoteSwiftPackageReference "SwiftLintPlugins" */;
-			productName = "plugin:SwiftLintBuildToolPlugin";
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

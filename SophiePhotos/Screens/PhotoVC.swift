@@ -14,6 +14,7 @@ class PhotoVC: UIViewController, UINavigationControllerDelegate, UIImagePickerCo
     let referenceImageView = UIImageView(image: UIImage(named: "sophie"))
     let sophie = UIImageView(image: UIImage(named: "sophie-iso"))
     let bubbleConnect = UIImageView(image: UIImage(named: "bubble-connector"))
+    let emulatorPhoto = UIImage(named: "emulator-photo")
     let cameraPreview = UIImageView()
     let cameraVC = UIImagePickerController()
     let clearButton = UIButton()
@@ -40,11 +41,13 @@ class PhotoVC: UIViewController, UINavigationControllerDelegate, UIImagePickerCo
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        view.backgroundColor = .systemBackground
+        view.backgroundColor = .systemGray6
+        
         // set font size depending on screen width to fit title and hint text
         setFontSize()
         setNavigationBarTitle()
         // views
+        setupCameraView()
         setupSophie()
         setupSpeechBubble()
     }
@@ -71,6 +74,11 @@ class PhotoVC: UIViewController, UINavigationControllerDelegate, UIImagePickerCo
         
         sophie.contentMode = .scaleAspectFit
         sophie.clipsToBounds = true
+        
+        // load full screen photo view when image is tapped
+        let gesture = UITapGestureRecognizer(target: self, action: #selector(sophieClicked))
+        sophie.isUserInteractionEnabled = true
+        sophie.addGestureRecognizer(gesture)
     }
 
     func setupSpeechBubble() {
@@ -96,7 +104,8 @@ class PhotoVC: UIViewController, UINavigationControllerDelegate, UIImagePickerCo
     func setNavigationBarTitle() {
         navigationController?.navigationBar.prefersLargeTitles = true
         navigationController?.navigationBar.largeTitleTextAttributes = [
-            NSAttributedString.Key.font: UIFont.systemFont(ofSize: largeTitleFontSize ?? 12, weight: .bold)
+            NSAttributedString.Key.font: UIFont.systemFont(ofSize: largeTitleFontSize ?? 12, weight: .bold),
+            NSAttributedString.Key.foregroundColor: UIColor.systemPurple
         ]
     }
     
@@ -141,28 +150,7 @@ class PhotoVC: UIViewController, UINavigationControllerDelegate, UIImagePickerCo
         spinnerChild.removeFromParent()
     }
     
-    func setupCameraPreview() {
-        view.addSubview(cameraPreview)
-        cameraPreview.translatesAutoresizingMaskIntoConstraints = false
-        cameraPreview.image = placeholderImage
-        cameraPreview.contentMode = .scaleAspectFit
-        cameraPreview.tintColor = .label
-        // load full screen photo view when image is tapped
-        let gesture = UITapGestureRecognizer(target: self, action: #selector(previewClicked))
-        cameraPreview.isUserInteractionEnabled = true
-        cameraPreview.addGestureRecognizer(gesture)
-        
-        cameraPreview.layer.cornerRadius = 12
-        // need this to make corner radius work
-        cameraPreview.layer.masksToBounds = true
-        
-    }
-    
-    @objc func previewClicked(sender: UITapGestureRecognizer) {
-//        if isRunningOnEmulator() {
-//            displayUserPhoto(UIImage(named: "emulator-photo")!) // if emulator just set a default photo
-//            return
-//        }
+    @objc func sophieClicked(sender: UITapGestureRecognizer) {
         if UIImagePickerController.isSourceTypeAvailable(.camera) {
             present(cameraVC, animated: true)
         } else {
@@ -185,45 +173,26 @@ class PhotoVC: UIViewController, UINavigationControllerDelegate, UIImagePickerCo
             return
         }
         
-        displayUserPhoto(image)
-        let editVC = PhotoEditorVC()
-        navigationController?.pushViewController(editVC, animated: true)
+        picker.dismiss(animated: true) {
+            self.displayImage(image)
+        }
+    }
+    
+    func displayImage(_ image: UIImage) {
+        let editVC = PhotoEditorVC(image: image)
+        editVC.modalPresentationStyle = .fullScreen
+        self.present(editVC, animated: true)
     }
     
     func imagePickerControllerDidCancel(_ picker: UIImagePickerController) {
-        picker.dismiss(animated: true)
-    }
-    
-    func displayUserPhoto(_ image: UIImage) {
-        cameraPreview.image = image
+        picker.dismiss(animated: false)
+        // only for testing purposes
+        if isRunningOnEmulator() {
+            displayImage(emulatorPhoto!)
+            return
+        }
         
-        clearButton.alpha = 1
-        submitButton.alpha = 1
-        view.updateConstraints()
-    }
-    
-    func createClearButton() {
-        view.addSubview(clearButton)
-        clearButton.setImage(UIImage(systemName: "xmark.circle", withConfiguration: largeConfig), for: .normal)
-        clearButton.tintColor = .systemRed
-        clearButton.translatesAutoresizingMaskIntoConstraints = false
-        
-        clearButton.imageView?.contentMode = .scaleAspectFill
-        
-        clearButton.addTarget(self, action: #selector(clearImage), for: .touchUpInside)
-        clearButton.alpha = 0
-    }
-    
-    func createSubmitButton() {
-        view.addSubview(submitButton)
-        submitButton.setImage(UIImage(systemName: "checkmark.circle", withConfiguration: largeConfig), for: .normal)
-        submitButton.tintColor = .systemGreen
-        submitButton.translatesAutoresizingMaskIntoConstraints = false
-        
-        clearButton.imageView?.contentMode = .scaleAspectFill
-        
-        submitButton.alpha = 0
-        submitButton.addTarget(self, action: #selector(addPhoto), for: .touchUpInside)
+     
     }
     
     @objc func addPhoto() {
