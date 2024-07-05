@@ -295,7 +295,7 @@ class PhotoEditorVC: UIViewController, UITextFieldDelegate {
     }
     
     func drawLabels() {
-        let labels = ["Meh", "Average", "Cutest"]
+        let labels = ["Derp", "Average", "Cutest"]
         let positions = [0, 2, 4] // 1st, 3rd, and 5th star buttons
         var labelViews: [UILabel] = []
         var lineViews: [UIView] = []

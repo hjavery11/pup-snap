@@ -1,15 +1,34 @@
 # Sophie Photos App
 
-![Photo of Sophie](SophiePhotos/sophie-photo.jpg))
+  ### Easily track photos of the world's cutest dog, Sophie
 
-## Easily track the cutest photos of the world's cutest dog, Sophie
+![Photo of Sophie](SophiePhotos/Assets/homescreen.png)
 
-### Information
 
-- **UIKit based app** that uses Firebase storage to host the image files.
-- **Easily take a photo of Sophie** to upload or view the feed of Sophie photos.
-- **Instant updating of the feed** after uploading a photo.
+## Features
+
+### Scroll your Feed
+![feed photo](SophiePhotos/Assets/feed.gif)
+
+### Add a New Photo
+![photo share](SophiePhotos/Assets/upload.png)
+
+### Receive Notifications
+![notif](SophiePhotos/Assets/push-notification.gif)
+  
+
+## Information  
+
+- ****UIKit based app**** that uses Firebase storage to host the image files.
+
+- ****Image caching**** in memory and local files
+- ****Live updating of feed****
+- ****Firebase functions**** used to send APNS notifications when a photo is uploaded
+
+  
 
 ### Coming Soon
 
-- **Rank the cuteness** of each photo so the feed can be in order of cutest photo.
+  
+
+- ****Sort your feed by cuteness****

@@ -83,7 +83,7 @@ class PhotoVC: UIViewController, UINavigationControllerDelegate, UIImagePickerCo
     
     func setupSpeechBubble() {
         // show the SwiftUI speech bubble
-        let speechBubble = SpeechBubbleView(text: "Hello, I'm Sophie! \nTap on me to take a photo!")
+        let speechBubble = SpeechBubbleView(text: "Hi, I'm Sophie! \nTap on me to add a photo!")
         let hostingController = UIHostingController(rootView: speechBubble)
         addChild(hostingController)
         hostingController.view.translatesAutoresizingMaskIntoConstraints = false
@@ -186,7 +186,7 @@ class PhotoVC: UIViewController, UINavigationControllerDelegate, UIImagePickerCo
     }
     
     func imagePickerControllerDidCancel(_ picker: UIImagePickerController) {
-        picker.dismiss(animated: false)
+        picker.dismiss(animated: true)
         // only for testing purposes
         if isRunningOnEmulator() {
             displayImage(emulatorPhoto!)
@@ -220,17 +220,17 @@ class PhotoVC: UIViewController, UINavigationControllerDelegate, UIImagePickerCo
             successHandler: {
                 self.hideSpinner()
                 print("Upload completed successfully")
-                DispatchQueue.main.async {
+                DispatchQueue.main.async { [weak self] in
+                    guard let self = self else { return }
                     let alert = UIAlertController(title: "Upload Successful", message: "Your photo has been uploaded successfully.", preferredStyle: .alert)
-                    let okAction = UIAlertAction(title: "OK", style: .default) { _ in
-                        //self.clearImage()
-                    }
+                    let okAction = UIAlertAction(title: "OK", style: .default)
                     alert.addAction(okAction)
                     self.present(alert, animated: true, completion: nil)
                 }
             },
             failureHandler: { error in
-                DispatchQueue.main.async {
+                DispatchQueue.main.async { [weak self] in
+                    guard let self = self else { return }
                     self.hideSpinner()
                     let alert = UIAlertController(title: "Upload Failed", message: error.localizedDescription, preferredStyle: .alert)
                     alert.addAction(UIAlertAction(title: "OK", style: .default, handler: nil))
@@ -259,12 +259,13 @@ class PhotoVC: UIViewController, UINavigationControllerDelegate, UIImagePickerCo
         
         let image = editor.image
         
-        let uploadTask = NetworkManager.shared.uploadPhoto(
+        let _ = NetworkManager.shared.uploadPhoto(
             image: image,
             progressHandler: { percentComplete in
                 print("Upload progress: \(percentComplete)%")
             },
-            successHandler: {
+            successHandler: { [weak self] in
+                guard let self = self else { return }
                 self.hideSpinner()
                 print("Upload completed successfully")
                 DispatchQueue.main.async {
@@ -274,7 +275,8 @@ class PhotoVC: UIViewController, UINavigationControllerDelegate, UIImagePickerCo
                     self.present(alert, animated: true, completion: nil)
                 }
             },
-            failureHandler: { error in
+            failureHandler: { [weak self] error in
+                guard let self = self else { return }
                 DispatchQueue.main.async {
                     self.hideSpinner()
                     let alert = UIAlertController(title: "Upload Failed", message: error.localizedDescription, preferredStyle: .alert)
