@@ -41,18 +41,22 @@ class PhotoEditorVC: UIViewController, UITextFieldDelegate {
         
         setupBottomActionBar()
         setupTopActionBar()
-        setupDivider()
         setupBottomActionItems()
         setupTopActionItems()
         setupImageView()
         setupTitle()
         setupCaptionField()
+        setupRatingsViewController()
         setupCuteScale()
+        //draw borderes
+        setupDividers()
         
         // Add tap gesture recognizer to dismiss keyboard
         let tapGesture = UITapGestureRecognizer(target: self, action: #selector(dismissKeyboard))
         view.addGestureRecognizer(tapGesture)
     }
+    
+    
     
     @objc func dismissKeyboard() {
         view.endEditing(true)
@@ -110,19 +114,31 @@ class PhotoEditorVC: UIViewController, UITextFieldDelegate {
         
     }
     
-    func setupDivider() {
-        let divider = UIView()
-        divider.backgroundColor = .systemGray4
-        divider.translatesAutoresizingMaskIntoConstraints = false
-        divider.layer.opacity = 0.75
+    func setupDividers() {
+        let dividerTop = UIView()
+        dividerTop.backgroundColor = .systemGray4
+        dividerTop.translatesAutoresizingMaskIntoConstraints = false
+        dividerTop.layer.opacity = 0.75
         
-        view.addSubview(divider)
+        view.addSubview(dividerTop)
+        
+        let dividerRating = UIView()
+        dividerRating.backgroundColor = .systemGray2
+        dividerRating.translatesAutoresizingMaskIntoConstraints = false
+        dividerRating.layer.opacity = 0.75
+        
+        view.addSubview(dividerRating)
         
         NSLayoutConstraint.activate([
-            divider.topAnchor.constraint(equalTo: topBar.bottomAnchor, constant: 10),
-            divider.widthAnchor.constraint(equalTo: topBar.widthAnchor),
-            divider.heightAnchor.constraint(equalToConstant: 1),
-            divider.leadingAnchor.constraint(equalTo: topBar.leadingAnchor)
+            dividerTop.topAnchor.constraint(equalTo: topBar.bottomAnchor, constant: 10),
+            dividerTop.widthAnchor.constraint(equalTo: topBar.widthAnchor),
+            dividerTop.heightAnchor.constraint(equalToConstant: 0.35),
+            dividerTop.leadingAnchor.constraint(equalTo: topBar.leadingAnchor),
+            
+            dividerRating.topAnchor.constraint(equalTo: captionField.bottomAnchor, constant: 20),
+            dividerRating.widthAnchor.constraint(equalTo: view.widthAnchor),
+            dividerRating.heightAnchor.constraint(equalToConstant: 0.35),
+            dividerRating.leadingAnchor.constraint(equalTo: view.leadingAnchor)
         ])
         
     }
@@ -211,13 +227,12 @@ class PhotoEditorVC: UIViewController, UITextFieldDelegate {
         captionField.clearButtonMode = .whileEditing
         captionField.returnKeyType = .done
         captionField.delegate = self
-        captionField.font = UIFont(name: "Avenir", size: 18)
+        captionField.font = UIFont(name: "Avenir", size: 20)
         
         NSLayoutConstraint.activate([
-            captionField.topAnchor.constraint(equalTo: imageView.bottomAnchor, constant: -5),
+            captionField.topAnchor.constraint(equalTo: imageView.bottomAnchor, constant: 35),
             captionField.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 15),
             captionField.widthAnchor.constraint(equalTo: view.widthAnchor, constant: -20),
-            captionField.heightAnchor.constraint(equalToConstant: 80)
         ])
     }
     
@@ -225,17 +240,24 @@ class PhotoEditorVC: UIViewController, UITextFieldDelegate {
         textField.resignFirstResponder()
         return true
     }
-    func setupCuteScale() {
+    
+    func setupRatingsViewController() {
         addChild(cuteScale)
         cuteScale.view.translatesAutoresizingMaskIntoConstraints = false
         view.addSubview(cuteScale.view)
+        cuteScale.didMove(toParent: self)
+    }
+    
+    func setupCuteScale() {
+        view.layoutIfNeeded()
+        
+        let yConst = (bottomBar.frame.minY - imageView.frame.maxY) / 2.5 // calculate how to put rating scale in middle of caption and bottom bar
         
         NSLayoutConstraint.activate([
             cuteScale.view.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            cuteScale.view.bottomAnchor.constraint(equalTo: bottomBar.topAnchor, constant: -20),
-            cuteScale.view.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
-            cuteScale.view.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20),
-            cuteScale.view.heightAnchor.constraint(equalToConstant: 50)
+            cuteScale.view.centerYAnchor.constraint(equalTo: imageView.bottomAnchor, constant: yConst),
+            cuteScale.view.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 40),
+            cuteScale.view.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -40),
         ])
         
         cuteScale.didMove(toParent: self)

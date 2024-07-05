@@ -9,6 +9,8 @@ import UIKit
 
 class RatingViewController: UIViewController {
     
+    weak var lastClickedButton: UIButton?
+    
     let starButtons: [UIButton] = {
         var buttons = [UIButton]()
         for _ in 1...5 {
@@ -16,7 +18,7 @@ class RatingViewController: UIViewController {
             let button = UIButton()
             button.setImage(UIImage(systemName: "dog", withConfiguration: UIImage.SymbolConfiguration(pointSize: 32, weight: .light)), for: .normal)
             button.setImage(UIImage(systemName: "dog.fill", withConfiguration: UIImage.SymbolConfiguration(pointSize: 32, weight: .light)), for: .selected)
-            button.tintColor = .systemPink
+            button.tintColor = .systemPurple
             buttons.append(button)
         }
         return buttons
@@ -62,12 +64,19 @@ class RatingViewController: UIViewController {
     }
     
     @objc func starButtonTapped(_ button: UIButton) {
-        rating = button.tag
+        if lastClickedButton == button && rating == button.tag { // Double-tap logic
+            rating = 0
+            lastClickedButton = nil // Reset last clicked button
+        } else {
+            rating = button.tag
+            lastClickedButton = button
+        }
     }
     
     func updateStarSelectionStates() {
         for (index, button) in starButtons.enumerated() {
             button.isSelected = index < rating
+            button.backgroundColor = .clear // Ensure the background stays clear
         }
     }
 }
