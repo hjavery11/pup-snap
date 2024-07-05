@@ -6,12 +6,11 @@
 
 
 ## Features
+### Add a New Photo
+![photo share](SophiePhotos/Assets/upload.png)
 
 ### Scroll your Feed
 ![feed photo](SophiePhotos/Assets/feed.gif)
-
-### Add a New Photo
-![photo share](SophiePhotos/Assets/upload.png)
 
 ### Receive Notifications
 ![notif](SophiePhotos/Assets/push-notification.gif)
