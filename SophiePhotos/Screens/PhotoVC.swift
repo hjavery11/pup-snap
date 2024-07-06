@@ -50,6 +50,7 @@ class PhotoVC: UIViewController, UINavigationControllerDelegate, UIImagePickerCo
         setupCameraView()
         setupSophie()
         setupSpeechBubble()
+        
     }
     
     override func viewDidLayoutSubviews() {
@@ -207,60 +208,20 @@ class PhotoVC: UIViewController, UINavigationControllerDelegate, UIImagePickerCo
         }
     }
     
-    @objc func addPhoto() {
-        guard let image = cameraPreview.image else { return }
-        
-        showSpinner()
-        
-        let uploadTask = NetworkManager.shared.uploadPhoto(
-            image: image,
-            progressHandler: { percentComplete in
-                print("Upload progress: \(percentComplete)%")
-            },
-            successHandler: {
-                self.hideSpinner()
-                print("Upload completed successfully")
-                DispatchQueue.main.async { [weak self] in
-                    guard let self = self else { return }
-                    let alert = UIAlertController(title: "Upload Successful", message: "Your photo has been uploaded successfully.", preferredStyle: .alert)
-                    let okAction = UIAlertAction(title: "OK", style: .default)
-                    alert.addAction(okAction)
-                    self.present(alert, animated: true, completion: nil)
-                }
-            },
-            failureHandler: { error in
-                DispatchQueue.main.async { [weak self] in
-                    guard let self = self else { return }
-                    self.hideSpinner()
-                    let alert = UIAlertController(title: "Upload Failed", message: error.localizedDescription, preferredStyle: .alert)
-                    alert.addAction(UIAlertAction(title: "OK", style: .default, handler: nil))
-                    self.present(alert, animated: true, completion: nil)
-                }
-                switch StorageErrorCode(rawValue: (error as NSError).code)! {
-                case .objectNotFound:
-                    print("File doesn't exist")
-                case .unauthorized:
-                    print("User doesn't have permission to access file")
-                case .cancelled:
-                    print("User canceled the upload")
-                case .unknown:
-                    print("Unknown error occurred, inspect the server response")
-                default:
-                    print("A separate error occurred, retry the upload")
-                }
-            }
-        )
-        
-        _ = uploadTask
-    }
-    
     func photoEditorDidUpload(_ editor: PhotoEditorVC) {
         showSpinner()
         
-        let image = editor.image
+        let image = editor.image        
+        let caption = editor.captionField.text ?? ""
+        let user = PersistenceManager.retrieveID()
+        let rating = editor.cuteScale.rating
+        let ratings = Photo.Rating(user: user, rating: rating)
+        let photoID = UUID().uuidString
+        
+        let photo = Photo(caption: caption, ratings: [ratings], id: photoID, image: image)
         
         let _ = NetworkManager.shared.uploadPhoto(
-            image: image,
+            photo: photo,
             progressHandler: { percentComplete in
                 print("Upload progress: \(percentComplete)%")
             },

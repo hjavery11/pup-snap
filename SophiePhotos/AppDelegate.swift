@@ -8,6 +8,8 @@
 import UIKit
 import Firebase
 import UserNotifications
+import FirebaseAppCheck
+import FirebaseCore
 
 @main
 class AppDelegate: UIResponder, UIApplicationDelegate {
@@ -16,7 +18,16 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         // Override point for customization after application launch.
+        #if DEBUG
+        let providerFactory = AppCheckDebugProviderFactory()
+        #else
+        let providerFactory = YourSimpleAppCheckProviderFactory()
+        #endif
+        
+        AppCheck.setAppCheckProviderFactory(providerFactory)
+       
         FirebaseApp.configure()
+   
         Messaging.messaging().delegate = self
         UNUserNotificationCenter.current().delegate = self
         

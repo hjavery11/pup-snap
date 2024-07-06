@@ -150,7 +150,7 @@ class FeedVC: UIViewController, FullScreenPhotoVCDelegate {
         }
     }
     
-    func deleteImage(at indexPath: IndexPath) {    
+    func deleteImage(at indexPath: IndexPath) {        
         Task {
             do {
                 try await NetworkManager.shared.deletePhoto(imageURL: urlArray[indexPath.item])
@@ -160,7 +160,13 @@ class FeedVC: UIViewController, FullScreenPhotoVCDelegate {
                 applySnapshot()
                
             } catch {
-                print("Error occured deleting photo: \(error.localizedDescription)")
+                let alert = UIAlertController(title: "Error", message: "Could not delete photo: \(error.localizedDescription)", preferredStyle: .alert)
+                let alertAction = UIAlertAction(title: "Ok", style: .default, handler: nil)
+             
+                alert.addAction(alertAction)
+            
+                present(alert, animated: true, completion: nil)
+                print("Error occured deleting photo: \(error)")
             }
            
         }
@@ -258,3 +264,5 @@ extension UIEdgeInsets {
         self.init(top: padding, left: padding, bottom: padding, right: padding)
     }
 }
+
+

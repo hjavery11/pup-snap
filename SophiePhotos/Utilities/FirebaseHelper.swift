@@ -27,7 +27,6 @@ class FirebaseHelper {
     }
 
     func fetchAllImages() async throws -> ([UIImage], [String]) {
-
         var images: [UIImage] = []
         var urls: [String] = []
         do {
@@ -80,8 +79,8 @@ class FirebaseHelper {
         }
     }
 
-    func uploadImage(image: UIImage, progressHandler: @escaping (Double) -> Void, successHandler: @escaping () -> Void, failureHandler: @escaping (Error) -> Void) -> StorageUploadTask? {
-        guard let imageData = image.jpegData(compressionQuality: 0.8) else {
+    func uploadImage(photo: Photo, progressHandler: @escaping (Double) -> Void, successHandler: @escaping () -> Void, failureHandler: @escaping (Error) -> Void) -> StorageUploadTask? {
+        guard let imageData = photo.image.jpegData(compressionQuality: 0.8) else {
             print("Failed to get image data")
             return nil
         }
@@ -103,6 +102,11 @@ class FirebaseHelper {
                     failureHandler(error!)
                     return
                 }
+                
+                //add to db
+                var newPhoto = photo
+                newPhoto.setFilePath(to:imageRef.fullPath)
+                DatabaseHelper().addPhotoToDB(photo: newPhoto)
 
                 print("Download URL: \(downloadURL.absoluteString)")
                 successHandler()

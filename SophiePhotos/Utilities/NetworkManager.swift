@@ -24,8 +24,8 @@ class NetworkManager {
         }
     }
 
-    func uploadPhoto(image: UIImage, progressHandler: @escaping (Double) -> Void, successHandler: @escaping () -> Void, failureHandler: @escaping (Error) -> Void) -> StorageUploadTask? {
-        return firebaseHelper.uploadImage(image: image, progressHandler: progressHandler, successHandler: successHandler, failureHandler: failureHandler)
+    func uploadPhoto(photo: Photo, progressHandler: @escaping (Double) -> Void, successHandler: @escaping () -> Void, failureHandler: @escaping (Error) -> Void) -> StorageUploadTask? {
+        return firebaseHelper.uploadImage(photo: photo, progressHandler: progressHandler, successHandler: successHandler, failureHandler: failureHandler)
     }
 
     func getPhoto(_ url: String, completion: @escaping (UIImage?) -> Void) {
