@@ -12,6 +12,8 @@ class SophiePhotoCell: UICollectionViewCell {
     static let reuseID = "SophiePhotoCell"
     let thumbnailImageView = UIImageView()
     var imageURL: String = ""
+    
+ 
 
     override init(frame: CGRect) {
         super.init(frame: frame)

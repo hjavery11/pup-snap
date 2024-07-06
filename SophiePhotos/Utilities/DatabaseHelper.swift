@@ -22,10 +22,15 @@ class DatabaseHelper {
             print("no image path set, cancelling upload to DB")
             return
         }
-
-        let valueArray =  ["\(photo.id)" : ["caption" : "\(photo.caption)", "ratings": ["user" : photo.ratings[0].user, "rating": photo.ratings[0].rating], "path" : path]] as [String : Any]
         
-        self.ref.child("photos").setValue(valueArray) { error, _ in
+        let valueArray = ["caption": photo.caption,
+                          "ratings": ["user": photo.ratings[0].user, "rating": photo.ratings[0].rating],
+                          "path": path,
+                          "timestamp": Int(Date().timeIntervalSince1970)] as [String : Any]
+        
+        let uniqueID = photo.id
+        
+        self.ref.child("photos").child(uniqueID).updateChildValues(valueArray) { error, _ in
             if let error = error {
                 print("Error setting value: \(error.localizedDescription)")
                 print("ValueArray: \(valueArray)")
@@ -65,8 +70,9 @@ class DatabaseHelper {
 //    private func createPhotoData(id: String, path: String) -> [String: Any] {
 //        let photoData: [String: Any] = [
 //            "caption": "",
-//            "ratings": [""],
-//            "path": path
+//            "ratings": ["user" : PersistenceManager.retrieveID(), "rating" : 3],
+//            "path": path,
+//            "timestamp": Int(Date().timeIntervalSince1970)
 //        ]
 //        return [id: photoData]
 //    }

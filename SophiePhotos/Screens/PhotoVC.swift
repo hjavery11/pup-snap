@@ -50,7 +50,6 @@ class PhotoVC: UIViewController, UINavigationControllerDelegate, UIImagePickerCo
         setupCameraView()
         setupSophie()
         setupSpeechBubble()
-        
     }
     
     override func viewDidLayoutSubviews() {
