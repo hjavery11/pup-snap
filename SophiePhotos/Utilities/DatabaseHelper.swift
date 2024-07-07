@@ -14,51 +14,59 @@ class DatabaseHelper {
     var ref: DatabaseReference!
     
     init() {
-        ref = Database.database().reference()
+        ref = Database.database().reference().child("photos")
     }
     
-//    func addPhotoToDB(photo: Photo) {
-//        
-//        guard let path = photo.imagePath else {
-//            print("no image path set, cancelling upload to DB")
-//            return
-//        }
-//        
-//        let valueArray = ["caption": photo.caption,
-//                          "ratings": [photo.ratings[0].user : photo.ratings[0].rating],
-//                          "path": path,
-//                          "timestamp": Int(Date().timeIntervalSince1970)] as [String : Any]
-//        
-//        let uniqueID = photo.id
-//        
-//        self.ref.child("photos").child(uniqueID).updateChildValues(valueArray) { error, _ in
-//            if let error = error {
-//                print("Error setting value: \(error.localizedDescription)")
-//                print("ValueArray: \(valueArray)")
-//            } else {
-//                print("Photo uploaded succesfully")
-//            }
-//            
-//        }
-//    }
+    func addPhotoToDB(photo: Photo) {        
+        guard let path = photo.path else {
+            print("No path was found to add to db for photo: \(photo.id ?? "")")
+            return
+        }
+        guard let uniqueID = photo.id else {
+            print("No unique id found for photo with path \(path)")
+            return
+        }
+        
+        let valueArray = ["caption": photo.caption,
+                          "ratings": photo.ratings,
+                          "path": path,
+                          "timestamp": Int(Date().timeIntervalSince1970)] as [String : Any]
+        
+        self.ref.child(uniqueID).updateChildValues(valueArray) { error, _ in
+            if let error = error {
+                print("Error setting value: \(error.localizedDescription)")
+                print("ValueArray: \(valueArray)")
+            } else {
+                print("Photo uploaded succesfully to database")
+            }
+            
+        }
+    }
+    
+    func deletePhotoFromDB(photo: Photo) async throws{
+        if let id = photo.id{
+            try await ref.child(id).removeValue()
+        } else {
+            print("no id found for photo to delete: \(photo)")
+        }
+    }
     
     func fetchPhotos() async throws -> [Photo]{
         do{
-            let snapshot = try await ref.child("photos").getData()
+            let snapshot = try await ref.getData()
             
             guard let value = snapshot.value as? [String: Any] else {
                 throw NSError(domain: "", code: -1)
             }
             
-    
-            
-            
             let jsonData = try JSONSerialization.data(withJSONObject: value)
             let decoder = JSONDecoder()
-            let photoDictionary = try decoder.decode(PhotoDictionary.self, from: jsonData)
+            var photoDictionary = try decoder.decode(PhotoDictionary.self, from: jsonData)
             
-            
-            
+            // Set the `id` for each `Photo` to the corresponding key
+            for(key, _) in photoDictionary {
+                photoDictionary[key]?.id = key
+            }
             
             let photos = Array<Photo>(photoDictionary.values)
             return photos
@@ -103,7 +111,6 @@ class DatabaseHelper {
 //
 //    private let databaseRef = Database.database().reference()
 //    private let storageRef = Storage.storage().reference().child("images")
-//    private let cache = NSCache<NSString, UIImage>()
 //
 //    // Function to generate a unique ID
 //    private func generateUniqueID() -> String {

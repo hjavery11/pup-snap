@@ -18,6 +18,7 @@ class FullScreenPhotoVC: UIViewController {
     var activityIndicator = UIActivityIndicatorView(style: .large)
     var closeButton = UIButton()
     var imageView = UIImageView()
+    var captionView = UILabel()
     
     var photo: Photo
     var indexPath: IndexPath?
@@ -37,14 +38,49 @@ class FullScreenPhotoVC: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .systemBackground
-        
+      
         configureImageView()
+        configureCaptionView()
         if self.indexPath != nil {
             // only show nav bar if coming from feed view, otherwise its a push notification without nav bar
             configureNavBar()
         }      
         setupLoading()
         addGestures()
+        
+        if self.photo.image == nil {
+            print("No image set from push notification. Grabbing image")
+            activityIndicator.startAnimating() // Show loading indicator
+            
+            // Safely unwrap the path
+            guard let path = self.photo.path else {
+                print("Invalid path")
+                activityIndicator.stopAnimating()
+                return
+            }
+            
+            Task {
+                do {
+                    if let image = try await FirebaseHelper().fetchImage(url: path) {
+                        DispatchQueue.main.async {
+                            self.photo.setImage(to: image)
+                            self.imageView.image = image
+                            self.activityIndicator.stopAnimating() // Hide loading indicator
+                        }
+                    } else {
+                        print("Error creating image from data")
+                        DispatchQueue.main.async {
+                            self.activityIndicator.stopAnimating() // Hide loading indicator
+                        }
+                    }
+                } catch {
+                    print("Error trying to fetch image for push notification: \(error)")
+                    DispatchQueue.main.async {
+                        self.activityIndicator.stopAnimating() // Hide loading indicator
+                    }
+                }
+            }
+        }
         
     }
     
@@ -60,6 +96,23 @@ class FullScreenPhotoVC: UIViewController {
             imageView.centerYAnchor.constraint(equalTo: view.centerYAnchor),
             imageView.widthAnchor.constraint(equalTo: view.widthAnchor),
             imageView.heightAnchor.constraint(equalTo: view.heightAnchor)
+        ])
+    }
+    
+    func configureCaptionView() {
+        view.addSubview(captionView)
+        captionView.translatesAutoresizingMaskIntoConstraints = false
+        captionView.text = photo.caption
+        captionView.font = UIFont(descriptor: .preferredFontDescriptor(withTextStyle: .headline), size: 24)
+        captionView.textColor = .label
+        captionView.textAlignment = .center
+        captionView.numberOfLines = 3
+        
+        NSLayoutConstraint.activate([
+            captionView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            captionView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            captionView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -20),
+            captionView.widthAnchor.constraint(equalTo: view.widthAnchor)
         ])
     }
     

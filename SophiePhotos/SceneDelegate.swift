@@ -69,16 +69,31 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate, UITabBarControllerDeleg
     }
     
     @objc func presentFullScreenPhotoVC(_ notification: Notification) {
-//        guard let userInfo = notification.userInfo, let filePath = userInfo["filePath"] as? String else { return }
-//        let fullScreenVC = FullScreenPhotoVC(photo: Photo, indexPath: nil
-//        // fullScreenVC.modalPresentationStyle = .fullScreen
-//        
-//        let navigationController = UINavigationController(rootViewController: fullScreenVC)
-//       // navigationController.modalPresentationStyle = .fullScreen
-//        
-//        window?.rootViewController?.present(navigationController, animated: true, completion: nil)
+        //    id: photoId,
+        //                caption: photoData.caption || '',
+        //                path: photoData.path || '',
+        //                ratings: JSON.stringify(photoData.ratings || {}),
+        //                timestamp: String(photoData.timestamp || '')
         
+        print(notification)
+        
+        guard let userInfo = notification.userInfo else { return }
+        guard let filePath = userInfo["path"] as? String,
+              let caption = userInfo["caption"] as? String,
+              let ratingsString = userInfo["ratings"] as? String,
+              let timestampString = userInfo["timestamp"] as? String,
+              let id = userInfo["id"] as? String,
+              let ratingsData = ratingsString.data(using: .utf8),
+              let ratings = try? JSONSerialization.jsonObject(with: ratingsData, options: []) as? [String: Int],
+              let timestamp = Int(timestampString) else { return }
+        
+        let photo = Photo(caption: caption, ratings: ratings, timestamp: timestamp, path: filePath, image: nil, id: id)
+        let fullScreenVC = FullScreenPhotoVC(photo: photo, indexPath: nil)
+        
+        let navigationController = UINavigationController(rootViewController: fullScreenVC)
+        window?.rootViewController?.present(navigationController, animated: true, completion: nil)
     }
+    
     
     func sceneDidDisconnect(_ scene: UIScene) {
         // Called as the scene is being released by the system.

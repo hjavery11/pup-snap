@@ -144,20 +144,25 @@ class FeedVC: UIViewController, FullScreenPhotoVCDelegate {
     }
     
     func checkForNewImages() {
-//        Task {
-//            let newPhotos = await NetworkManager.shared.getPhotos()
-//            if newPhotos.count != photoArray.count {
-//                photoArray = newPhotos
-//                applySnapshot()
-//            }
-//        }
+        Task {
+            do {
+                let newPhotos = try await NetworkManager.shared.getPhotoCount()
+                if newPhotos != photoArray.count {
+                    photoArray = try await NetworkManager.shared.fetchCompletePhotos()
+                    applySnapshot()
+                }
+            } catch {
+                print("error trying to check for new images, aborting refresh")
+            }
+        }
     }
     
     func deleteImage(at indexPath: IndexPath) {        
         Task {
             do {
-                try await NetworkManager.shared.deletePhoto(imageURL: photoArray[indexPath.item].path)
-                photoArray.remove(at: indexPath.item)              
+                let deletedPhoto = photoArray[indexPath.item]
+                try await NetworkManager.shared.deletePhoto(photo: deletedPhoto)
+                photoArray.remove(at: indexPath.item)
                
                 applySnapshot()
                
@@ -188,69 +193,67 @@ class FeedVC: UIViewController, FullScreenPhotoVCDelegate {
     }
     
     func displayPriorImage(currentVC: FullScreenPhotoVC) {
-//        guard let currentImageIndex = currentImageIndex else { return }
-//        let priorIndex = currentImageIndex - 1
-//        guard priorIndex >= 0, priorIndex < photoArray.count else { return }
-//        
-//        let priorPhoto = photoArray[priorIndex]
-//
-//        let newIndexPath = IndexPath(item: priorIndex, section: currentVC.indexPath?.section ?? 0) // future proof of more than 0 sections
-//        
-//        currentVC.photo = priorPhoto
-//        currentVC.indexPath = newIndexPath
-//        
-//        self.currentImageIndex = priorIndex
-//        
-//        let currentImageView = currentVC.imageView
-//        
-//        // Create a new image view for the prior image
-//        let newImageView = UIImageView(image: priorImage)
-//        newImageView.contentMode = .scaleAspectFit
-//        newImageView.frame = currentImageView.bounds
-//        newImageView.frame.origin.x = -currentImageView.frame.width
-//        
-//        currentImageView.superview?.addSubview(newImageView)
-//        currentImageView.image = nil
-//        UIView.animate(withDuration: 0.2, animations: {
-//            newImageView.frame.origin.x = 0
-//            currentImageView.frame.origin.x = currentImageView.frame.width
-//        }, completion: { _ in
-//            currentImageView.frame.origin.x = 0
-//            newImageView.removeFromSuperview()
-//        })
-//        currentImageView.image = priorImage
+        guard let currentImageIndex = currentImageIndex else { return }
+        let priorIndex = currentImageIndex - 1
+        guard priorIndex >= 0, priorIndex < photoArray.count else { return }
+        
+        let priorPhoto = photoArray[priorIndex]
+
+        let newIndexPath = IndexPath(item: priorIndex, section: currentVC.indexPath?.section ?? 0) // future proof of more than 0 sections
+        
+        currentVC.photo = priorPhoto
+        currentVC.indexPath = newIndexPath
+        
+        self.currentImageIndex = priorIndex
+        
+        let currentImageView = currentVC.imageView
+        
+        // Create a new image view for the prior image
+        let newImageView = UIImageView(image: priorPhoto.image)
+        newImageView.contentMode = .scaleAspectFit
+        newImageView.frame = currentImageView.bounds
+        newImageView.frame.origin.x = -currentImageView.frame.width
+        
+        currentImageView.superview?.addSubview(newImageView)
+        currentImageView.image = nil
+        UIView.animate(withDuration: 0.2, animations: {
+            newImageView.frame.origin.x = 0
+            currentImageView.frame.origin.x = currentImageView.frame.width
+        }, completion: { _ in
+            currentImageView.frame.origin.x = 0
+            newImageView.removeFromSuperview()
+        })
+        currentImageView.image = priorPhoto.image
         
     }
     
     func displayNextImage(currentVC: FullScreenPhotoVC) {
-//        guard let currentImageIndex = currentImageIndex else { return }
-//        let nextIndex = currentImageIndex + 1
-//        guard nextIndex >= 0, nextIndex < imageArray.count else { return }
-//        
-//        let nextImage = imageArray[nextIndex]
-//        let nextURL = urlArray[nextIndex]
-//        
-//        currentVC.imageURL = nextURL
-//        self.currentImageIndex = nextIndex
-//        
-//        let currentImageView = currentVC.imageView
-//        
-//        // Create a new image view for the next image
-//        let newImageView = UIImageView(image: nextImage)
-//        newImageView.contentMode = .scaleAspectFit
-//        newImageView.frame = currentImageView.bounds
-//        newImageView.frame.origin.x = currentImageView.frame.width
-//        
-//        currentImageView.superview?.addSubview(newImageView)
-//        currentImageView.image = nil
-//        UIView.animate(withDuration: 0.2, animations: {
-//            newImageView.frame.origin.x = 0
-//            currentImageView.frame.origin.x = -currentImageView.frame.width
-//        }, completion: { _ in
-//            currentImageView.frame.origin.x = 0
-//            newImageView.removeFromSuperview()
-//        })
-//        currentImageView.image = nextImage
+        guard let currentImageIndex = currentImageIndex else { return }
+        let nextIndex = currentImageIndex + 1
+        guard nextIndex >= 0, nextIndex < photoArray.count else { return }
+        
+        let nextImage = photoArray[nextIndex].image
+        
+        self.currentImageIndex = nextIndex
+        
+        let currentImageView = currentVC.imageView
+        
+        // Create a new image view for the next image
+        let newImageView = UIImageView(image: nextImage)
+        newImageView.contentMode = .scaleAspectFit
+        newImageView.frame = currentImageView.bounds
+        newImageView.frame.origin.x = currentImageView.frame.width
+        
+        currentImageView.superview?.addSubview(newImageView)
+        currentImageView.image = nil
+        UIView.animate(withDuration: 0.2, animations: {
+            newImageView.frame.origin.x = 0
+            currentImageView.frame.origin.x = -currentImageView.frame.width
+        }, completion: { _ in
+            currentImageView.frame.origin.x = 0
+            newImageView.removeFromSuperview()
+        })
+        currentImageView.image = nextImage
     }
     
 }

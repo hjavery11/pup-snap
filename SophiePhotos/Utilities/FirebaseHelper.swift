@@ -29,19 +29,30 @@ class FirebaseHelper {
     func fetchImage(url: String) async throws -> UIImage? {
         let photoRef = Storage.storage().reference().child(url)
         let cacheKey = NSString(string: url)
+        
         if let cachedImage = cache.object(forKey: cacheKey) { // check in memory first so we have it in cache
             print("did return cached image")
             return cachedImage
         }
         
+        //see if its on disk
+        let fileName = url.replacingOccurrences(of: "/", with: "_")
+        if let diskImage = loadImageFromDisk(with: fileName) {
+            print("Returned image from disk")
+            cache.setObject(diskImage, forKey: cacheKey)
+            return diskImage
+        }
+        
         //otherwise download image and save to cache
         do {
-            let data = try await photoRef.data(maxSize: 2 * 1024 * 1024)
+            let data = try await photoRef.data(maxSize: 5 * 1024 * 1024)
             guard let image = UIImage(data: data) else {
                 print("error making image from data")
                 return nil
             }
             
+            
+            saveImageToDisk(image: image, fileName: fileName)
             cache.setObject(image, forKey: cacheKey)
             return image
             
@@ -53,62 +64,62 @@ class FirebaseHelper {
     
     
     
-    //    func uploadImage(photo: Photo, progressHandler: @escaping (Double) -> Void, successHandler: @escaping () -> Void, failureHandler: @escaping (Error) -> Void) -> StorageUploadTask? {
-    //        guard let imageData = photo.image?.jpegData(compressionQuality: 0.8) else {
-    //            print("Failed to get image data")
-    //            return nil
-    //        }
-    //
-    //        // create a reference to the file
-    //        let imageRef = storageRef.child((UUID().uuidString) + ".jpg")
-    //
-    //        // upload the file to the path images/[UUID].jpg
-    //        let uploadTask = imageRef.putData(imageData, metadata: nil) { metadata, error in
-    //            guard metadata != nil else {
-    //                print("Upload error: \(String(describing: error?.localizedDescription))")
-    //                failureHandler(error!)
-    //                return
-    //            }
-    //
-    //            imageRef.downloadURL { url, error in
-    //                guard let downloadURL = url else {
-    //                    print("Download URL error: \(String(describing: error?.localizedDescription))")
-    //                    failureHandler(error!)
-    //                    return
-    //                }
-    //
-    //                //add to db
-    //                var newPhoto = photo
-    //                newPhoto.setFilePath(to:imageRef.fullPath)
-    //                DatabaseHelper().addPhotoToDB(photo: newPhoto)
-    //
-    //                print("Download URL: \(downloadURL.absoluteString)")
-    //                successHandler()
-    //            }
-    //
-    //        }
-    //
-    //        // monitor upload progress
-    //        uploadTask.observe(.progress) { snapshot in
-    //            let percentComplete = 100.0 * Double(snapshot.progress!.completedUnitCount) / Double(snapshot.progress!.totalUnitCount)
-    //            print("Upload progress: \(percentComplete)")
-    //            progressHandler(percentComplete)
-    //        }
-    //
-    //        // handle upload failure
-    //
-    //        uploadTask.observe(.failure) { snapshot in
-    //            if let error = snapshot.error {
-    //                failureHandler(error)
-    //            }
-    //        }
-    //
-    //        return uploadTask
-    //
-    //    }
+        func uploadImage(photo: Photo, progressHandler: @escaping (Double) -> Void, successHandler: @escaping () -> Void, failureHandler: @escaping (Error) -> Void) -> StorageUploadTask? {
+            guard let imageData = photo.image?.jpegData(compressionQuality: 0.7) else {
+                print("Failed to get image data")
+                return nil
+            }
+    
+            // create a reference to the file
+            let imageRef = storageRef.child((UUID().uuidString) + ".jpg")
+    
+            // upload the file to the path images/[UUID].jpg
+            let uploadTask = imageRef.putData(imageData, metadata: nil) { metadata, error in
+                guard metadata != nil else {
+                    print("Upload error: \(String(describing: error?.localizedDescription))")
+                    failureHandler(error!)
+                    return
+                }
+    
+                imageRef.downloadURL { url, error in
+                    guard let downloadURL = url else {
+                        print("Download URL error: \(String(describing: error?.localizedDescription))")
+                        failureHandler(error!)
+                        return
+                    }
+    
+                    //add to db
+                    var newPhoto = photo
+                    newPhoto.setPath(imageRef.fullPath)
+                    DatabaseHelper().addPhotoToDB(photo: newPhoto)
+    
+                    print("Download URL: \(downloadURL.absoluteString)")
+                    successHandler()
+                }
+    
+            }
+    
+            // monitor upload progress
+            uploadTask.observe(.progress) { snapshot in
+                let percentComplete = 100.0 * Double(snapshot.progress!.completedUnitCount) / Double(snapshot.progress!.totalUnitCount)
+                print("Upload progress: \(percentComplete)")
+                progressHandler(percentComplete)
+            }
+    
+            // handle upload failure
+    
+            uploadTask.observe(.failure) { snapshot in
+                if let error = snapshot.error {
+                    failureHandler(error)
+                }
+            }
+    
+            return uploadTask
+    
+        }
     
     func deleteImage(url: String) async throws {
-        let deleteRef = baseStorageRef.child(url)
+        let deleteRef = Storage.storage().reference().child(url)
         try await deleteRef.delete()
     }
     

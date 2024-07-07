@@ -120,11 +120,7 @@ extension AppDelegate: UNUserNotificationCenterDelegate {
     func userNotificationCenter(_ center: UNUserNotificationCenter, didReceive response: UNNotificationResponse, withCompletionHandler completionHandler: @escaping () -> Void) {
         let userInfo = response.notification.request.content.userInfo
         self.logToFile(("Notification received in background or terminated: \(userInfo)"))
-        if let filePath = userInfo["filePath"] as? String {
-            print("Received file path: \(filePath)")
-            // Post notification with the file path to handle presentation in SceneDelegate
-            NotificationCenter.default.post(name: NSNotification.Name("PresentFullScreenPhotoVC"), object: nil, userInfo: ["filePath": filePath])
-        }
+        NotificationCenter.default.post(name: NSNotification.Name("PresentFullScreenPhotoVC"), object: nil, userInfo: userInfo)
         completionHandler()
     }
 }

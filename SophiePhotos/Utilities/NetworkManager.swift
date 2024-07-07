@@ -25,7 +25,7 @@ class NetworkManager {
             try await withThrowingTaskGroup(of: (Int, UIImage?).self) { group in
                 for (index, photo) in photos.enumerated() {
                     group.addTask {
-                        guard let image = try? await self.firebaseHelper.fetchImage(url: photo.path) else {
+                        guard let image = try? await self.firebaseHelper.fetchImage(url: photo.path ?? "") else {
                             return (index, nil)
                         }
                         return (index, image)
@@ -54,14 +54,30 @@ class NetworkManager {
 
     }
 
-//    func uploadPhoto(photo: Photo, progressHandler: @escaping (Double) -> Void, successHandler: @escaping () -> Void, failureHandler: @escaping (Error) -> Void) -> StorageUploadTask? {
-//        return firebaseHelper.uploadImage(photo: photo, progressHandler: progressHandler, successHandler: successHandler, failureHandler: failureHandler)
-//    }
-//  
-
-    func deletePhoto(imageURL: String) async throws {
-       try await firebaseHelper.deleteImage(url: imageURL)
+    func uploadPhoto(photo: Photo, progressHandler: @escaping (Double) -> Void, successHandler: @escaping () -> Void, failureHandler: @escaping (Error) -> Void) -> StorageUploadTask? {
+        return firebaseHelper.uploadImage(photo: photo, progressHandler: progressHandler, successHandler: successHandler, failureHandler: failureHandler)
     }
+  
+
+    func deletePhoto(photo: Photo) async throws {
+        do {
+            try await firebaseHelper.deleteImage(url: photo.path!)
+            try await dbHelper.deletePhotoFromDB(photo: photo)
+            print("deleted photo: \(photo.path ?? "") and id: \(String(describing: photo.id))")
+        } catch {
+            print("something went wrong deleting photo: \(error)")
+        }
+    }
+    
+    func getPhotoCount() async throws -> Int {
+        do {
+            let photos = try await dbHelper.fetchPhotos()
+            return photos.count
+        } catch {
+           throw error
+        }
+    }   
+   
 
 }
 

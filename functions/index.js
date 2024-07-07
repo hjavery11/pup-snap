@@ -79,10 +79,10 @@ exports.sendPushNotificationToTopic = functions.https.onRequest((req, res) => {
         });
 });
 
-// Function to send a notification when a new file is uploaded to Firebase Storage
-exports.notifyOnFileUpload = functions.storage.object().onFinalize(async (object) => {
-    const filePath = object.name;
-    console.log('New file uploaded:', filePath);
+exports.notifyOnNewPhotoEntry = functions.database.ref('/photos/{photoId}').onCreate(async (snapshot, context) => {
+    const photoId = context.params.photoId;
+    const photoData = snapshot.val();
+    console.log('New photo entry:', photoData);
 
     const message = {
         notification: {
@@ -90,7 +90,11 @@ exports.notifyOnFileUpload = functions.storage.object().onFinalize(async (object
             body: 'A new photo has been uploaded.',
         },
         data: {
-            filePath: filePath
+            id: photoId,
+            caption: photoData.caption || '',
+            path: photoData.path || '',
+            ratings: JSON.stringify(photoData.ratings || {}),
+            timestamp: String(photoData.timestamp || '')
         },
         topic: 'allUsers',
         android: {
@@ -110,7 +114,7 @@ exports.notifyOnFileUpload = functions.storage.object().onFinalize(async (object
                 'mutable-content': 1
             },
             fcm_options: {
-                image: `https://your-storage-bucket-url/${filePath}`
+                image: `https://your-storage-bucket-url/${photoData.path}`
             }
         }
     };
