@@ -50,6 +50,7 @@ class PhotoVC: UIViewController, UINavigationControllerDelegate, UIImagePickerCo
         setupCameraView()
         setupSophie()
         setupSpeechBubble()
+        
     }
     
     override func viewDidLayoutSubviews() {
@@ -217,7 +218,7 @@ class PhotoVC: UIViewController, UINavigationControllerDelegate, UIImagePickerCo
         let ratings = Photo.Rating(user: user, rating: rating)
         let photoID = UUID().uuidString
         
-        let photo = Photo(caption: caption, ratings: [ratings], id: photoID, image: image)
+        let photo = Photo(caption: caption, ratings: [ratings], id: photoID, image: image, timestamp: Int(Date().timeIntervalSince1970))
         
         let _ = NetworkManager.shared.uploadPhoto(
             photo: photo,

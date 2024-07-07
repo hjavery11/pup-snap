@@ -10,8 +10,7 @@ import UIKit
 class SophiePhotoCell: UICollectionViewCell {
 
     static let reuseID = "SophiePhotoCell"
-    let thumbnailImageView = UIImageView()
-    var imageURL: String = ""
+    var photo: Photo?
     
  
 
@@ -25,6 +24,7 @@ class SophiePhotoCell: UICollectionViewCell {
     }
 
     private func configure() {
+        let thumbnailImageView = UIImageView(image: photo?.image)
         addSubview(thumbnailImageView)
         thumbnailImageView.translatesAutoresizingMaskIntoConstraints = false
         thumbnailImageView.layoutIfNeeded()
@@ -39,8 +39,7 @@ class SophiePhotoCell: UICollectionViewCell {
         ])
     }
 
-    func set(image: UIImage, imageURL: String) {
-        thumbnailImageView.image = image
-        self.imageURL = imageURL
+    func set(photo: Photo) {
+        self.photo = photo
     }
 }

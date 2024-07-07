@@ -69,14 +69,14 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate, UITabBarControllerDeleg
     }
     
     @objc func presentFullScreenPhotoVC(_ notification: Notification) {
-        guard let userInfo = notification.userInfo, let filePath = userInfo["filePath"] as? String else { return }
-        let fullScreenVC = FullScreenPhotoVC(imageURL: filePath)
-        // fullScreenVC.modalPresentationStyle = .fullScreen
-        
-        let navigationController = UINavigationController(rootViewController: fullScreenVC)
-       // navigationController.modalPresentationStyle = .fullScreen
-        
-        window?.rootViewController?.present(navigationController, animated: true, completion: nil)
+//        guard let userInfo = notification.userInfo, let filePath = userInfo["filePath"] as? String else { return }
+//        let fullScreenVC = FullScreenPhotoVC(photo: Photo, indexPath: nil
+//        // fullScreenVC.modalPresentationStyle = .fullScreen
+//        
+//        let navigationController = UINavigationController(rootViewController: fullScreenVC)
+//       // navigationController.modalPresentationStyle = .fullScreen
+//        
+//        window?.rootViewController?.present(navigationController, animated: true, completion: nil)
         
     }
     

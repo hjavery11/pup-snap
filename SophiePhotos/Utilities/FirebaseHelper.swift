@@ -25,7 +25,8 @@ class FirebaseHelper {
         baseStorageRef = storage.reference()
 
     }
-
+    
+    //should be needed anymore to fetch all from storage. Now will fetch all from database first and then fetch each from storage
     func fetchAllImages() async throws -> ([UIImage], [String]) {
         var images: [UIImage] = []
         var urls: [String] = []
@@ -63,22 +64,25 @@ class FirebaseHelper {
         }
         return (images, urls)
     }
-
-    func fetchImage(url: String, completion: @escaping (UIImage?) -> Void) {
-        let photoRef = storage.reference().child(url)
-        // start download
-        photoRef.getData(maxSize: 10 * 1024 * 1024) { data, error in
-            if let error = error {
-                print("Issue loading image: \(url) with error: \(error.localizedDescription)")
-                completion(nil)
-            } else if let data = data, let image = UIImage(data: data) {
-               completion(image)
+    
+    
+    func fetchImage(url: String) async throws -> UIImage {
+        let photoRef = Storage.storage().reference().child(url)
+        
+        // Start download using async/await
+        do {
+            let data = try await photoRef.getData(maxSize: 10 * 1024 * 1024)
+            if let image = UIImage(data: data) {
+                return image
             } else {
-                completion(nil)
+                throw NSError(domain: "InvalidImageData", code: -1, userInfo: [NSLocalizedDescriptionKey: "Unable to convert data to image"])
             }
+        } catch {
+            print("Issue loading image: \(url) with error: \(error.localizedDescription)")
+            throw error
         }
     }
-
+    
     func uploadImage(photo: Photo, progressHandler: @escaping (Double) -> Void, successHandler: @escaping () -> Void, failureHandler: @escaping (Error) -> Void) -> StorageUploadTask? {
         guard let imageData = photo.image.jpegData(compressionQuality: 0.8) else {
             print("Failed to get image data")

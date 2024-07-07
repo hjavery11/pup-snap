@@ -19,20 +19,15 @@ class FullScreenPhotoVC: UIViewController {
     var closeButton = UIButton()
     var imageView = UIImageView()
     
-    var imageURL: String
+    var photo: Photo
     var indexPath: IndexPath?
     
-    init(imageURL: String, image: UIImage? = nil, indexPath: IndexPath? = nil) {
-        self.imageURL = imageURL
+    init(photo: Photo, indexPath: IndexPath?) {
+        self.photo = photo
         self.indexPath = indexPath
+        
         super.init(nibName: nil, bundle: nil)
        
-        // check which init
-        if let image = image {
-            self.imageView.image = image
-        } else {
-            fetchImage(url: imageURL)
-        }
     }
     
     required init?(coder: NSCoder) {
@@ -54,6 +49,7 @@ class FullScreenPhotoVC: UIViewController {
     }
     
     func configureImageView() {
+        imageView.image = photo.image
         imageView.translatesAutoresizingMaskIntoConstraints = false
         imageView.contentMode = .scaleAspectFit
         
@@ -79,27 +75,7 @@ class FullScreenPhotoVC: UIViewController {
         self.view.addGestureRecognizer(leftGesture)
         self.view.addGestureRecognizer(rightGesture)
     }
-   
-    func fetchImage(url: String) {
-        // start loading
-        activityIndicator.startAnimating()
-        
-            NetworkManager.shared.getPhoto(url) { [weak self] image in
-                guard let self = self else {return}
-                DispatchQueue.main.async {
-                    // stop loading
-                    self.activityIndicator.stopAnimating()
-                    
-                    if let image = image {
-                        self.imageView.image = image
-                    } else {
-                        print("Failed to fetch image")
-                    }
-                }
-            }
-        
-    }
-    
+
     func setupLoading() {
         // configure loading spinner
         activityIndicator.translatesAutoresizingMaskIntoConstraints = false

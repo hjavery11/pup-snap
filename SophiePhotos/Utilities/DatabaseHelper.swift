@@ -7,6 +7,7 @@
 
 import Foundation
 import FirebaseDatabaseInternal
+import UIKit
 
 class DatabaseHelper {
     
@@ -24,7 +25,7 @@ class DatabaseHelper {
         }
         
         let valueArray = ["caption": photo.caption,
-                          "ratings": ["user": photo.ratings[0].user, "rating": photo.ratings[0].rating],
+                          "ratings": [photo.ratings[0].user : photo.ratings[0].rating],
                           "path": path,
                           "timestamp": Int(Date().timeIntervalSince1970)] as [String : Any]
         
@@ -38,10 +39,76 @@ class DatabaseHelper {
                 print("Photo uploaded succesfully")
             }
             
-        }        
+        }
     }
     
+    func fetchAllPhotosFromDB() async throws -> [Photo] {
+        do {
+            let snapshot = try await ref.child("photos").getData()
+            guard let value = snapshot.value as? [String: [String: Any]] else {
+                throw NSError(domain: "Invalid data format", code: -1, userInfo: nil)
+            }
+            
+            var photos: [Photo] = []
+            
+            for (key, photoData) in value {
+                guard let caption = photoData["caption"] as? String,
+                      let ratingsArray = photoData["ratings"] as? [String: Int],
+                      let path = photoData["path"] as? String,
+                      let timestamp = photoData["timestamp"] as? Int else {
+                    print("Invalid data for photo ID \(key)")
+                    continue
+                }
+                
+                var ratings: [Photo.Rating] = []
+                
+                for(user, rating) in ratingsArray {
+                    let ratingObj = Photo.Rating(user: user, rating: rating)
+                    ratings.append(ratingObj)
+                }
+                
+                var photoImage = UIImage()
+                
+                if let image = loadImageFromDisk(with: path) { // first check to see if we have the image cached before getting from storage
+                    photoImage = image
+                } else {
+                    do {
+                        photoImage = try await FirebaseHelper().fetchImage(url: path)
+                    } catch {
+                        print("Error retrieving image from storage for: \(path)")
+                        throw error
+                    }
+                }
+                
+                let photo = Photo(caption: caption, ratings: ratings, id: key, image: photoImage, imagePath: path, timestamp: timestamp)
+                
+                photos.append(photo)
+            }
+            
+            return photos
+        } catch {
+            print("Error fetching photos: \(error.localizedDescription)")
+            throw error
+        }
+    }
+    
+    // Function to get local file URL
+    private func getLocalFileURL(fileName: String) -> URL {
+        let paths = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)
+        let documentDirectory = paths[0]
+        return documentDirectory.appendingPathComponent(fileName)
+    }
+    
+    // Function to load image from disk
+    private func loadImageFromDisk(with fileName: String) -> UIImage? {
+        let fileURL = getLocalFileURL(fileName: fileName)
+        if let data = try? Data(contentsOf: fileURL) {
+            return UIImage(data: data)
+        }
+        return nil
+    }
 }
+
 
 // All this is DB setup script for syncing out of sync firebase storage with realtime database
 //import Firebase
@@ -53,10 +120,10 @@ class DatabaseHelper {
 //class PhotoDatabaseManager {
 //
 //    static let shared = PhotoDatabaseManager()
-//    
+//
 //    private init() {
 //    }
-//    
+//
 //    private let databaseRef = Database.database().reference()
 //    private let storageRef = Storage.storage().reference().child("images")
 //    private let cache = NSCache<NSString, UIImage>()
@@ -70,7 +137,7 @@ class DatabaseHelper {
 //    private func createPhotoData(id: String, path: String) -> [String: Any] {
 //        let photoData: [String: Any] = [
 //            "caption": "",
-//            "ratings": ["user" : PersistenceManager.retrieveID(), "rating" : 3],
+//            "ratings": [PersistenceManager.retrieveID() : 3],
 //            "path": path,
 //            "timestamp": Int(Date().timeIntervalSince1970)
 //        ]
@@ -87,12 +154,12 @@ class DatabaseHelper {
 //            }
 //        }
 //    }
-//    
+//
 //    // Function to fetch all images and their URLs
 //    func fetchAllImages() async throws -> Void {
 //       print("Attemtping image fix")
 //        var photosData: [String: Any] = [:]
-//        
+//
 //        do {
 //            let result = try await storageRef.listAll()
 //            for item in result.items {
@@ -102,14 +169,14 @@ class DatabaseHelper {
 //                let photoData = createPhotoData(id: uniqueID, path: item.fullPath)
 //                photosData.merge(photoData) { (current, _) in current }
 //            }
-//            
+//
 //            // Save photo metadata to the database
 //            savePhotoMetadataToDatabase(photoData: photosData)
 //            //print(photosData)
 //        } catch {
 //            print("Error listing items: \(error)")
 //        }
-//        
-//       
+//
+//
 //    }
 //}

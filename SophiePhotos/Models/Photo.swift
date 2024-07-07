@@ -7,21 +7,23 @@
 
 import UIKit
 
-struct Photo {
+struct Photo: Hashable {
     let caption: String
     let ratings: [Rating]
     let id: String
-    let image: UIImage
+    var image: UIImage
     var imagePath: String?
+    var timestamp: Int
     
-    struct Rating {
+    struct Rating: Hashable {
         let user: String
         let rating: Int
     }
     
     mutating func setFilePath(to imagePath: String) {
         self.imagePath = imagePath
-    }
+    }    
+    
 }
 
 
