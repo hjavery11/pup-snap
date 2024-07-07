@@ -17,81 +17,58 @@ class DatabaseHelper {
         ref = Database.database().reference()
     }
     
-    func addPhotoToDB(photo: Photo) {
-        
-        guard let path = photo.imagePath else {
-            print("no image path set, cancelling upload to DB")
-            return
-        }
-        
-        let valueArray = ["caption": photo.caption,
-                          "ratings": [photo.ratings[0].user : photo.ratings[0].rating],
-                          "path": path,
-                          "timestamp": Int(Date().timeIntervalSince1970)] as [String : Any]
-        
-        let uniqueID = photo.id
-        
-        self.ref.child("photos").child(uniqueID).updateChildValues(valueArray) { error, _ in
-            if let error = error {
-                print("Error setting value: \(error.localizedDescription)")
-                print("ValueArray: \(valueArray)")
-            } else {
-                print("Photo uploaded succesfully")
-            }
-            
-        }
-    }
+//    func addPhotoToDB(photo: Photo) {
+//        
+//        guard let path = photo.imagePath else {
+//            print("no image path set, cancelling upload to DB")
+//            return
+//        }
+//        
+//        let valueArray = ["caption": photo.caption,
+//                          "ratings": [photo.ratings[0].user : photo.ratings[0].rating],
+//                          "path": path,
+//                          "timestamp": Int(Date().timeIntervalSince1970)] as [String : Any]
+//        
+//        let uniqueID = photo.id
+//        
+//        self.ref.child("photos").child(uniqueID).updateChildValues(valueArray) { error, _ in
+//            if let error = error {
+//                print("Error setting value: \(error.localizedDescription)")
+//                print("ValueArray: \(valueArray)")
+//            } else {
+//                print("Photo uploaded succesfully")
+//            }
+//            
+//        }
+//    }
     
-    func fetchAllPhotosFromDB() async throws -> [Photo] {
-        do {
+    func fetchPhotos() async throws -> [Photo]{
+        do{
             let snapshot = try await ref.child("photos").getData()
-            guard let value = snapshot.value as? [String: [String: Any]] else {
-                throw NSError(domain: "Invalid data format", code: -1, userInfo: nil)
+            
+            guard let value = snapshot.value as? [String: Any] else {
+                throw NSError(domain: "", code: -1)
             }
             
-            var photos: [Photo] = []
+    
             
-            for (key, photoData) in value {
-                guard let caption = photoData["caption"] as? String,
-                      let ratingsArray = photoData["ratings"] as? [String: Int],
-                      let path = photoData["path"] as? String,
-                      let timestamp = photoData["timestamp"] as? Int else {
-                    print("Invalid data for photo ID \(key)")
-                    continue
-                }
-                
-                var ratings: [Photo.Rating] = []
-                
-                for(user, rating) in ratingsArray {
-                    let ratingObj = Photo.Rating(user: user, rating: rating)
-                    ratings.append(ratingObj)
-                }
-                
-                var photoImage = UIImage()
-                
-                if let image = loadImageFromDisk(with: path) { // first check to see if we have the image cached before getting from storage
-                    photoImage = image
-                } else {
-                    do {
-                        photoImage = try await FirebaseHelper().fetchImage(url: path)
-                    } catch {
-                        print("Error retrieving image from storage for: \(path)")
-                        throw error
-                    }
-                }
-                
-                let photo = Photo(caption: caption, ratings: ratings, id: key, image: photoImage, imagePath: path, timestamp: timestamp)
-                
-                photos.append(photo)
-            }
             
+            let jsonData = try JSONSerialization.data(withJSONObject: value)
+            let decoder = JSONDecoder()
+            let photoDictionary = try decoder.decode(PhotoDictionary.self, from: jsonData)
+            
+            
+            
+            
+            let photos = Array<Photo>(photoDictionary.values)
             return photos
         } catch {
-            print("Error fetching photos: \(error.localizedDescription)")
+            print("error in DatabaseHelper fetchPhotos()")
             throw error
         }
     }
     
+
     // Function to get local file URL
     private func getLocalFileURL(fileName: String) -> URL {
         let paths = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)

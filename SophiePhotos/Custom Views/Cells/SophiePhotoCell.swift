@@ -11,6 +11,7 @@ class SophiePhotoCell: UICollectionViewCell {
 
     static let reuseID = "SophiePhotoCell"
     var photo: Photo?
+    var thumbnailImageView = UIImageView()
     
  
 
@@ -24,7 +25,6 @@ class SophiePhotoCell: UICollectionViewCell {
     }
 
     private func configure() {
-        let thumbnailImageView = UIImageView(image: photo?.image)
         addSubview(thumbnailImageView)
         thumbnailImageView.translatesAutoresizingMaskIntoConstraints = false
         thumbnailImageView.layoutIfNeeded()
@@ -41,5 +41,6 @@ class SophiePhotoCell: UICollectionViewCell {
 
     func set(photo: Photo) {
         self.photo = photo
+        thumbnailImageView.image = photo.image
     }
 }

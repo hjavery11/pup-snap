@@ -15,31 +15,45 @@ class NetworkManager {
 
     private init() {}
 
-    func getPhotos() async -> [Photo] {
+    func fetchCompletePhotos() async throws -> [Photo] {
+        var photos: [Photo] = []
+        
         do {
-            let photos = try await dbHelper.fetchAllPhotosFromDB()
-            return photos
+            photos = try await dbHelper.fetchPhotos()
+            print("done with database fetch")
+            
+            try await withThrowingTaskGroup(of: (Int, UIImage?).self) { group in
+                for (index, photo) in photos.enumerated() {
+                    group.addTask {
+                        let image = try? await self.firebaseHelper.fetchImage(url: photo.path)
+                        return (index, image)
+                    }
+                }
+                
+                for try await (index, image) in group {
+                    if let image = image {
+                        photos[index].image = image
+                    }
+                }
+                
+            }
         } catch {
-            print("error on getting photos: \(error)")
-            return []
+            print("Error in fetching compelte photos: \(error)")
+            throw error
         }
+        
+        return photos
+
     }
 
-    func uploadPhoto(photo: Photo, progressHandler: @escaping (Double) -> Void, successHandler: @escaping () -> Void, failureHandler: @escaping (Error) -> Void) -> StorageUploadTask? {
-        return firebaseHelper.uploadImage(photo: photo, progressHandler: progressHandler, successHandler: successHandler, failureHandler: failureHandler)
-    }
-
-    func getPhoto(_ url: String) async -> UIImage? {
-        do {
-            return try await firebaseHelper.fetchImage(url: url)
-        } catch {
-            print("error getting photo at url: \(url)")
-            return nil
-        }
-    }
+//    func uploadPhoto(photo: Photo, progressHandler: @escaping (Double) -> Void, successHandler: @escaping () -> Void, failureHandler: @escaping (Error) -> Void) -> StorageUploadTask? {
+//        return firebaseHelper.uploadImage(photo: photo, progressHandler: progressHandler, successHandler: successHandler, failureHandler: failureHandler)
+//    }
+//  
 
     func deletePhoto(imageURL: String) async throws {
        try await firebaseHelper.deleteImage(url: imageURL)
     }
 
 }
+

@@ -7,24 +7,21 @@
 
 import UIKit
 
-struct Photo: Hashable {
+struct Photo: Decodable, Hashable {
     let caption: String
-    let ratings: [Rating]
-    let id: String
-    var image: UIImage
-    var imagePath: String?
-    var timestamp: Int
+    let ratings: [String: Int]
+    let timestamp: Int
+    let path: String
+    var image: UIImage?
     
-    struct Rating: Hashable {
-        let user: String
-        let rating: Int
+    private enum CodingKeys: String, CodingKey {
+        case caption, ratings, timestamp, path
     }
     
-    mutating func setFilePath(to imagePath: String) {
-        self.imagePath = imagePath
-    }    
-    
+    mutating func setImage(to image: UIImage) {
+        self.image = image
+    }
 }
 
-
+typealias PhotoDictionary = [String: Photo]
 

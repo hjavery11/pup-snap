@@ -23,16 +23,12 @@ class FeedVC: UIViewController, FullScreenPhotoVCDelegate {
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .systemGray6
-    
+        
         configureNavigationBar()
         createLoadingView()
-        Task {
-            await fetchPhotos()
-            configureCollectionView()
-            configureDataSource()
-            applySnapshot()
-            dismissLoadingView()
-        }
+        
+        fetchPhotos()
+        
         
     }
     
@@ -67,9 +63,19 @@ class FeedVC: UIViewController, FullScreenPhotoVCDelegate {
         ])
     }
     
-    func fetchPhotos() async {
-        photoArray = await NetworkManager.shared.getPhotos()
-        print(photoArray)
+    func fetchPhotos() {
+        Task{
+            do {
+                photoArray = try await NetworkManager.shared.fetchCompletePhotos()
+                configureCollectionView()
+                configureDataSource()
+                applySnapshot()
+                dismissLoadingView()
+            } catch {
+                print("Error: \(error)")
+            }
+           
+        }
     }
     
     func createThreeColumnFlowLayout() -> UICollectionViewFlowLayout {
@@ -138,13 +144,13 @@ class FeedVC: UIViewController, FullScreenPhotoVCDelegate {
     }
     
     func checkForNewImages() {
-        Task {
-            let newPhotos = await NetworkManager.shared.getPhotos()
-            if newPhotos.count != photoArray.count {
-                photoArray = newPhotos
-                applySnapshot()
-            }
-        }
+//        Task {
+//            let newPhotos = await NetworkManager.shared.getPhotos()
+//            if newPhotos.count != photoArray.count {
+//                photoArray = newPhotos
+//                applySnapshot()
+//            }
+//        }
     }
     
     func deleteImage(at indexPath: IndexPath) {        
