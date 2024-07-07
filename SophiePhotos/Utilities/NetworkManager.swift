@@ -25,16 +25,24 @@ class NetworkManager {
             try await withThrowingTaskGroup(of: (Int, UIImage?).self) { group in
                 for (index, photo) in photos.enumerated() {
                     group.addTask {
-                        let image = try? await self.firebaseHelper.fetchImage(url: photo.path)
+                        guard let image = try? await self.firebaseHelper.fetchImage(url: photo.path) else {
+                            return (index, nil)
+                        }
                         return (index, image)
                     }
                 }
                 
+                var photosWithImages: [Photo] = []
+                
                 for try await (index, image) in group {
                     if let image = image {
-                        photos[index].image = image
+                        var photo = photos[index]
+                        photo.image = image
+                        photosWithImages.append(photo)
                     }
                 }
+                
+                photos = photosWithImages
                 
             }
         } catch {

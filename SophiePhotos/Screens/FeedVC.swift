@@ -129,7 +129,7 @@ class FeedVC: UIViewController, FullScreenPhotoVCDelegate {
         
         guard let photo = cell.photo else { return }
         
-        let fullScreenVC = FullScreenPhotoVC(photo: photo, indexPath: nil)
+        let fullScreenVC = FullScreenPhotoVC(photo: photo, indexPath: indexPath)
         fullScreenVC.delegate = self
         if let navController = self.navigationController {
             navController.pushViewController(fullScreenVC, animated: true)
@@ -154,25 +154,24 @@ class FeedVC: UIViewController, FullScreenPhotoVCDelegate {
     }
     
     func deleteImage(at indexPath: IndexPath) {        
-//        Task {
-//            do {
-//                try await NetworkManager.shared.deletePhoto(imageURL: urlArray[indexPath.item])
-//                imageArray.remove(at: indexPath.item)
-//                urlArray.remove(at: indexPath.item)
-//               
-//                applySnapshot()
-//               
-//            } catch {
-//                let alert = UIAlertController(title: "Error", message: "Could not delete photo: \(error.localizedDescription)", preferredStyle: .alert)
-//                let alertAction = UIAlertAction(title: "Ok", style: .default, handler: nil)
-//             
-//                alert.addAction(alertAction)
-//            
-//                present(alert, animated: true, completion: nil)
-//                print("Error occured deleting photo: \(error)")
-//            }
-//           
-//        }
+        Task {
+            do {
+                try await NetworkManager.shared.deletePhoto(imageURL: photoArray[indexPath.item].path)
+                photoArray.remove(at: indexPath.item)              
+               
+                applySnapshot()
+               
+            } catch {
+                let alert = UIAlertController(title: "Error", message: "Could not delete photo: \(error.localizedDescription)", preferredStyle: .alert)
+                let alertAction = UIAlertAction(title: "Ok", style: .default, handler: nil)
+             
+                alert.addAction(alertAction)
+            
+                present(alert, animated: true, completion: nil)
+                print("Error occured deleting photo: \(error)")
+            }
+           
+        }
       
     }
     
