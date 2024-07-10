@@ -6,12 +6,11 @@
 
 
 ## Features
+### Add a New Photo
+![photo share](SophiePhotos/Assets/upload.png)
 
 ### Scroll your Feed
 ![feed photo](SophiePhotos/Assets/feed.gif)
-
-### Add a New Photo
-![photo share](SophiePhotos/Assets/upload.png)
 
 ### Receive Notifications
 ![notif](SophiePhotos/Assets/push-notification.gif)
@@ -32,3 +31,6 @@
   
 
 - ****Sort your feed by cuteness****
+
+### Future Plans
+- ****Integrate pairing keys to allow anybody to use the app to share photos of their own dog
