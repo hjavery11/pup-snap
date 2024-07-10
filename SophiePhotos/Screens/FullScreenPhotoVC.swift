@@ -19,6 +19,8 @@ class FullScreenPhotoVC: UIViewController {
     var closeButton = UIButton()
     var imageView = UIImageView()
     var captionView = UILabel()
+    var totalRatingView = UILabel()
+    var ratingView = RatingViewController()
     
     var photo: Photo
     var indexPath: IndexPath?
@@ -41,6 +43,9 @@ class FullScreenPhotoVC: UIViewController {
       
         configureImageView()
         configureCaptionView()
+        configureTotalRatingView()
+        configureRatingView()
+        
         if self.indexPath != nil {
             // only show nav bar if coming from feed view, otherwise its a push notification without nav bar
             configureNavBar()
@@ -84,6 +89,12 @@ class FullScreenPhotoVC: UIViewController {
         
     }
     
+    override func viewDidLayoutSubviews() {
+        configureCaptionView()
+        configureTotalRatingView()
+        configureRatingView()
+    }
+    
     func configureImageView() {
         imageView.image = photo.image
         imageView.translatesAutoresizingMaskIntoConstraints = false
@@ -105,14 +116,27 @@ class FullScreenPhotoVC: UIViewController {
         captionView.text = photo.caption
         captionView.font = UIFont(descriptor: .preferredFontDescriptor(withTextStyle: .headline), size: 24)
         captionView.textColor = .label
-        captionView.textAlignment = .center
-        captionView.numberOfLines = 3
+        
+        let width = (view.frame.width) / 2
         
         NSLayoutConstraint.activate([
-            captionView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-            captionView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            captionView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -20),
-            captionView.widthAnchor.constraint(equalTo: view.widthAnchor)
+            captionView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 10),
+            captionView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 10),
+            captionView.widthAnchor.constraint(equalToConstant: width)
+        ])
+    }
+    
+    func configureTotalRatingView() {
+        view.addSubview(totalRatingView)
+        totalRatingView.text = "Cute Rating: \(photo.averageRating)/5"
+        totalRatingView.translatesAutoresizingMaskIntoConstraints = false
+        
+        let width = (view.frame.width - 20) / 2
+        
+        NSLayoutConstraint.activate([
+            totalRatingView.topAnchor.constraint(equalTo: captionView.topAnchor),
+            totalRatingView.leadingAnchor.constraint(equalTo: captionView.trailingAnchor, constant: 10),
+            totalRatingView.widthAnchor.constraint(equalToConstant: width)
         ])
     }
     
@@ -167,5 +191,38 @@ class FullScreenPhotoVC: UIViewController {
         }
         
     }
+    
+    func configureRatingView() {
+        addChild(ratingView)
+        view.addSubview(ratingView.view)
+        ratingView.view.translatesAutoresizingMaskIntoConstraints = false
+        ratingView.didMove(toParent: self)
+        
+        setUserRating()
+        layoutRatingView()
+        
+    }
+    
+    func setUserRating() {
+        let userID = PersistenceManager.retrieveID()
+        let userRating = photo.ratings[userID]
+        
+        ratingView.rating = userRating ?? 0
+    }
+    
+    
+    func layoutRatingView() {
+        view.layoutIfNeeded()
+        
+        NSLayoutConstraint.activate([
+            ratingView.view.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            ratingView.view.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            ratingView.view.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -20),
+            ratingView.view.widthAnchor.constraint(equalTo: view.widthAnchor)
+        ])
+        
+        ratingView.didMove(toParent: self)
+    }
+   
 
 }

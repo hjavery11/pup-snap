@@ -36,7 +36,7 @@ class RatingViewController: UIViewController {
         
         setupStarButtons()
     }
-    
+
     
     
     func setupStarButtons() {

@@ -30,5 +30,5 @@ struct SpeechBubbleView: View {
 }
 
 #Preview {
-    SpeechBubbleView(text: "This is a long text message that spans multiple lines to test this")
+    SpeechBubbleView(text: "This is a long text message that spans multiple lines to test this.")
 }

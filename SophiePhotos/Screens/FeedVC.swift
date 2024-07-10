@@ -208,6 +208,10 @@ class FeedVC: UIViewController, FullScreenPhotoVCDelegate {
         
         let currentImageView = currentVC.imageView
         
+        //change captions
+        currentVC.captionView.text = priorPhoto.caption
+        //change rating
+        
         // Create a new image view for the prior image
         let newImageView = UIImageView(image: priorPhoto.image)
         newImageView.contentMode = .scaleAspectFit
@@ -232,14 +236,22 @@ class FeedVC: UIViewController, FullScreenPhotoVCDelegate {
         let nextIndex = currentImageIndex + 1
         guard nextIndex >= 0, nextIndex < photoArray.count else { return }
         
-        let nextImage = photoArray[nextIndex].image
+        let nextPhoto = photoArray[nextIndex]
+        let newIndexPath = IndexPath(item: nextIndex, section: currentVC.indexPath?.section ?? 0) // future proof of more than 0 sections
         
         self.currentImageIndex = nextIndex
         
+        currentVC.photo = nextPhoto
+        currentVC.indexPath = newIndexPath
+        
         let currentImageView = currentVC.imageView
         
+        //change captions
+        currentVC.captionView.text = nextPhoto.caption
+        //change rating
+        
         // Create a new image view for the next image
-        let newImageView = UIImageView(image: nextImage)
+        let newImageView = UIImageView(image: nextPhoto.image)
         newImageView.contentMode = .scaleAspectFit
         newImageView.frame = currentImageView.bounds
         newImageView.frame.origin.x = currentImageView.frame.width
@@ -253,7 +265,7 @@ class FeedVC: UIViewController, FullScreenPhotoVCDelegate {
             currentImageView.frame.origin.x = 0
             newImageView.removeFromSuperview()
         })
-        currentImageView.image = nextImage
+        currentImageView.image = nextPhoto.image
     }
     
 }

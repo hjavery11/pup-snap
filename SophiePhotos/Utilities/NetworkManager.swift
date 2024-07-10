@@ -49,8 +49,8 @@ class NetworkManager {
             print("Error in fetching compelte photos: \(error)")
             throw error
         }
-        
-        return photos
+        let sortedPhotos = photos.sorted()
+        return sortedPhotos
 
     }
 

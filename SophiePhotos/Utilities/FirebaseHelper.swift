@@ -87,14 +87,19 @@ class FirebaseHelper {
                         failureHandler(error!)
                         return
                     }
-    
-                    //add to db
-                    var newPhoto = photo
-                    newPhoto.setPath(imageRef.fullPath)
-                    DatabaseHelper().addPhotoToDB(photo: newPhoto)
-    
+                    
+                    // Perform database operations on a background queue
+                    DispatchQueue.global(qos: .background).async {
+                        var newPhoto = photo
+                        newPhoto.setPath(imageRef.fullPath)
+                        DatabaseHelper().addPhotoToDB(photo: newPhoto)
+                    }
                     print("Download URL: \(downloadURL.absoluteString)")
-                    successHandler()
+                    
+                    DispatchQueue.main.async {
+                        successHandler()
+
+                    }
                 }
     
             }
