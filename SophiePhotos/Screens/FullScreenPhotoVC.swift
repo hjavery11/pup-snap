@@ -41,14 +41,14 @@ class FullScreenPhotoVC: UIViewController, RatingViewControllerDelegate {
         view.backgroundColor = .systemBackground
       
         configureImageView()
-        configureCaptionView()
-       // configureTotalRatingView()
-        configureRatingView()
+        configureCaptionView()     
         
         if self.indexPath != nil {
             // only show nav bar if coming from feed view, otherwise its a push notification without nav bar
             configureNavBar()
-        }      
+            //dont show rating view if no indexPath
+            configureRatingView()
+        }
         setupLoading()
         addGestures()
         
@@ -67,7 +67,7 @@ class FullScreenPhotoVC: UIViewController, RatingViewControllerDelegate {
                 do {
                     if let image = try await FirebaseHelper().fetchImage(url: path) {
                         DispatchQueue.main.async {
-                            self.photo.setImage(to: image)
+                            self.photo.image = image
                             self.imageView.image = image
                             self.activityIndicator.stopAnimating() // Hide loading indicator
                         }
@@ -197,7 +197,7 @@ class FullScreenPhotoVC: UIViewController, RatingViewControllerDelegate {
     
     func setUserRating() {
         let userID = PersistenceManager.retrieveID()
-        if let userRating = photo.ratings[userID] {
+        if let userRating = photo.ratings[userID], userRating > 0{
             ratingView.rating = userRating
             print("user rating is \(userRating)")
             for button in ratingView.starButtons {

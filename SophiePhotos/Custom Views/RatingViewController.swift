@@ -18,12 +18,27 @@ class RatingViewController: UIViewController {
     var delegate: RatingViewControllerDelegate?
   
     let starButtons: [UIButton] = {
+        var button1: UIImage?
+        var button2: UIImage?
+        
+        if #available(iOS 17.0, *) {
+            button1 = UIImage(systemName: "dog", withConfiguration: UIImage.SymbolConfiguration(pointSize: 32, weight: .light))
+            button2 = UIImage(systemName: "dog.fill", withConfiguration: UIImage.SymbolConfiguration(pointSize: 32, weight: .light))
+                                
+        } else if #available(iOS 15.0, *) {
+            button1 = UIImage(systemName: "heart", withConfiguration: UIImage.SymbolConfiguration(pointSize: 32, weight: .light))
+            button2 = UIImage(systemName: "heart.fill", withConfiguration: UIImage.SymbolConfiguration(pointSize: 32, weight: .light))
+        } else {
+            button1 = UIImage(systemName: "circle", withConfiguration: UIImage.SymbolConfiguration(pointSize: 32, weight: .light))
+            button2 = UIImage(systemName: "circle.fill", withConfiguration: UIImage.SymbolConfiguration(pointSize: 32, weight: .light))
+        }
+        
         var buttons = [UIButton]()
         for _ in 1...5 {
            // var configuration = UIButton.Configuration.plain()
             let button = UIButton()
-            button.setImage(UIImage(systemName: "dog", withConfiguration: UIImage.SymbolConfiguration(pointSize: 32, weight: .light)), for: .normal)
-            button.setImage(UIImage(systemName: "dog.fill", withConfiguration: UIImage.SymbolConfiguration(pointSize: 32, weight: .light)), for: .selected)
+            button.setImage(button1, for: .normal)
+            button.setImage(button2, for: .selected)
             button.tintColor = .systemPurple
             buttons.append(button)
         }
