@@ -12,7 +12,7 @@ protocol FullScreenPhotoVCDelegate: AnyObject {
     func deleteImage(at indexPath: IndexPath)
 }
 
-class FullScreenPhotoVC: UIViewController {
+class FullScreenPhotoVC: UIViewController, RatingViewControllerDelegate {
 
     weak var delegate: FullScreenPhotoVCDelegate?
     var activityIndicator = UIActivityIndicatorView(style: .large)
@@ -30,7 +30,6 @@ class FullScreenPhotoVC: UIViewController {
         self.indexPath = indexPath
         
         super.init(nibName: nil, bundle: nil)
-       
     }
     
     required init?(coder: NSCoder) {
@@ -43,7 +42,7 @@ class FullScreenPhotoVC: UIViewController {
       
         configureImageView()
         configureCaptionView()
-        configureTotalRatingView()
+       // configureTotalRatingView()
         configureRatingView()
         
         if self.indexPath != nil {
@@ -89,12 +88,6 @@ class FullScreenPhotoVC: UIViewController {
         
     }
     
-    override func viewDidLayoutSubviews() {
-        configureCaptionView()
-        configureTotalRatingView()
-        configureRatingView()
-    }
-    
     func configureImageView() {
         imageView.image = photo.image
         imageView.translatesAutoresizingMaskIntoConstraints = false
@@ -117,12 +110,10 @@ class FullScreenPhotoVC: UIViewController {
         captionView.font = UIFont(descriptor: .preferredFontDescriptor(withTextStyle: .headline), size: 24)
         captionView.textColor = .label
         
-        let width = (view.frame.width) / 2
         
         NSLayoutConstraint.activate([
             captionView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 10),
             captionView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 10),
-            captionView.widthAnchor.constraint(equalToConstant: width)
         ])
     }
     
@@ -195,6 +186,7 @@ class FullScreenPhotoVC: UIViewController {
     func configureRatingView() {
         addChild(ratingView)
         view.addSubview(ratingView.view)
+        ratingView.delegate = self
         ratingView.view.translatesAutoresizingMaskIntoConstraints = false
         ratingView.didMove(toParent: self)
         
@@ -205,9 +197,19 @@ class FullScreenPhotoVC: UIViewController {
     
     func setUserRating() {
         let userID = PersistenceManager.retrieveID()
-        let userRating = photo.ratings[userID]
-        
-        ratingView.rating = userRating ?? 0
+        if let userRating = photo.ratings[userID] {
+            ratingView.rating = userRating
+            print("user rating is \(userRating)")
+            for button in ratingView.starButtons {
+                button.isUserInteractionEnabled = false
+            }
+        } else {
+            ratingView.rating = 0
+            for button in ratingView.starButtons {
+                button.isUserInteractionEnabled = true
+            }
+        }
+       
     }
     
     
@@ -220,8 +222,24 @@ class FullScreenPhotoVC: UIViewController {
             ratingView.view.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -20),
             ratingView.view.widthAnchor.constraint(equalTo: view.widthAnchor)
         ])
+    }
+    
+    func updateRating(rating: Int) {
+        photo.addRating(user: PersistenceManager.retrieveID(), rating: rating)
+        setUserRating()
         
-        ratingView.didMove(toParent: self)
+        Task {
+            do {
+                try await NetworkManager.shared.updatePhotoRating(photo: self.photo)
+                ratingView.view.removeFromSuperview()
+                view.addSubview(ratingView.view)
+                layoutRatingView()
+                
+            } catch {
+                print("Error updating photo rating: \(error.localizedDescription)")
+            }
+        }
+        
     }
    
 

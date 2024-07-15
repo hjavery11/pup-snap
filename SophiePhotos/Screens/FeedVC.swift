@@ -211,6 +211,7 @@ class FeedVC: UIViewController, FullScreenPhotoVCDelegate {
         //change captions
         currentVC.captionView.text = priorPhoto.caption
         //change rating
+        currentVC.setUserRating()
         
         // Create a new image view for the prior image
         let newImageView = UIImageView(image: priorPhoto.image)
@@ -249,6 +250,7 @@ class FeedVC: UIViewController, FullScreenPhotoVCDelegate {
         //change captions
         currentVC.captionView.text = nextPhoto.caption
         //change rating
+        currentVC.setUserRating()
         
         // Create a new image view for the next image
         let newImageView = UIImageView(image: nextPhoto.image)

@@ -10,7 +10,7 @@ import UIKit
 struct Photo: Decodable, Hashable {
 
     let caption: String
-    let ratings: [String: Int]
+    var ratings: [String: Int]
     let timestamp: Int
     var path: String?
     var image: UIImage?
@@ -30,6 +30,10 @@ struct Photo: Decodable, Hashable {
     
     mutating func setPath(_ path: String) {
         self.path = path
+    }
+    
+    mutating func addRating(user: String, rating: Int){
+        ratings.updateValue(rating, forKey: user)
     }
     
 }

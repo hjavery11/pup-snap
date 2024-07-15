@@ -43,6 +43,20 @@ class DatabaseHelper {
         }
     }
     
+    func editPhotoRating(photo:Photo) async throws{
+        guard let photoId = photo.id else {
+            print("No unique photo found for photo")
+            throw SophieError.photoAccess
+        }
+        
+        let ratingRef = ref.child(photoId).child("ratings")
+        
+        try await ratingRef.updateChildValues(photo.ratings)
+        
+
+        
+    }
+    
     func deletePhotoFromDB(photo: Photo) async throws{
         if let id = photo.id{
             try await ref.child(id).removeValue()
@@ -93,6 +107,7 @@ class DatabaseHelper {
         return nil
     }
 }
+
 
 
 // All this is DB setup script for syncing out of sync firebase storage with realtime database

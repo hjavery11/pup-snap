@@ -10,6 +10,7 @@ import Firebase
 import UserNotifications
 import FirebaseAppCheck
 import FirebaseCore
+import FirebaseAuth
 
 @main
 class AppDelegate: UIResponder, UIApplicationDelegate {
@@ -27,6 +28,14 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         AppCheck.setAppCheckProviderFactory(providerFactory)
        
         FirebaseApp.configure()
+        
+        //anon signin for firebase auth
+        Auth.auth().signInAnonymously { authResult, error in
+            print("anon sign in for firebase with authResult: \(String(describing: authResult)) and errors: \(String(describing: error))")
+            guard let user = authResult?.user else { return }
+            let isAnonymous = user.isAnonymous //true
+            let uid = user.uid
+        }
    
         Messaging.messaging().delegate = self
         UNUserNotificationCenter.current().delegate = self

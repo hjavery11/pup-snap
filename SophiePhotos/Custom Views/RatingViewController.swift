@@ -7,10 +7,16 @@
 
 import UIKit
 
+protocol RatingViewControllerDelegate {
+    func updateRating(rating: Int)
+}
+
 class RatingViewController: UIViewController {
     
     weak var lastClickedButton: UIButton?
-    
+    var enabled: Bool = true
+    var delegate: RatingViewControllerDelegate?
+  
     let starButtons: [UIButton] = {
         var buttons = [UIButton]()
         for _ in 1...5 {
@@ -52,7 +58,7 @@ class RatingViewController: UIViewController {
             button.tag = index + 1
             button.addTarget(self, action: #selector(starButtonTapped(_:)), for: .touchUpInside)
         }
-        
+      
         NSLayoutConstraint.activate([
                    stackView.topAnchor.constraint(equalTo: view.topAnchor),
                    stackView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
@@ -71,6 +77,14 @@ class RatingViewController: UIViewController {
             rating = button.tag
             lastClickedButton = button
         }
+        
+        if let viewControllers = navigationController?.viewControllers {
+                    for viewController in viewControllers {
+                        if viewController.isKind(of: FullScreenPhotoVC.self) {
+                            delegate?.updateRating(rating: rating)
+                        }
+                    }
+                }
     }
     
     func updateStarSelectionStates() {
@@ -79,4 +93,5 @@ class RatingViewController: UIViewController {
             button.backgroundColor = .clear // Ensure the background stays clear
         }
     }
+    
 }

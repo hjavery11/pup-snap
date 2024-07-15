@@ -57,6 +57,10 @@ class NetworkManager {
     func uploadPhoto(photo: Photo, progressHandler: @escaping (Double) -> Void, successHandler: @escaping () -> Void, failureHandler: @escaping (Error) -> Void) -> StorageUploadTask? {
         return firebaseHelper.uploadImage(photo: photo, progressHandler: progressHandler, successHandler: successHandler, failureHandler: failureHandler)
     }
+    
+    func updatePhotoRating(photo: Photo) async throws {
+        try await dbHelper.editPhotoRating(photo: photo)
+    }
   
 
     func deletePhoto(photo: Photo) async throws {

@@ -36,6 +36,7 @@
 		FA63FFC92C3916B00070165E /* Photo.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA63FFC82C3916B00070165E /* Photo.swift */; };
 		FA63FFCB2C391DB80070165E /* SophieError.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA63FFCA2C391DB80070165E /* SophieError.swift */; };
 		FA63FFCD2C39231B0070165E /* PersistenceManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA63FFCC2C39231B0070165E /* PersistenceManager.swift */; };
+		FAD07D382C45ACB700A3ECBF /* FirebaseAuth in Frameworks */ = {isa = PBXBuildFile; productRef = FAD07D372C45ACB700A3ECBF /* FirebaseAuth */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -77,6 +78,7 @@
 				FA63FF942C368A350070165E /* FirebaseCrashlytics in Frameworks */,
 				FA3590702C34D44800E417B1 /* FirebaseStorage in Frameworks */,
 				FA63FFC32C39090A0070165E /* FirebaseAppCheck in Frameworks */,
+				FAD07D382C45ACB700A3ECBF /* FirebaseAuth in Frameworks */,
 				FA3590812C35037A00E417B1 /* FirebaseFunctions in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -212,6 +214,7 @@
 				FA63FF932C368A350070165E /* FirebaseCrashlytics */,
 				FA63FFC02C3908280070165E /* FirebaseDatabase */,
 				FA63FFC22C39090A0070165E /* FirebaseAppCheck */,
+				FAD07D372C45ACB700A3ECBF /* FirebaseAuth */,
 			);
 			productName = SophiePhotos;
 			productReference = FA35904A2C33B2AC00E417B1 /* SophiePhotos.app */;
@@ -580,6 +583,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = FA35906E2C34D44800E417B1 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
 			productName = FirebaseAppCheck;
+		};
+		FAD07D372C45ACB700A3ECBF /* FirebaseAuth */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = FA35906E2C34D44800E417B1 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseAuth;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};
