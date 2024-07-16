@@ -79,7 +79,8 @@ exports.sendPushNotificationToTopic = functions.https.onRequest((req, res) => {
         });
 });
 
-exports.notifyOnNewPhotoEntry = functions.database.ref('/photos/{photoId}').onCreate(async (snapshot, context) => {
+exports.notifyOnNewPhotoEntry = functions.database.ref('{pairingKey}/photos/{photoId}').onCreate(async (snapshot, context) => {
+    const pairingKey = context.params.pairingKey
     const photoId = context.params.photoId;
     const photoData = snapshot.val();
     console.log('New photo entry:', photoData);
@@ -96,7 +97,7 @@ exports.notifyOnNewPhotoEntry = functions.database.ref('/photos/{photoId}').onCr
             ratings: JSON.stringify(photoData.ratings || {}),
             timestamp: String(photoData.timestamp || '')
         },
-        topic: 'allUsers',
+        topic: `pairingKey_${pairingKey}`,
         android: {
             notification: {
                 sound: 'default'
@@ -114,7 +115,7 @@ exports.notifyOnNewPhotoEntry = functions.database.ref('/photos/{photoId}').onCr
                 'mutable-content': 1
             },
             fcm_options: {
-                image: `https://your-storage-bucket-url/${photoData.path}`
+                image: `https://sophie-photo-1ccc0-default-rtdb.firebaseio.com/${photoData.path}`
             }
         }
     };
@@ -123,6 +124,6 @@ exports.notifyOnNewPhotoEntry = functions.database.ref('/photos/{photoId}').onCr
         const response = await admin.messaging().send(message);
         console.log('Notification sent successfully:', response);
     } catch (error) {
-        console.error('Error sending notification:', error);
+        console.error(`Error sending notification for topic: pairingKey_${pairingKey}`, error);
     }
 });
