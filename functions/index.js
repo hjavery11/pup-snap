@@ -2,6 +2,25 @@ const functions = require('firebase-functions');
 const admin = require('firebase-admin');
 admin.initializeApp();
 
+exports.setCustomClaims = functions.https.onCall(async (data, context) => {
+    const uid = data.uid;
+    const pairingKey = String(data.pairingKey);
+
+    // Check if the user making the request is authenticated
+    if (context.auth && context.auth.token) {
+        // Set custom user claims on this newly created user.
+        return admin.auth().setCustomUserClaims(uid, { pairingKey: pairingKey })
+            .then(() => {
+                return { message: `Custom claims set for user ${uid}` };
+            })
+            .catch(error => {
+                return { error: error.message };
+            });
+    } else {
+        throw new functions.https.HttpsError('failed-precondition', 'The function must be called while authenticated.');
+    }
+});
+
 exports.sendPushNotification = functions.https.onRequest((req, res) => {
     const token = req.body.token;
     const notification = {

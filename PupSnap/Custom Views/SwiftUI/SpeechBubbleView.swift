@@ -10,11 +10,11 @@ import SwiftUI
 struct SpeechBubbleView: View {
     @Environment(\.colorScheme) var colorScheme
     
-    var text: String
-
+    @ObservedObject var vm: PhotoVC
+    
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
-            Text(text)
+            Text(vm.speechBubbleText)
                 .padding()
                 .background(Color.white)
                 .foregroundStyle(.black)
@@ -27,8 +27,4 @@ struct SpeechBubbleView: View {
         .shadow(color: colorScheme == .dark ? Color.white : Color.gray, radius: 9)
 
     }
-}
-
-#Preview {
-    SpeechBubbleView(text: "This is a long text message that spans multiple lines to test this.")
 }

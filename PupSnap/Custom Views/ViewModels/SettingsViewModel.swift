@@ -7,13 +7,7 @@
 
 import Foundation
 
-protocol SettingsViewModelDelegate {
-    func updateDog(with image: String)
-}
-
-@MainActor class SettingsViewModel: ObservableObject { 
-    
-    var delegate: SettingsViewModelDelegate?
+@MainActor class SettingsViewModel: ObservableObject {     
     
      let dogPhotos: [String] = [
         "sophie-iso",
@@ -51,9 +45,15 @@ protocol SettingsViewModelDelegate {
     @Published var showIconSuccess: Bool = false
     @Published var selectedPhoto: String?
     @Published var newPhoto: String = ""
+    @Published var dogName: String
+    @Published var dogNameSuccess: Bool = false
+    @Published var showNameConfirmation: Bool = false
+    @Published var newDogName: String = ""
     
     init() {
         self.selectedPhoto = PersistenceManager.getDogPhoto() ?? "sophie-iso"
+        self.dogName = PersistenceManager.getDogName() ?? ""
+        self.newDogName = dogName
     }
     
     var alertMessage: String = ""
@@ -76,9 +76,18 @@ protocol SettingsViewModelDelegate {
     }
     
     func updateDogPhoto() {
-        if newPhoto != "" {
+        if self.newPhoto != "" {
             PersistenceManager.updateDogPhoto(photo: self.newPhoto)
-            delegate?.updateDog(with: newPhoto)
+            showIconSuccess = true
+         
+        }
+    }
+    
+    func updateDogName() {
+        if self.newDogName != "" {
+            PersistenceManager.setDogName(to: self.newDogName)
+            dogNameSuccess = true
+            self.dogName = newDogName
         }
     }
 

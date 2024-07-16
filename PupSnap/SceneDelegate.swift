@@ -53,7 +53,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate, UITabBarControllerDeleg
     
     func createPhotoVC() -> UINavigationController {
         let photoVC = PhotoVC()
-        photoVC.title = "📸 Sophie Photo"
+        photoVC.title = "📸 PupSnap"
         photoVC.tabBarItem = UITabBarItem(title: "Camera", image: UIImage(systemName: "camera"), selectedImage: UIImage(systemName: "camera.fill"))
         let navController = UINavigationController(rootViewController: photoVC)
         let textAttributes = [NSAttributedString.Key.foregroundColor:UIColor.systemPurple]
@@ -65,7 +65,6 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate, UITabBarControllerDeleg
     
     func createFeedVC() -> UINavigationController {
         let feedVC = FeedVC()
-        feedVC.title = "🐶 Top Sophie Photos"
         let navController = UINavigationController(rootViewController: feedVC)
         feedVC.tabBarItem = UITabBarItem(title: "Feed", image: UIImage(systemName: "list.bullet.circle"), selectedImage: UIImage(systemName: "list.bullet.circle.fill"))
         

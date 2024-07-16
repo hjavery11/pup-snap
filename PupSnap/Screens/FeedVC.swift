@@ -24,12 +24,22 @@ class FeedVC: UIViewController, FullScreenPhotoVCDelegate {
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .systemGray6
+        setTitle()
         
         configureNavigationBar()
         createLoadingView()
         
         fetchPhotos()
         
+    }
+    
+    override func viewDidAppear(_ animated: Bool) {
+        setTitle()
+    }
+    
+    func setTitle() {
+        let name = PersistenceManager.getDogName() ?? "Dog"
+        self.navigationItem.title = "🐶 \(name) Photos"
         
     }
 

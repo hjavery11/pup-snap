@@ -43,6 +43,9 @@
 		FAD07D452C46571400A3ECBF /* DogView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAD07D442C46571400A3ECBF /* DogView.swift */; };
 		FAD07D6E2C465BC600A3ECBF /* Dog.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAD07D6D2C465BC600A3ECBF /* Dog.swift */; };
 		FAD07D702C46E42100A3ECBF /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = FAD07D6F2C46E42100A3ECBF /* GoogleService-Info.plist */; };
+		FAD07D722C46E90200A3ECBF /* FirebaseRemoteConfigSwift in Frameworks */ = {isa = PBXBuildFile; productRef = FAD07D712C46E90200A3ECBF /* FirebaseRemoteConfigSwift */; };
+		FAD07D742C46EA7D00A3ECBF /* RemoteConfigManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAD07D732C46EA7D00A3ECBF /* RemoteConfigManager.swift */; };
+		FAD07D762C46F9A200A3ECBF /* UIApplication+Ext.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAD07D752C46F9A200A3ECBF /* UIApplication+Ext.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -78,6 +81,8 @@
 		FAD07D442C46571400A3ECBF /* DogView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DogView.swift; sourceTree = "<group>"; };
 		FAD07D6D2C465BC600A3ECBF /* Dog.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Dog.swift; sourceTree = "<group>"; };
 		FAD07D6F2C46E42100A3ECBF /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
+		FAD07D732C46EA7D00A3ECBF /* RemoteConfigManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RemoteConfigManager.swift; sourceTree = "<group>"; };
+		FAD07D752C46F9A200A3ECBF /* UIApplication+Ext.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIApplication+Ext.swift"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -86,6 +91,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				FA63FFC12C3908280070165E /* FirebaseDatabase in Frameworks */,
+				FAD07D722C46E90200A3ECBF /* FirebaseRemoteConfigSwift in Frameworks */,
 				FA3590832C35037A00E417B1 /* FirebaseMessaging in Frameworks */,
 				FA63FF942C368A350070165E /* FirebaseCrashlytics in Frameworks */,
 				FA3590702C34D44800E417B1 /* FirebaseStorage in Frameworks */,
@@ -176,6 +182,7 @@
 				FA63FFC62C390E9C0070165E /* AppCheckProviderFactory.swift */,
 				FA63FFCA2C391DB80070165E /* SophieError.swift */,
 				FA63FFCC2C39231B0070165E /* PersistenceManager.swift */,
+				FAD07D732C46EA7D00A3ECBF /* RemoteConfigManager.swift */,
 			);
 			path = Utilities;
 			sourceTree = "<group>";
@@ -204,6 +211,7 @@
 			isa = PBXGroup;
 			children = (
 				FA63FFB42C37519F0070165E /* UIImageView+Ext.swift */,
+				FAD07D752C46F9A200A3ECBF /* UIApplication+Ext.swift */,
 			);
 			path = Extensions;
 			sourceTree = "<group>";
@@ -241,6 +249,7 @@
 				FA63FFC02C3908280070165E /* FirebaseDatabase */,
 				FA63FFC22C39090A0070165E /* FirebaseAppCheck */,
 				FAD07D372C45ACB700A3ECBF /* FirebaseAuth */,
+				FAD07D712C46E90200A3ECBF /* FirebaseRemoteConfigSwift */,
 			);
 			productName = SophiePhotos;
 			productReference = FA35904A2C33B2AC00E417B1 /* PupSnap.app */;
@@ -327,6 +336,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				FA63FFC72C390E9C0070165E /* AppCheckProviderFactory.swift in Sources */,
+				FAD07D742C46EA7D00A3ECBF /* RemoteConfigManager.swift in Sources */,
 				FA3590762C34D95C00E417B1 /* FirebaseHelper.swift in Sources */,
 				FA63FFAD2C372D370070165E /* PhotoEditorVC.swift in Sources */,
 				FA3590722C34D65C00E417B1 /* NetworkManager.swift in Sources */,
@@ -349,6 +359,7 @@
 				FA3590502C33B2AC00E417B1 /* SceneDelegate.swift in Sources */,
 				FA3590862C35223300E417B1 /* FullScreenPhotoVC.swift in Sources */,
 				FA63FF972C368B450070165E /* CrashlyticsCrashButton.swift in Sources */,
+				FAD07D762C46F9A200A3ECBF /* UIApplication+Ext.swift in Sources */,
 				FAD07D3A2C45C9B900A3ECBF /* SettingsView.swift in Sources */,
 				FAD07D6E2C465BC600A3ECBF /* Dog.swift in Sources */,
 				FAD07D432C46098A00A3ECBF /* SettingsViewModel.swift in Sources */,
@@ -624,6 +635,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = FA35906E2C34D44800E417B1 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
 			productName = FirebaseAuth;
+		};
+		FAD07D712C46E90200A3ECBF /* FirebaseRemoteConfigSwift */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = FA35906E2C34D44800E417B1 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseRemoteConfigSwift;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

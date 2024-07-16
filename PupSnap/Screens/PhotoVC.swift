@@ -8,10 +8,11 @@ import UIKit
 import SwiftUI
 import FirebaseStorage
 
-class PhotoVC: UIViewController, UINavigationControllerDelegate, UIImagePickerControllerDelegate, PhotoEditorVCDelegate {
+class PhotoVC: UIViewController, UINavigationControllerDelegate, UIImagePickerControllerDelegate, PhotoEditorVCDelegate, ObservableObject {
     
     let hintText = UILabel()
     let dog = UIImageView()
+    @Published var speechBubbleText = "Initial text"
     let bubbleConnect = UIImageView(image: UIImage(named: "bubble-connector"))
     let emulatorPhoto = UIImage(named: "emulator-photo")
     let cameraPreview = UIImageView()
@@ -37,10 +38,14 @@ class PhotoVC: UIViewController, UINavigationControllerDelegate, UIImagePickerCo
     
     // Reference to the height constraint of referenceImageView
     var referenceImageViewHeightConstraint: NSLayoutConstraint?
+   
+    
     
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .systemGray6
+        
+        setDogInfo()
         
         // set font size depending on screen width to fit title and hint text
         setFontSize()
@@ -52,17 +57,30 @@ class PhotoVC: UIViewController, UINavigationControllerDelegate, UIImagePickerCo
 
     }
     
+    override func viewDidAppear(_ animated: Bool) {
+        setDogInfo()
+    }
+    
+    func setDogInfo() {
+        let dogName = PersistenceManager.getDogName() ?? "Sophie"
+        let icon = PersistenceManager.getDogPhoto() ?? "sophie-iso"
+        let text = "Hi, I'm \(dogName) \nTap on me to add a photo!"
+        
+        dog.image = UIImage(named: icon)
+        self.speechBubbleText = text
+        updateSpeechBubbleText(text)
+    }
+    
+    func updateSpeechBubbleText(_ text: String) {
+           speechBubbleText = text          
+       }
+    
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
         setupConnector()
     }
     
     func setupDogPhoto() {
-        let userDog = PersistenceManager.getDogPhoto() ?? "sophie-iso"
-        let image = UIImage(named: userDog)
-        
-        dog.image = image
-        
         view.addSubview(dog)
         dog.translatesAutoresizingMaskIntoConstraints = false
         
@@ -93,8 +111,7 @@ class PhotoVC: UIViewController, UINavigationControllerDelegate, UIImagePickerCo
     
     func setupSpeechBubble() {
         // show the SwiftUI speech bubble
-        let speechBubble = SpeechBubbleView(text: "Hi, I'm Sophie! \nTap on me to add a photo!")
-        let hostingController = UIHostingController(rootView: speechBubble)
+        let hostingController = UIHostingController(rootView: SpeechBubbleView(vm: self))
         addChild(hostingController)
         hostingController.view.translatesAutoresizingMaskIntoConstraints = false
         view.addSubview(hostingController.view)
@@ -216,57 +233,72 @@ class PhotoVC: UIViewController, UINavigationControllerDelegate, UIImagePickerCo
             present(alert, animated: true, completion: nil)
         }
     }
-    
+
     func photoEditorDidUpload(_ editor: PhotoEditorVC) {
         showSpinner()
         
-        let image = editor.image        
-        let caption = editor.captionField.text ?? ""
-        let user = PersistenceManager.retrieveID()
-        let rating = editor.cuteScale.rating
-        let ratings = [user: rating]
-        let photoID = UUID().uuidString
-        
-        let photo = Photo(caption: caption, ratings: ratings, timestamp: Int(Date().timeIntervalSince1970), image: image, id: photoID)
-        
-        let _ = NetworkManager.shared.uploadPhoto(
-            photo: photo,
-            progressHandler: { percentComplete in
-                print("Upload progress: \(percentComplete)%")
-            },
-            successHandler: { [weak self] in
-                guard let self = self else { return }
-                self.hideSpinner()
-                print("Upload completed successfully")
-                DispatchQueue.main.async {
-                    let alert = UIAlertController(title: "Upload Successful", message: "Your photo has been uploaded successfully.", preferredStyle: .alert)
-                    let okAction = UIAlertAction(title: "OK", style: .default)
-                    alert.addAction(okAction)
-                    self.present(alert, animated: true, completion: nil)
+        Task {
+            do {
+                let isWithinLimit = try await NetworkManager.shared.checkPhotoLimit()
+                
+                if isWithinLimit {
+                    let image = editor.image
+                    let caption = editor.captionField.text ?? ""
+                    let user = PersistenceManager.retrieveID()
+                    let rating = editor.cuteScale.rating
+                    let ratings = [user: rating]
+                    let photoID = UUID().uuidString
+                    
+                    let photo = Photo(caption: caption, ratings: ratings, timestamp: Int(Date().timeIntervalSince1970), image: image, id: photoID)
+                    
+                    let _ = NetworkManager.shared.uploadPhoto(
+                        photo: photo,
+                        progressHandler: { percentComplete in
+                            print("Upload progress: \(percentComplete)%")
+                        },
+                        successHandler: { [weak self] in
+                            guard let self = self else { return }
+                            self.hideSpinner()
+                            print("Upload completed successfully")
+                            DispatchQueue.main.async {
+                                let alert = UIAlertController(title: "Upload Successful", message: "Your photo has been uploaded successfully.", preferredStyle: .alert)
+                                let okAction = UIAlertAction(title: "OK", style: .default)
+                                alert.addAction(okAction)
+                                self.present(alert, animated: true, completion: nil)
+                            }
+                        },
+                        failureHandler: { [weak self] error in
+                            guard let self = self else { return }
+                            DispatchQueue.main.async {
+                                self.hideSpinner()
+                                let alert = UIAlertController(title: "Upload Failed", message: error.localizedDescription, preferredStyle: .alert)
+                                alert.addAction(UIAlertAction(title: "OK", style: .default, handler: nil))
+                                self.present(alert, animated: true, completion: nil)
+                            }
+                            switch StorageErrorCode(rawValue: (error as NSError).code)! {
+                            case .objectNotFound:
+                                print("File doesn't exist")
+                            case .unauthorized:
+                                print("User doesn't have permission to access file")
+                            case .cancelled:
+                                print("User canceled the upload")
+                            case .unknown:
+                                print("Unknown error occurred, inspect the server response")
+                            default:
+                                print("A separate error occurred, retry the upload")
+                            }
+                        }
+                    )
                 }
-            },
-            failureHandler: { [weak self] error in
-                guard let self = self else { return }
+            } catch let error as NSError {
+                self.hideSpinner()
                 DispatchQueue.main.async {
-                    self.hideSpinner()
                     let alert = UIAlertController(title: "Upload Failed", message: error.localizedDescription, preferredStyle: .alert)
                     alert.addAction(UIAlertAction(title: "OK", style: .default, handler: nil))
                     self.present(alert, animated: true, completion: nil)
                 }
-                switch StorageErrorCode(rawValue: (error as NSError).code)! {
-                case .objectNotFound:
-                    print("File doesn't exist")
-                case .unauthorized:
-                    print("User doesn't have permission to access file")
-                case .cancelled:
-                    print("User canceled the upload")
-                case .unknown:
-                    print("Unknown error occurred, inspect the server response")
-                default:
-                    print("A separate error occurred, retry the upload")
-                }
-            }
-        )
+            }       
+        }
     }
     
     

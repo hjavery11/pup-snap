@@ -46,6 +46,35 @@ class DatabaseHelper {
         }
     }
     
+    func checkPhotoLimit() async throws-> Bool {
+            let maxPhotosString = RemoteConfigManager.shared.getValue(forKey: RemoteConfigManager.Keys.maxPhotos)
+            guard let maxPhotosPerUser = Int(maxPhotosString) else {
+                print("Invalid max photos per user value")
+                throw NSError(domain: "DatabaseHelper", code: 1, userInfo: [NSLocalizedDescriptionKey: "Invalid max photos per user value"])
+            }
+            
+            //retireve photo count for user
+            let userKey = PersistenceManager.retrieveKey()
+            let photosRef = ref.child(String(userKey)).child("photos")
+        
+        do {
+            let snapshot = try await photosRef.getData()
+            let photoCount = snapshot.childrenCount
+            print("Allowing upload with photoCount of: \(photoCount) and max allowed of: \(maxPhotosPerUser)")
+            
+            if photoCount > maxPhotosPerUser {
+                throw NSError(domain: "DatabaseHelper", code: 2, userInfo: [NSLocalizedDescriptionKey: "You have reached the maximum number of photos allowed: \(maxPhotosPerUser)."])
+            }
+            
+         return true
+            
+        } catch {
+            throw NSError(domain: "DatabaseHelper", code: 3, userInfo: [NSLocalizedDescriptionKey: "\(error.localizedDescription)"])
+        }
+            
+    
+    }
+    
     func editPhotoRating(photo:Photo) async throws{
         let userKey = PersistenceManager.retrieveKey()
         let photosRef = ref.child(String(userKey)).child("photos")

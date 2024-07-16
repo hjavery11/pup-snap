@@ -17,6 +17,7 @@ enum PersistenceManager {
         static let id = "user_id"
         static let key = "key"
         static let dog = "dogPhoto"
+        static let dogName = "dog_name"
     }
     
     static func retrieveID() -> String {
@@ -74,5 +75,13 @@ enum PersistenceManager {
     
     static func getDogPhoto() -> String? {
         defaults.string(forKey: Keys.dog)
+    }
+    
+    static func setDogName(to name: String) {
+        defaults.set(name, forKey: Keys.dogName)
+    }
+    
+    static func getDogName() -> String? {
+        defaults.string(forKey: Keys.dogName)
     }
 }

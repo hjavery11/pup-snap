@@ -12,6 +12,7 @@ import FirebaseAppCheck
 import FirebaseCore
 import FirebaseAuth
 import FirebaseMessaging
+import FirebaseFunctions
 
 @main
 class AppDelegate: UIResponder, UIApplicationDelegate {
@@ -30,13 +31,55 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
        
         FirebaseApp.configure()
         
-        //anon signin for firebase auth
         Auth.auth().signInAnonymously { authResult, error in
-            print("anon sign in for firebase with authResult: \(String(describing: authResult)) and errors: \(String(describing: error))")
-            guard (authResult?.user) != nil else { return }
-//            let isAnonymous = user.isAnonymous //true
-//            let uid = user.uid
+            if let error = error {
+                print("Error signing in anonymously: \(error.localizedDescription)")
+                return
+            }
+            guard let user = authResult?.user else { return }
+            
+            let userKey = PersistenceManager.retrieveKey()
+            let functions = Functions.functions()
+            functions.httpsCallable("setCustomClaims").call(["uid": user.uid, "pairingKey": userKey]) { result, error in
+                if let error = error {
+                    print("Error setting custom claims: \(error.localizedDescription)")
+                } else {
+                    print("Custom claims set successfully for UID/Pairing key: \(user.uid)/\(userKey)")
+                    // Fetch new ID token to ensure the custom claims are applied
+                    user.getIDTokenForcingRefresh(true) { idToken, error in
+                        if let error = error {
+                            print("Error fetching ID token: \(error.localizedDescription)")
+                            return
+                        }
+                        // Print the ID token
+                        if let idToken = idToken {
+                            print("ID Token: \(idToken)")
+                        }
+                        // Verify the custom claims
+                        Auth.auth().currentUser?.getIDTokenResult(completion: { (result, error) in
+                            if let error = error {
+                                print("Error fetching ID token result: \(error.localizedDescription)")
+                                return
+                            }
+                            if let claims = result?.claims {
+                                print("Custom claims: \(claims)")
+                                // Ensure the pairing key claim exists
+                                if let pairingKey = claims["pairingKey"] as? Int {
+                                    print("Pairing key successfully found: \(pairingKey)")
+                                } else {
+                                    print("Custom claim for pairing key not found")
+                                }
+                            }
+                        })
+                    }
+                }
+            }
         }
+
+
+
+        
+        
    
         Messaging.messaging().delegate = self
         UNUserNotificationCenter.current().delegate = self
@@ -79,10 +122,16 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                     print("Error retrieeving all keys from database: \(error.localizedDescription)")
                 }
             }
-        }
+        }    
         
-      
-     
+        // Fetch and activate Remote Config on app startup
+        RemoteConfigManager.shared.fetchAndActivate { changed, error in
+            if let error = error {
+                print("Error fetching and activating Remote Config: \(error)")
+            } else {
+                print("Remote Config fetched and activated on startup.")
+            }
+        }
         
       
         return true

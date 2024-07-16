@@ -58,6 +58,10 @@ class NetworkManager {
         return firebaseHelper.uploadImage(photo: photo, progressHandler: progressHandler, successHandler: successHandler, failureHandler: failureHandler)
     }
     
+    func checkPhotoLimit() async throws -> Bool {
+        return try await dbHelper.checkPhotoLimit()
+    }
+    
     func updatePhotoRating(photo: Photo) async throws {
         try await dbHelper.editPhotoRating(photo: photo)
     }

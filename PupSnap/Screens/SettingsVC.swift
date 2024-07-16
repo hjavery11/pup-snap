@@ -8,7 +8,7 @@
 import UIKit
 import SwiftUI
 
-class SettingsVC: UIViewController, SettingsViewModelDelegate {  
+class SettingsVC: UIViewController {  
     
     let settingsView = UIHostingController(rootView: SettingsView())
 
@@ -32,15 +32,6 @@ class SettingsVC: UIViewController, SettingsViewModelDelegate {
             settingsView.view.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             settingsView.view.trailingAnchor.constraint(equalTo: view.trailingAnchor),
         ])
-    }
-    
-    func updateDog(with image: String) {
-        if let viewControllers = navigationController?.viewControllers {
-            for viewController in viewControllers {
-                if let photoVC = viewController as? PhotoVC {
-                                  
-                }
-            }
-        }
-    }
+    }    
+   
 }
