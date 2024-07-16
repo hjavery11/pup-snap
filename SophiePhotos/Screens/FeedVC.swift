@@ -17,6 +17,7 @@ class FeedVC: UIViewController, FullScreenPhotoVCDelegate {
     var collectionView: UICollectionView!
     var dataSource: UICollectionViewDiffableDataSource<Section, Photo>?
     var currentImageIndex: Int?
+    let emptyView = UITextView()
     
     let spinnerChild = SpinnerVC()
     
@@ -31,6 +32,7 @@ class FeedVC: UIViewController, FullScreenPhotoVCDelegate {
         
         
     }
+
     
     func configureNavigationBar() {
         navigationController?.navigationBar.tintColor = .systemPurple
@@ -78,6 +80,22 @@ class FeedVC: UIViewController, FullScreenPhotoVCDelegate {
         }
     }
     
+    func configureEmptyView() {
+        emptyView.text = "No Photos 🐶"
+        view.addSubview(emptyView)
+        emptyView.translatesAutoresizingMaskIntoConstraints = false
+        emptyView.font = UIFont.preferredFont(forTextStyle: .largeTitle)
+        emptyView.textAlignment = .center
+        emptyView.isUserInteractionEnabled = false
+        
+        NSLayoutConstraint.activate([
+            emptyView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            emptyView.centerYAnchor.constraint(equalTo: view.centerYAnchor),
+            emptyView.widthAnchor.constraint(equalTo: view.widthAnchor),
+            emptyView.heightAnchor.constraint(equalToConstant: 100)
+        ])
+    }
+    
     func createThreeColumnFlowLayout() -> UICollectionViewFlowLayout {
         let width = view.bounds.width
         let padding: CGFloat = 12
@@ -114,6 +132,9 @@ class FeedVC: UIViewController, FullScreenPhotoVCDelegate {
         snapshot.appendSections([.main])
         snapshot.appendItems(photoArray)
         dataSource?.apply(snapshot, animatingDifferences: true)
+        if photoArray.isEmpty {
+            configureEmptyView()
+        }
     }
     
     @objc func previewClicked(sender: UITapGestureRecognizer) {
@@ -149,6 +170,7 @@ class FeedVC: UIViewController, FullScreenPhotoVCDelegate {
                 let newPhotos = try await NetworkManager.shared.getPhotoCount()
                 if newPhotos != photoArray.count {
                     photoArray = try await NetworkManager.shared.fetchCompletePhotos()
+                    emptyView.removeFromSuperview()
                     applySnapshot()
                 }
             } catch {

@@ -37,6 +37,10 @@
 		FA63FFCB2C391DB80070165E /* SophieError.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA63FFCA2C391DB80070165E /* SophieError.swift */; };
 		FA63FFCD2C39231B0070165E /* PersistenceManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA63FFCC2C39231B0070165E /* PersistenceManager.swift */; };
 		FAD07D382C45ACB700A3ECBF /* FirebaseAuth in Frameworks */ = {isa = PBXBuildFile; productRef = FAD07D372C45ACB700A3ECBF /* FirebaseAuth */; };
+		FAD07D3A2C45C9B900A3ECBF /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAD07D392C45C9B900A3ECBF /* SettingsView.swift */; };
+		FAD07D3C2C45C9E300A3ECBF /* SettingsVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAD07D3B2C45C9E300A3ECBF /* SettingsVC.swift */; };
+		FAD07D3E2C45CE9100A3ECBF /* PairingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAD07D3D2C45CE9100A3ECBF /* PairingView.swift */; };
+		FAD07D432C46098A00A3ECBF /* SettingsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAD07D422C46098A00A3ECBF /* SettingsViewModel.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -66,6 +70,10 @@
 		FA63FFC82C3916B00070165E /* Photo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Photo.swift; sourceTree = "<group>"; };
 		FA63FFCA2C391DB80070165E /* SophieError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SophieError.swift; sourceTree = "<group>"; };
 		FA63FFCC2C39231B0070165E /* PersistenceManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PersistenceManager.swift; sourceTree = "<group>"; };
+		FAD07D392C45C9B900A3ECBF /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
+		FAD07D3B2C45C9E300A3ECBF /* SettingsVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsVC.swift; sourceTree = "<group>"; };
+		FAD07D3D2C45CE9100A3ECBF /* PairingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PairingView.swift; sourceTree = "<group>"; };
+		FAD07D422C46098A00A3ECBF /* SettingsViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsViewModel.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -127,6 +135,7 @@
 				FA3590612C33B30000E417B1 /* FeedVC.swift */,
 				FA3590852C35223300E417B1 /* FullScreenPhotoVC.swift */,
 				FA63FFAC2C372D370070165E /* PhotoEditorVC.swift */,
+				FAD07D3B2C45C9E300A3ECBF /* SettingsVC.swift */,
 			);
 			path = "\U0010Screens";
 			sourceTree = "<group>";
@@ -134,6 +143,7 @@
 		FA35907C2C34FA2300E417B1 /* Custom Views */ = {
 			isa = PBXGroup;
 			children = (
+				FAD07D412C46097800A3ECBF /* ViewModels */,
 				FA63FFAE2C373ECA0070165E /* SwiftUI */,
 				FA35907D2C34FA2F00E417B1 /* Cells */,
 				FA3590772C34E14B00E417B1 /* SpinnerVC.swift */,
@@ -177,7 +187,9 @@
 		FA63FFAE2C373ECA0070165E /* SwiftUI */ = {
 			isa = PBXGroup;
 			children = (
+				FAD07D392C45C9B900A3ECBF /* SettingsView.swift */,
 				FA63FFAF2C373ED40070165E /* SpeechBubbleView.swift */,
+				FAD07D3D2C45CE9100A3ECBF /* PairingView.swift */,
 			);
 			path = SwiftUI;
 			sourceTree = "<group>";
@@ -188,6 +200,14 @@
 				FA63FFB42C37519F0070165E /* UIImageView+Ext.swift */,
 			);
 			path = Extensions;
+			sourceTree = "<group>";
+		};
+		FAD07D412C46097800A3ECBF /* ViewModels */ = {
+			isa = PBXGroup;
+			children = (
+				FAD07D422C46098A00A3ECBF /* SettingsViewModel.swift */,
+			);
+			path = ViewModels;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -311,15 +331,19 @@
 				FA63FFB52C37519F0070165E /* UIImageView+Ext.swift in Sources */,
 				FA3590622C33B30000E417B1 /* FeedVC.swift in Sources */,
 				FA35906B2C34A46E00E417B1 /* SophiePhotoCell.swift in Sources */,
+				FAD07D3C2C45C9E300A3ECBF /* SettingsVC.swift in Sources */,
 				FA63FFCD2C39231B0070165E /* PersistenceManager.swift in Sources */,
 				FA63FFCB2C391DB80070165E /* SophieError.swift in Sources */,
 				FA63FFBF2C37E2710070165E /* RatingViewController.swift in Sources */,
 				FA63FFC92C3916B00070165E /* Photo.swift in Sources */,
 				FA3590522C33B2AC00E417B1 /* PhotoVC.swift in Sources */,
 				FA35904E2C33B2AC00E417B1 /* AppDelegate.swift in Sources */,
+				FAD07D3E2C45CE9100A3ECBF /* PairingView.swift in Sources */,
 				FA3590502C33B2AC00E417B1 /* SceneDelegate.swift in Sources */,
 				FA3590862C35223300E417B1 /* FullScreenPhotoVC.swift in Sources */,
 				FA63FF972C368B450070165E /* CrashlyticsCrashButton.swift in Sources */,
+				FAD07D3A2C45C9B900A3ECBF /* SettingsView.swift in Sources */,
+				FAD07D432C46098A00A3ECBF /* SettingsViewModel.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

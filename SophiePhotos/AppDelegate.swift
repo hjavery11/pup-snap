@@ -16,7 +16,7 @@ import FirebaseAuth
 class AppDelegate: UIResponder, UIApplicationDelegate {
 
     var window: UIWindow?
-
+    
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         // Override point for customization after application launch.
         #if DEBUG
@@ -32,9 +32,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         //anon signin for firebase auth
         Auth.auth().signInAnonymously { authResult, error in
             print("anon sign in for firebase with authResult: \(String(describing: authResult)) and errors: \(String(describing: error))")
-            guard let user = authResult?.user else { return }
-            let isAnonymous = user.isAnonymous //true
-            let uid = user.uid
+            guard (authResult?.user) != nil else { return }
+//            let isAnonymous = user.isAnonymous //true
+//            let uid = user.uid
         }
    
         Messaging.messaging().delegate = self
@@ -50,6 +50,40 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             }
         }
         
+        //get pairing key, or set if first launch
+        let userKey = PersistenceManager.retrieveKey()
+        
+        //only do async code to fetch all keys if userKey isnt created yet
+        if userKey == 0 {
+            Task {
+                do {
+                    let allKeys = try await NetworkManager.shared.retrieveAllKeys()
+                    guard !allKeys.isEmpty else {
+                        print("No keys returned from database")
+                        return
+                    }
+                    
+                    //generate new 8-digit int key not in current keys
+                    var newKey: Int
+                    repeat {
+                        newKey = Int.random(in: 10000000...99999999)
+                    } while allKeys.contains(newKey)
+                    
+                    //save new key to user defaults
+                    PersistenceManager.setKey(key: newKey)
+                    print("New user key set to : \(newKey)")
+                  
+
+                } catch {
+                    print("Error retrieeving all keys from database: \(error.localizedDescription)")
+                }
+            }
+        }
+        
+      
+     
+        
+      
         return true
     }
 

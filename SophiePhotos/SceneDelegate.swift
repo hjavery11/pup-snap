@@ -49,10 +49,18 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate, UITabBarControllerDeleg
         return navController
     }
     
+    func createSettingsVC() -> UINavigationController {
+        let settingsVC = SettingsVC()
+        let navController = UINavigationController(rootViewController: settingsVC)
+        settingsVC.tabBarItem = UITabBarItem(title: "Settings", image: UIImage(systemName: "ellipsis.rectangle"), selectedImage: UIImage(systemName: "ellipsis.rectangle.fill"))
+        
+        return navController
+    }
+    
     func createTabbar() -> UITabBarController {
         let tabBar = UITabBarController()
         UITabBar.appearance().tintColor = .systemPurple
-        tabBar.viewControllers = [createPhotoVC(), createFeedVC()]
+        tabBar.viewControllers = [createPhotoVC(), createFeedVC(),createSettingsVC()]
         UITabBar.appearance().backgroundColor = .tertiarySystemFill
         
         return tabBar

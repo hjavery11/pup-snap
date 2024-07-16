@@ -36,7 +36,7 @@ class NetworkManager {
                 
                 for try await (index, image) in group {
                     if let image = image {
-                        var photo = photos[index]
+                        let photo = photos[index]
                         photo.image = image
                         photosWithImages.append(photo)
                     }
@@ -81,6 +81,10 @@ class NetworkManager {
            throw error
         }
     }   
+    
+    func retrieveAllKeys() async throws -> [Int] {
+        try await dbHelper.retrieveAllKeys()
+    }
    
 
 }

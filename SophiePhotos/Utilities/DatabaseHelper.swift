@@ -10,14 +10,17 @@ import FirebaseDatabaseInternal
 import UIKit
 
 class DatabaseHelper {
-    
+
     var ref: DatabaseReference!
+
     
     init() {
-        ref = Database.database().reference().child("photos")
+        ref = Database.database().reference()
     }
     
-    func addPhotoToDB(photo: Photo) {        
+    func addPhotoToDB(photo: Photo) {
+        let userKey = PersistenceManager.retrieveKey()
+        let photosRef = ref.child(String(userKey)).child("photos")
         guard let path = photo.path else {
             print("No path was found to add to db for photo: \(photo.id ?? "")")
             return
@@ -32,7 +35,7 @@ class DatabaseHelper {
                           "path": path,
                           "timestamp": Int(Date().timeIntervalSince1970)] as [String : Any]
         
-        self.ref.child(uniqueID).updateChildValues(valueArray) { error, _ in
+        photosRef.child(uniqueID).updateChildValues(valueArray) { error, _ in
             if let error = error {
                 print("Error setting value: \(error.localizedDescription)")
                 print("ValueArray: \(valueArray)")
@@ -44,12 +47,14 @@ class DatabaseHelper {
     }
     
     func editPhotoRating(photo:Photo) async throws{
+        let userKey = PersistenceManager.retrieveKey()
+        let photosRef = ref.child(String(userKey)).child("photos")
         guard let photoId = photo.id else {
             print("No unique photo found for photo")
             throw SophieError.photoAccess
         }
         
-        let ratingRef = ref.child(photoId).child("ratings")
+        let ratingRef = photosRef.child(photoId).child("ratings")
         
         try await ratingRef.updateChildValues(photo.ratings)
         
@@ -58,24 +63,28 @@ class DatabaseHelper {
     }
     
     func deletePhotoFromDB(photo: Photo) async throws{
+        let userKey = PersistenceManager.retrieveKey()
+        let photosRef = ref.child(String(userKey)).child("photos")
         if let id = photo.id{
-            try await ref.child(id).removeValue()
+            try await photosRef.child(id).removeValue()
         } else {
             print("no id found for photo to delete: \(photo)")
         }
     }
     
     func fetchPhotos() async throws -> [Photo]{
+        let userKey = PersistenceManager.retrieveKey()
+        let photosRef = ref.child(String(userKey)).child("photos")
         do{
-            let snapshot = try await ref.getData()
+            let snapshot = try await photosRef.getData()
             
             guard let value = snapshot.value as? [String: Any] else {
-                throw NSError(domain: "", code: -1)
+                return []
             }
             
             let jsonData = try JSONSerialization.data(withJSONObject: value)
             let decoder = JSONDecoder()
-            var photoDictionary = try decoder.decode(PhotoDictionary.self, from: jsonData)
+            let photoDictionary = try decoder.decode(PhotoDictionary.self, from: jsonData)
             
             // Set the `id` for each `Photo` to the corresponding key
             for(key, _) in photoDictionary {
@@ -90,7 +99,25 @@ class DatabaseHelper {
         }
     }
     
+    func retrieveAllKeys() async throws -> [Int]{
+        let snapshot = try await ref.getData()
+        guard let topLevelData = snapshot.value as? [String: Any] else {
+            print("No top-level data found")
+            return []
+        }
+        
+        let allKeys = topLevelData.keys.compactMap { key -> Int? in
+            let intKey = Int(key)
+            return intKey
+        }
+        
+        return allKeys
+    }
 
+}
+
+extension DatabaseHelper {
+    
     // Function to get local file URL
     private func getLocalFileURL(fileName: String) -> URL {
         let paths = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)
@@ -111,11 +138,8 @@ class DatabaseHelper {
 
 
 // All this is DB setup script for syncing out of sync firebase storage with realtime database
-//import Firebase
+//import Foundation
 //import FirebaseDatabase
-//import FirebaseStorage
-//import FirebaseCore
-//import UIKit
 //
 //class PhotoDatabaseManager {
 //
@@ -125,57 +149,43 @@ class DatabaseHelper {
 //    }
 //
 //    private let databaseRef = Database.database().reference()
-//    private let storageRef = Storage.storage().reference().child("images")
 //
-//    // Function to generate a unique ID
-//    private func generateUniqueID() -> String {
-//        return UUID().uuidString
+//    // Function to generate a random 8-digit integer
+//    private func generateRandom8DigitInteger() -> Int {
+//        return Int.random(in: 10000000...99999999)
 //    }
 //
-//    // Function to create photo data
-//    private func createPhotoData(id: String, path: String) -> [String: Any] {
-//        let photoData: [String: Any] = [
-//            "caption": "",
-//            "ratings": [PersistenceManager.retrieveID() : 3],
-//            "path": path,
-//            "timestamp": Int(Date().timeIntervalSince1970)
-//        ]
-//        return [id: photoData]
-//    }
-//
-//    // Function to save photos metadata to Firebase Realtime Database
-//    private func savePhotoMetadataToDatabase(photoData: [String: Any]) {
-//        databaseRef.child("photos").updateChildValues(photoData) { error, ref in
-//            if let error = error {
-//                print("Error saving photos to database: \(error.localizedDescription)")
-//            } else {
-//                print("Successfully saved photos to database")
-//            }
-//        }
-//    }
-//
-//    // Function to fetch all images and their URLs
-//    func fetchAllImages() async throws -> Void {
-//       print("Attemtping image fix")
-//        var photosData: [String: Any] = [:]
-//
-//        do {
-//            let result = try await storageRef.listAll()
-//            for item in result.items {
-//
-//                // Create photo data and add to the dictionary
-//                let uniqueID = generateUniqueID()
-//                let photoData = createPhotoData(id: uniqueID, path: item.fullPath)
-//                photosData.merge(photoData) { (current, _) in current }
+//    // Function to move photo data to a new top-level key
+//    func movePhotosToNewKey() {
+//        // Step 1: Retrieve everything currently under "photos"
+//        databaseRef.child("photos").observeSingleEvent(of: .value) { snapshot in
+//            guard let photosData = snapshot.value as? [String: Any] else {
+//                print("No photos data found")
+//                return
 //            }
 //
-//            // Save photo metadata to the database
-//            savePhotoMetadataToDatabase(photoData: photosData)
-//            //print(photosData)
-//        } catch {
-//            print("Error listing items: \(error)")
+//            // Step 2: Create a new top-level key and set it to a random 8-digit integer
+//            let randomKey = self.generateRandom8DigitInteger()
+//            let keyString = String(randomKey)
+//
+//            // Step 3: Move everything from "photos" to inside that 8-digit key
+//            self.databaseRef.child(keyString).child("photos").setValue(photosData) { error, _ in
+//                if let error = error {
+//                    print("Error moving photos to new key: \(error.localizedDescription)")
+//                    return
+//                } else {
+//                    print("Successfully moved photos to new key")
+//
+//                    // Delete old "photos" node after moving
+//                    self.databaseRef.child("photos").removeValue { error, _ in
+//                        if let error = error {
+//                            print("Error deleting old photos node: \(error.localizedDescription)")
+//                        } else {
+//                            print("Successfully deleted old photos node")
+//                        }
+//                    }
+//                }
+//            }
 //        }
-//
-//
 //    }
 //}

@@ -41,7 +41,7 @@ class FullScreenPhotoVC: UIViewController, RatingViewControllerDelegate {
         view.backgroundColor = .systemBackground
       
         configureImageView()
-        configureCaptionView()     
+        configureCaptionView()
         
         if self.indexPath != nil {
             // only show nav bar if coming from feed view, otherwise its a push notification without nav bar

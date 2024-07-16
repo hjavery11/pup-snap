@@ -13,6 +13,7 @@ enum PersistenceManager {
     
     enum Keys {
         static let id = "user_id"
+        static let key = "key"
     }
     
     static func retrieveID() -> String {
@@ -29,8 +30,14 @@ enum PersistenceManager {
         //id found
         let decodedID = try! decoder.decode(String.self, from: userID)
         return decodedID
-        
-        
-        
+    }
+    
+    static func retrieveKey() -> Int {
+        let key = defaults.integer(forKey: Keys.key)
+        return key
+    }
+    
+    static func setKey(key: Int) {
+        defaults.set(key, forKey: Keys.key)
     }
 }
