@@ -111,34 +111,13 @@ class NetworkManager {
             if let error = error {
                 print("Error setting custom claims: \(error.localizedDescription)")
             } else {
-                print("Custom claims set successfully for UID/Pairing key: \(user.uid)/\(userKey)")
-                //   Fetch new ID token to ensure the custom claims are applied
-                user.getIDTokenForcingRefresh(true) { idToken, error in
-                    if let error = error {
-                        print("Error fetching ID token: \(error.localizedDescription)")
-                        return
-                    }
-                    // Print the ID token
-                    if let idToken = idToken {
-                        print("ID Token: \(idToken)")
-                    }
-                    // Verify the custom claims
-                    Auth.auth().currentUser?.getIDTokenResult(completion: { (result, error) in
-                        if let error = error {
-                            print("Error fetching ID token result: \(error.localizedDescription)")
-                            return
-                        }
-                        if let claims = result?.claims {
-                            print("Custom claims: \(claims)")
-                            // Ensure the pairing key claim exists
-                            if let pairingKey = claims["pairingKey"] as? Int {
-                                print("Pairing key successfully found: \(pairingKey)")
-                            } else {
-                                print("Custom claim for pairing key not found")
-                            }
-                        }
-                    })
+                if let result = result {
+                    print(result.data)
+                   print("returned while setting claim to pairing key \(userKey) for user uid: \(user.uid)")
+                } else {
+                    print("Issue with fetching result from setClaims function call")
                 }
+               
             }
         }
     }

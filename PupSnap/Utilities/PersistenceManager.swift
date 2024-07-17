@@ -46,12 +46,13 @@ enum PersistenceManager {
         defaults.removeObject(forKey: Keys.key)
     }
     
-    static func setKeyFirstTime(key: Int) {
+    static func setKeyFirstTime(key: Int,completion: @escaping () -> Void) {
         Task {
             defaults.set(key, forKey: Keys.key)
             subscribeToPairingKey(pairingKey: String(key))
             do {
                 try await NetworkManager.shared.initializeKey(pairingKey: key)
+                completion()
             } catch {
                 print("Error attempting to initalize key: \(error)")
             }
@@ -90,15 +91,12 @@ enum PersistenceManager {
        
     }
     
-    static func setUser(key: Int) {
-        Auth.auth().signInAnonymously { authResult, error in
-            if let error = error {
-                print("Error signing in anonymously: \(error.localizedDescription)")
-                return
-            }
-            guard let user = authResult?.user else { return }
-            NetworkManager.shared.setClaims(for: user, with: key)
-        }
+    static func setUser(key: Int) async throws{
+        let authResult = try await Auth.auth().signInAnonymously()
+        let user = authResult.user
+        NetworkManager.shared.setClaims(for: user, with: key)
+     
+        print("end of setUser inside persistance manager")
     }
     
     static func unsubscribeFromPairingKey() async throws {

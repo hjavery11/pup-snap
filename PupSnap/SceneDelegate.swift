@@ -7,30 +7,33 @@
 
 import UIKit
 import BranchSDK
+import Combine
 
 class SceneDelegate: UIResponder, UIWindowSceneDelegate, UITabBarControllerDelegate {
     
     var window: UIWindow?
+    var tabBarController: UITabBarController?
+    private var cancellable: AnyCancellable?
     
     func scene(_ scene: UIScene, willConnectTo session: UISceneSession, options connectionOptions: UIScene.ConnectionOptions) {
         print("delegatetest scenedelegate first scene function")
-        if let urlContext = connectionOptions.urlContexts.first {
-            Branch.getInstance().handleDeepLink(urlContext.url)
+        
+        cancellable = AppDelegate.setupCompletionSubject.sink { [weak self] in
+            self?.setupScene(connectionOptions: connectionOptions, scene: scene)
         }
-        
+         
+    }
+    
+    private func setupScene(connectionOptions: UIScene.ConnectionOptions, scene: UIScene) {
+        print("scene delegate is setting up scene from combine")
         guard let windowScene = (scene as? UIWindowScene) else { return }
-      
-        
         
         window = UIWindow(frame: windowScene.coordinateSpace.bounds)
         window?.windowScene = windowScene
-        let tabBarController = createTabbar()
-        tabBarController.delegate = self
+        tabBarController = createTabbar()
+        tabBarController?.delegate = self
         window?.rootViewController = tabBarController
         window?.makeKeyAndVisible()
-        print("delegatetest scene delgate after make key and visible")
-        
-        
         
         // Add observer for the notification
         NotificationCenter.default.addObserver(self, selector: #selector(presentFullScreenPhotoVC(_:)), name: NSNotification.Name("PresentFullScreenPhotoVC"), object: nil)
@@ -42,6 +45,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate, UITabBarControllerDeleg
             }
         }
     }
+    
     
     func scene(_ scene: UIScene, openURLContexts URLContexts: Set<UIOpenURLContext>) {
         print("delegatetest scene delegate openURLContexts")
@@ -163,7 +167,9 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate, UITabBarControllerDeleg
         // Called when the scene has moved from an inactive state to an active state.
         // Use this method to restart any tasks that were paused (or not yet started) when the scene was inactive.
         print("delegatetest scene delegate did become active")
-        // Access the stored Branch link data       
+        // Access the stored Branch link data    
+        //Enable tab bar
+       
     }
     
     func sceneWillResignActive(_ scene: UIScene) {

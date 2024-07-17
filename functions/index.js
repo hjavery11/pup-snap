@@ -158,8 +158,8 @@ exports.notifyOnNewPhotoEntry = functions.database.ref('{pairingKey}/photos/{pho
 
     const message = {
         notification: {
-            title: 'New Sophie Photo!',
-            body: 'A new photo has been uploaded.',
+            title: 'New PupSnap Photo!',
+            body: 'A new photo has been uploaded to your PupSnap Feed.',
         },
         data: {
             id: photoId,
@@ -193,7 +193,8 @@ exports.notifyOnNewPhotoEntry = functions.database.ref('{pairingKey}/photos/{pho
 
     try {
         const response = await admin.messaging().send(message);
-        console.log('Notification sent successfully:', response);
+        console.log('Notification sent succesfully with message:', message)
+        console.log('Notification response was:', response);        
     } catch (error) {
         console.error(`Error sending notification for topic: pairingKey_${pairingKey}`, error);
     }

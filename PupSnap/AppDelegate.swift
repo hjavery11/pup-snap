@@ -14,11 +14,13 @@ import FirebaseAuth
 import FirebaseMessaging
 import FirebaseFunctions
 import BranchSDK
+import Combine
 
 @main
 class AppDelegate: UIResponder, UIApplicationDelegate {
     
     var window: UIWindow?
+    static let setupCompletionSubject = PassthroughSubject<Void, Never>()
     
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         
@@ -91,17 +93,23 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                     } while allKeys.contains(newKey)
                     
                     //save new key to user defaults
-                    PersistenceManager.setKeyFirstTime(key: newKey)
+                    PersistenceManager.setKeyFirstTime(key: newKey) {
+                        print("Set key first time completion handler")
+                    }
                     print("New user key set to : \(newKey)")
                     PersistenceManager.setUser(key: newKey)
+                    print("setUser was just called inside app delegate")
+                    AppDelegate.setupCompletionSubject.send(())
                     
                     
                 } catch {
-                    print("Error retrieeving all keys from database: \(error.localizedDescription)")
+                    print("Error retrieving all keys from database: \(error.localizedDescription)")
                 }
             }
         }  else {
             PersistenceManager.setUser(key: userKey)
+            print("setUser was just called inside app delegate")
+            AppDelegate.setupCompletionSubject.send(())
         }
         
         // Fetch and activate Remote Config on app startup
