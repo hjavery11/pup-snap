@@ -46,6 +46,19 @@ enum PersistenceManager {
         defaults.removeObject(forKey: Keys.key)
     }
     
+    static func setKeyFirstTime(key: Int) {
+        Task {
+            defaults.set(key, forKey: Keys.key)
+            subscribeToPairingKey(pairingKey: String(key))
+            do {
+                try await NetworkManager.shared.initializeKey(pairingKey: key)
+            } catch {
+                print("Error attempting to initalize key: \(error)")
+            }
+            
+        }
+    }
+    
     static func setKey(key: Int) {
         Task {
             do {

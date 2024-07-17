@@ -3,10 +3,13 @@
 <plist version="1.0">
 <dict>
 	<key>aps-environment</key>
-	<string>development</string>
+	<string>production</string>
 	<key>com.apple.developer.associated-domains</key>
 	<array>
 		<string>applinks:pupsnapapp.com</string>
+		<string>pupsnap.app.link</string>
+		<string>pupsnap-alternate.app.link</string>
+		<string>applinks:pupsnap.app.link</string>
 	</array>
 	<key>com.apple.developer.devicecheck.appattest-environment</key>
 	<string>production</string>

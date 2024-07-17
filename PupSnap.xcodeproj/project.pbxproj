@@ -47,6 +47,14 @@
 		FAD07D742C46EA7D00A3ECBF /* RemoteConfigManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAD07D732C46EA7D00A3ECBF /* RemoteConfigManager.swift */; };
 		FAD07D762C46F9A200A3ECBF /* UIApplication+Ext.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAD07D752C46F9A200A3ECBF /* UIApplication+Ext.swift */; };
 		FAD07D7F2C4781CE00A3ECBF /* LinkManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAD07D7E2C4781CE00A3ECBF /* LinkManager.swift */; };
+		FAD07D822C4790C100A3ECBF /* BranchSDK in Frameworks */ = {isa = PBXBuildFile; productRef = FAD07D812C4790C100A3ECBF /* BranchSDK */; };
+		FAD07D852C482C2100A3ECBF /* CoreServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FAD07D842C482C2100A3ECBF /* CoreServices.framework */; };
+		FAD07D872C482C2A00A3ECBF /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FAD07D862C482C2A00A3ECBF /* SystemConfiguration.framework */; };
+		FAD07D892C482C3200A3ECBF /* CoreTelephony.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FAD07D882C482C3200A3ECBF /* CoreTelephony.framework */; };
+		FAD07D8B2C482C3A00A3ECBF /* WebKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FAD07D8A2C482C3A00A3ECBF /* WebKit.framework */; };
+		FAD07D8D2C482C4200A3ECBF /* CoreSpotlight.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FAD07D8C2C482C4200A3ECBF /* CoreSpotlight.framework */; };
+		FAD07D8F2C482C6A00A3ECBF /* StoreKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FAD07D8E2C482C6A00A3ECBF /* StoreKit.framework */; settings = {ATTRIBUTES = (Weak, ); }; };
+		FAD07D912C483AD900A3ECBF /* PasteModalVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAD07D902C483AD900A3ECBF /* PasteModalVC.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -85,6 +93,13 @@
 		FAD07D732C46EA7D00A3ECBF /* RemoteConfigManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RemoteConfigManager.swift; sourceTree = "<group>"; };
 		FAD07D752C46F9A200A3ECBF /* UIApplication+Ext.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIApplication+Ext.swift"; sourceTree = "<group>"; };
 		FAD07D7E2C4781CE00A3ECBF /* LinkManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LinkManager.swift; sourceTree = "<group>"; };
+		FAD07D842C482C2100A3ECBF /* CoreServices.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreServices.framework; path = System/Library/Frameworks/CoreServices.framework; sourceTree = SDKROOT; };
+		FAD07D862C482C2A00A3ECBF /* SystemConfiguration.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SystemConfiguration.framework; path = System/Library/Frameworks/SystemConfiguration.framework; sourceTree = SDKROOT; };
+		FAD07D882C482C3200A3ECBF /* CoreTelephony.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreTelephony.framework; path = System/Library/Frameworks/CoreTelephony.framework; sourceTree = SDKROOT; };
+		FAD07D8A2C482C3A00A3ECBF /* WebKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WebKit.framework; path = System/Library/Frameworks/WebKit.framework; sourceTree = SDKROOT; };
+		FAD07D8C2C482C4200A3ECBF /* CoreSpotlight.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreSpotlight.framework; path = System/Library/Frameworks/CoreSpotlight.framework; sourceTree = SDKROOT; };
+		FAD07D8E2C482C6A00A3ECBF /* StoreKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = StoreKit.framework; path = System/Library/Frameworks/StoreKit.framework; sourceTree = SDKROOT; };
+		FAD07D902C483AD900A3ECBF /* PasteModalVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PasteModalVC.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -92,6 +107,13 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				FAD07D8F2C482C6A00A3ECBF /* StoreKit.framework in Frameworks */,
+				FAD07D8D2C482C4200A3ECBF /* CoreSpotlight.framework in Frameworks */,
+				FAD07D8B2C482C3A00A3ECBF /* WebKit.framework in Frameworks */,
+				FAD07D892C482C3200A3ECBF /* CoreTelephony.framework in Frameworks */,
+				FAD07D872C482C2A00A3ECBF /* SystemConfiguration.framework in Frameworks */,
+				FAD07D852C482C2100A3ECBF /* CoreServices.framework in Frameworks */,
+				FAD07D822C4790C100A3ECBF /* BranchSDK in Frameworks */,
 				FA63FFC12C3908280070165E /* FirebaseDatabase in Frameworks */,
 				FAD07D722C46E90200A3ECBF /* FirebaseRemoteConfigSwift in Frameworks */,
 				FA3590832C35037A00E417B1 /* FirebaseMessaging in Frameworks */,
@@ -111,6 +133,7 @@
 			children = (
 				FA35904C2C33B2AC00E417B1 /* PupSnap */,
 				FA35904B2C33B2AC00E417B1 /* Products */,
+				FAD07D832C482C2100A3ECBF /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -162,6 +185,7 @@
 				FA63FF962C368B450070165E /* CrashlyticsCrashButton.swift */,
 				FA63FFB12C3745660070165E /* LineView.swift */,
 				FA63FFBE2C37E2710070165E /* RatingViewController.swift */,
+				FAD07D902C483AD900A3ECBF /* PasteModalVC.swift */,
 			);
 			path = "Custom Views";
 			sourceTree = "<group>";
@@ -227,6 +251,19 @@
 			path = ViewModels;
 			sourceTree = "<group>";
 		};
+		FAD07D832C482C2100A3ECBF /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				FAD07D8E2C482C6A00A3ECBF /* StoreKit.framework */,
+				FAD07D8C2C482C4200A3ECBF /* CoreSpotlight.framework */,
+				FAD07D8A2C482C3A00A3ECBF /* WebKit.framework */,
+				FAD07D882C482C3200A3ECBF /* CoreTelephony.framework */,
+				FAD07D862C482C2A00A3ECBF /* SystemConfiguration.framework */,
+				FAD07D842C482C2100A3ECBF /* CoreServices.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -253,6 +290,7 @@
 				FA63FFC22C39090A0070165E /* FirebaseAppCheck */,
 				FAD07D372C45ACB700A3ECBF /* FirebaseAuth */,
 				FAD07D712C46E90200A3ECBF /* FirebaseRemoteConfigSwift */,
+				FAD07D812C4790C100A3ECBF /* BranchSDK */,
 			);
 			productName = SophiePhotos;
 			productReference = FA35904A2C33B2AC00E417B1 /* PupSnap.app */;
@@ -284,6 +322,7 @@
 			mainGroup = FA3590412C33B2AC00E417B1;
 			packageReferences = (
 				FA35906E2C34D44800E417B1 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */,
+				FAD07D802C4790C100A3ECBF /* XCRemoteSwiftPackageReference "ios-branch-deep-linking" */,
 			);
 			productRefGroup = FA35904B2C33B2AC00E417B1 /* Products */;
 			projectDirPath = "";
@@ -338,6 +377,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				FAD07D912C483AD900A3ECBF /* PasteModalVC.swift in Sources */,
 				FA63FFC72C390E9C0070165E /* AppCheckProviderFactory.swift in Sources */,
 				FAD07D742C46EA7D00A3ECBF /* RemoteConfigManager.swift in Sources */,
 				FA3590762C34D95C00E417B1 /* FirebaseHelper.swift in Sources */,
@@ -521,6 +561,7 @@
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
 				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -531,6 +572,10 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.HEJ.PupSnap;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -554,6 +599,7 @@
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
 				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -564,6 +610,10 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.HEJ.PupSnap;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -600,6 +650,14 @@
 			requirement = {
 				kind = upToNextMajorVersion;
 				minimumVersion = 10.28.1;
+			};
+		};
+		FAD07D802C4790C100A3ECBF /* XCRemoteSwiftPackageReference "ios-branch-deep-linking" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/BranchMetrics/ios-branch-deep-linking";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 3.4.4;
 			};
 		};
 /* End XCRemoteSwiftPackageReference section */
@@ -644,6 +702,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = FA35906E2C34D44800E417B1 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
 			productName = FirebaseRemoteConfigSwift;
+		};
+		FAD07D812C4790C100A3ECBF /* BranchSDK */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = FAD07D802C4790C100A3ECBF /* XCRemoteSwiftPackageReference "ios-branch-deep-linking" */;
+			productName = BranchSDK;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

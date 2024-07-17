@@ -13,23 +13,42 @@ import FirebaseCore
 import FirebaseAuth
 import FirebaseMessaging
 import FirebaseFunctions
+import BranchSDK
 
 @main
 class AppDelegate: UIResponder, UIApplicationDelegate {
-
+    
     var window: UIWindow?
-     
+    
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
+        
+        print("delegatetest appdelegate didfinishlaunchingwithoptions")
+        FirebaseApp.configure()
+        // Check the pasteboard before Branch initialization
+        Branch.getInstance().checkPasteboardOnInstall()
+        //Should change to using UIPasteBoard instead of checkPasteboardOnInstall but skipping for now. Might be able to configure custom alert modal in the future
+        
+        
+        // Initialize Branch session
+        Branch.getInstance().initSession(launchOptions: launchOptions) { (params, error) in
+            LinkManager.shared.params = params as? [String: AnyObject]
+            print("branch params from app delegate: \(String(describing: params as? [String:AnyObject]))")
+            LinkManager.shared.handleDeepLink()
+        }
+       
+        
         // Override point for customization after application launch.
-        #if DEBUG
+#if DEBUG
         let providerFactory = AppCheckDebugProviderFactory()
-        #else
+        print("is debug")
+#else
         let providerFactory = YourSimpleAppCheckProviderFactory()
-        #endif
+        print("is not debug")
+#endif
         
         AppCheck.setAppCheckProviderFactory(providerFactory)
+        
        
-        FirebaseApp.configure()
         
         Messaging.messaging().delegate = self
         UNUserNotificationCenter.current().delegate = self
@@ -45,13 +64,13 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         }
         
         //get pairing key, or set if first launch
-      //PersistenceManager.unsetKey() //testing purposes to force a new key without uninstalling
+        //PersistenceManager.unsetKey() //testing purposes to force a new key without uninstalling
         
-       // PhotoDatabaseManager.shared.syncPhotosToDatabase()
+        // PhotoDatabaseManager.shared.syncPhotosToDatabase()
         
         
         let userKey = PersistenceManager.retrieveKey()
-  
+        
         //only do async code to fetch all keys if userKey isnt created yet
         if userKey == 0 {
             print("user key was 0")
@@ -72,11 +91,11 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                     } while allKeys.contains(newKey)
                     
                     //save new key to user defaults
-                    PersistenceManager.setKey(key: newKey)
+                    PersistenceManager.setKeyFirstTime(key: newKey)
                     print("New user key set to : \(newKey)")
                     PersistenceManager.setUser(key: newKey)
-                  
-
+                    
+                    
                 } catch {
                     print("Error retrieeving all keys from database: \(error.localizedDescription)")
                 }
@@ -94,7 +113,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             }
         }
         
-      
+        print("delegatetest end of did finish launching with options")
         return true
     }
     
@@ -118,7 +137,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                 PersistenceManager.subscribeToPairingKey(pairingKey: String(userKey))
             }
             
-         
+            
             // Subscribe to a topic after successfully fetching the FCM token
             Messaging.messaging().subscribe(toTopic: "allUsers") { error in
                 if let error = error {
@@ -126,19 +145,30 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                 } else {
                     print("Subscribed to allUsers topic")
                 }
-            }           
-          
+            }
+            
         }
     }
-
+    
+    func application(_ app: UIApplication, open url: URL, options: [UIApplication.OpenURLOptionsKey : Any] = [:]) -> Bool {
+        Branch.getInstance().application(app, open: url, options: options)
+        return true
+    }
+    
+    func application(_ application: UIApplication, continue userActivity: NSUserActivity, restorationHandler: @escaping ([UIUserActivityRestoring]?) -> Void) -> Bool {
+        Branch.getInstance().continue(userActivity)
+        return true
+    }
+    
     // MARK: UISceneSession Lifecycle
-
+    
     func application(_ application: UIApplication, configurationForConnecting connectingSceneSession: UISceneSession, options: UIScene.ConnectionOptions) -> UISceneConfiguration {
         // Called when a new scene session is being created.
         // Use this method to select a configuration to create the new scene with.
+        print("delegatetest app delegate new scene being created")
         return UISceneConfiguration(name: "Default Configuration", sessionRole: connectingSceneSession.role)
     }
-
+    
     func application(_ application: UIApplication, didDiscardSceneSessions sceneSessions: Set<UISceneSession>) {
         // Called when the user discards a scene session.
         // If any sessions were discarded while the application was not running, this will be called shortly after application:didFinishLaunchingWithOptions.
@@ -146,24 +176,24 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     }
     
     func logToFile(_ message: String) {
-           let fileManager = FileManager.default
-           let urls = fileManager.urls(for: .documentDirectory, in: .userDomainMask)
-           if let documentDirectory: NSURL = urls.first as NSURL? {
-               let logFilePath = documentDirectory.appendingPathComponent("app.log")
-               if let logFilePath = logFilePath {
-                   let logMessage = "\(Date()): \(message)\n"
-                   if fileManager.fileExists(atPath: logFilePath.path) {
-                       if let fileHandle = try? FileHandle(forWritingTo: logFilePath) {
-                           fileHandle.seekToEndOfFile()
-                           fileHandle.write(logMessage.data(using: .utf8)!)
-                           fileHandle.closeFile()
-                       }
-                   } else {
-                       try? logMessage.write(to: logFilePath, atomically: true, encoding: .utf8)
-                   }
-               }
-           }
-       }
+        let fileManager = FileManager.default
+        let urls = fileManager.urls(for: .documentDirectory, in: .userDomainMask)
+        if let documentDirectory: NSURL = urls.first as NSURL? {
+            let logFilePath = documentDirectory.appendingPathComponent("app.log")
+            if let logFilePath = logFilePath {
+                let logMessage = "\(Date()): \(message)\n"
+                if fileManager.fileExists(atPath: logFilePath.path) {
+                    if let fileHandle = try? FileHandle(forWritingTo: logFilePath) {
+                        fileHandle.seekToEndOfFile()
+                        fileHandle.write(logMessage.data(using: .utf8)!)
+                        fileHandle.closeFile()
+                    }
+                } else {
+                    try? logMessage.write(to: logFilePath, atomically: true, encoding: .utf8)
+                }
+            }
+        }
+    }
 }
 
 extension AppDelegate: MessagingDelegate {

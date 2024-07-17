@@ -7,6 +7,14 @@
 
 import UIKit
 
-final class LinkManager {
+class LinkManager {
     static let shared = LinkManager()
+    var params: [String: AnyObject]?
+    
+    private init() {}
+    
+    func handleDeepLink() {
+        print("Handling deep link for \(String(describing: params))")
+    }
+    
 }
