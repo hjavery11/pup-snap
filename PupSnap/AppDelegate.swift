@@ -18,37 +18,7 @@ import FirebaseFunctions
 class AppDelegate: UIResponder, UIApplicationDelegate {
 
     var window: UIWindow?
-    
-    func application(_ application: UIApplication, continue userActivity: NSUserActivity, restorationHandler: @escaping ([UIUserActivityRestoring]?) -> Void) -> Bool {
-          if userActivity.activityType == NSUserActivityTypeBrowsingWeb, let url = userActivity.webpageURL {
-              // Handle the URL accordingly
-              handleIncomingURL(url)
-              return true
-          }
-          return false
-      }
-      
-      private func handleIncomingURL(_ url: URL) {
-          // Parse the URL and navigate to the appropriate screen in your app
-          print("Incoming URL: \(url)")
-          if let host = url.host, host == "pupsnapapp.com" {
-              if url.pathComponents.contains("pair") {
-                  let pairingKey = url.lastPathComponent
-                  print("Pairing Key: \(pairingKey)")
-                  // Navigate to the specific view controller in your app
-                  navigateToPairingScreen(with: pairingKey)
-              }
-          }
-      }
-      
-    private func navigateToPairingScreen(with pairingKey: String) {
-           if let rootViewController = window?.rootViewController as? UINavigationController {
-               let settingsViewController = SettingsVC()
-               settingsViewController.pairingKey = pairingKey
-               rootViewController.pushViewController(settingsViewController, animated: true)
-           }
-       }
-    
+     
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         // Override point for customization after application launch.
         #if DEBUG
@@ -61,14 +31,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
        
         FirebaseApp.configure()
         
-  
-        
-
-
-
-        
-        
-   
         Messaging.messaging().delegate = self
         UNUserNotificationCenter.current().delegate = self
         

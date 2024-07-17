@@ -8,6 +8,7 @@
 import SwiftUI
 
 struct PairingView: View {
+    @Environment(\.presentationMode) var presentationMode
     
     @ObservedObject var viewModel: SettingsViewModel
     @FocusState private var keyIsFocused: Bool
@@ -18,7 +19,6 @@ struct PairingView: View {
         NavigationStack {
             List {
                 Section {
-                    Text(pairingKey ?? "No key")
                     HStack {
                         Text("My Key")
                             .font(.title3)
@@ -36,7 +36,8 @@ struct PairingView: View {
                             }
                     }
                     
-                    ShareLink("Share My Key",item: URL(string: "PupSnap://changekey?key=\(viewModel.userKey)")!, subject: Text("Join me on Sophie Photos!"))
+                   // ShareLink("Share My Key",item: URL(string: "https://pupsnapapp.com/pair/\(viewModel.userKey)")!, subject: Text("Join me on PupSnap to see all my photos!"))
+                    ShareLink("Share My Key",item: URL(string: "https://pupsnapapp.com/pair/56706732")!, subject: Text("Join me on PupSnap to see all my photos!"))
             
                 } header: {
                     Text("Pairing")
@@ -58,7 +59,13 @@ struct PairingView: View {
                 Task {
                     do {
                         try await viewModel.changeKey()
-                    } catch {                   
+                        if pairingKey != nil {
+                            DispatchQueue.main.asyncAfter(deadline: .now() + 1){
+                                exit(0)
+                            }
+                        }
+                      
+                    } catch {
                         viewModel.showingChangeKeyError = true
                     }
                     
@@ -66,10 +73,16 @@ struct PairingView: View {
                 
             }
         } message: {
-            Text("Your new key will be set to: \(viewModel.newKey). \nChanging your key will remove access to your current key")
+            let text = pairingKey != nil ? "Your new key will be set to: \(viewModel.newKey). \n\nChanging your key will remove access to your current key.\n\nThe app will close after changing" : "Your new key will be set to: \(viewModel.newKey).\n\nChanging your key will remove access to your current key."
+            Text(text)
           
         }
-        
+        .onAppear {
+            if let sharedKey = pairingKey {
+                viewModel.newKey = sharedKey
+                viewModel.showingConfirmation = true
+            }
+        }
         .sheet(isPresented: $viewModel.showingChangeKey) {
             VStack {
                 Text("Change Key")
@@ -106,7 +119,7 @@ struct PairingView: View {
         }
     
     }
-        
+  
 }
 
 #Preview {

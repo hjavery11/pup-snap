@@ -12,7 +12,16 @@ class SettingsVC: UIViewController {
     
     var settingsView: UIHostingController<SettingsView>?
     var pairingKey: String?
-
+ 
+    init(pairingKey: String? = nil) {
+        self.pairingKey = pairingKey
+        super.init(nibName: nil, bundle: nil)
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         title = "Settings"

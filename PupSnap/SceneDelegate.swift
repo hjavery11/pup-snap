@@ -6,38 +6,14 @@
 //
 
 import UIKit
+import OSLog
 
 class SceneDelegate: UIResponder, UIWindowSceneDelegate, UITabBarControllerDelegate {
     
     var window: UIWindow?
     
-    
     func scene(_ scene: UIScene, willConnectTo session: UISceneSession, options connectionOptions: UIScene.ConnectionOptions) {
-        
-//        // Determine who sent the URL.
-//        if let urlContext = connectionOptions.urlContexts.first {
-//            
-//            let sendingAppID = urlContext.options.sourceApplication
-//            let url = urlContext.url
-//            print("source application = \(sendingAppID ?? "Unknown")")
-//            print("url = \(url)")
-//            //Process URL
-//            guard let components = NSURLComponents(url: url, resolvingAgainstBaseURL: true),
-//                    let destination = components.path,
-//                    let params = components.queryItems else {
-//                        print("Invalid URL")
-//                        return
-//                }
-//            
-//            if let sharedKey = params.first(where: { $0.name == "key"})?.value {
-//                print("Shared key from url: \(sharedKey)")
-//            } else {
-//                print("No key found in deeplink")
-//            }
-//        }
-        
-        
-        
+    
         guard let windowScene = (scene as? UIWindowScene) else { return }
         
         window = UIWindow(frame: windowScene.coordinateSpace.bounds)
@@ -47,9 +23,49 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate, UITabBarControllerDeleg
         window?.rootViewController = tabBarController
         window?.makeKeyAndVisible()
         
+       
+        
         // Add observer for the notification
         NotificationCenter.default.addObserver(self, selector: #selector(presentFullScreenPhotoVC(_:)), name: NSNotification.Name("PresentFullScreenPhotoVC"), object: nil)
+        
+        // Handle URL if app was launched with a URL
+        if let url = connectionOptions.userActivities.first?.webpageURL {
+            DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
+                self.handleIncomingURL(url)
+            }
+        }
     }
+  
+    
+    
+    func scene(_ scene: UIScene, continue userActivity: NSUserActivity) {
+          if userActivity.activityType == NSUserActivityTypeBrowsingWeb, let url = userActivity.webpageURL {
+              handleIncomingURL(url)
+          }
+      }
+
+      private func handleIncomingURL(_ url: URL) {
+          print("Incoming URL: \(url)")
+          if let host = url.host, host == "pupsnapapp.com" {
+              if url.pathComponents.contains("pair") {
+                  let pairingKey = url.lastPathComponent
+                  print("Pairing Key: \(pairingKey)")
+                  navigateToPairingScreen(with: pairingKey)
+              }
+          }
+      }
+
+    
+    
+      private func navigateToPairingScreen(with pairingKey: String) {
+          if let rootViewController = window?.rootViewController as? UITabBarController,
+             let navController = rootViewController.selectedViewController as? UINavigationController {
+              let settingsViewController = SettingsVC()
+              settingsViewController.pairingKey = pairingKey
+              navController.isNavigationBarHidden = true
+              navController.pushViewController(settingsViewController, animated: true)
+          }
+      }
     
     func createPhotoVC() -> UINavigationController {
         let photoVC = PhotoVC()

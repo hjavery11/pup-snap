@@ -101,6 +101,6 @@ import Foundation
             self.dogName = newDogName
         }
     }
-
+    
     
 }

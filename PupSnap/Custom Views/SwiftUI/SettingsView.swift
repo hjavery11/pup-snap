@@ -48,6 +48,19 @@ struct SettingsView: View {
                
             }
         }
+        .onAppear {
+            if pairingKey != nil {
+                DispatchQueue.main.async {
+                    // Navigate to PairingView if pairingKey is provided
+                    let pairingView = PairingView(viewModel: viewModel, pairingKey: pairingKey)
+                    let hostingController = UIHostingController(rootView: pairingView)
+                    if let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
+                       let window = windowScene.windows.first(where: { $0.isKeyWindow }) {
+                        window.rootViewController?.present(hostingController, animated: true, completion: nil)
+                    }
+                }
+            }
+        }
     }
 }
 

@@ -46,6 +46,7 @@
 		FAD07D722C46E90200A3ECBF /* FirebaseRemoteConfigSwift in Frameworks */ = {isa = PBXBuildFile; productRef = FAD07D712C46E90200A3ECBF /* FirebaseRemoteConfigSwift */; };
 		FAD07D742C46EA7D00A3ECBF /* RemoteConfigManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAD07D732C46EA7D00A3ECBF /* RemoteConfigManager.swift */; };
 		FAD07D762C46F9A200A3ECBF /* UIApplication+Ext.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAD07D752C46F9A200A3ECBF /* UIApplication+Ext.swift */; };
+		FAD07D7F2C4781CE00A3ECBF /* LinkManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAD07D7E2C4781CE00A3ECBF /* LinkManager.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -83,6 +84,7 @@
 		FAD07D6F2C46E42100A3ECBF /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		FAD07D732C46EA7D00A3ECBF /* RemoteConfigManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RemoteConfigManager.swift; sourceTree = "<group>"; };
 		FAD07D752C46F9A200A3ECBF /* UIApplication+Ext.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIApplication+Ext.swift"; sourceTree = "<group>"; };
+		FAD07D7E2C4781CE00A3ECBF /* LinkManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LinkManager.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -123,7 +125,6 @@
 		FA35904C2C33B2AC00E417B1 /* PupSnap */ = {
 			isa = PBXGroup;
 			children = (
-				FAD07D792C47685C00A3ECBF /* Coordinator */,
 				FA3590842C350A7800E417B1 /* PupSnap.entitlements */,
 				FA35907F2C34FA4200E417B1 /* Models */,
 				FA35907E2C34FA3800E417B1 /* Utilities */,
@@ -184,6 +185,7 @@
 				FA63FFCA2C391DB80070165E /* SophieError.swift */,
 				FA63FFCC2C39231B0070165E /* PersistenceManager.swift */,
 				FAD07D732C46EA7D00A3ECBF /* RemoteConfigManager.swift */,
+				FAD07D7E2C4781CE00A3ECBF /* LinkManager.swift */,
 			);
 			path = Utilities;
 			sourceTree = "<group>";
@@ -223,13 +225,6 @@
 				FAD07D422C46098A00A3ECBF /* SettingsViewModel.swift */,
 			);
 			path = ViewModels;
-			sourceTree = "<group>";
-		};
-		FAD07D792C47685C00A3ECBF /* Coordinator */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			path = Coordinator;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -364,6 +359,7 @@
 				FA3590522C33B2AC00E417B1 /* PhotoVC.swift in Sources */,
 				FA35904E2C33B2AC00E417B1 /* AppDelegate.swift in Sources */,
 				FAD07D3E2C45CE9100A3ECBF /* PairingView.swift in Sources */,
+				FAD07D7F2C4781CE00A3ECBF /* LinkManager.swift in Sources */,
 				FA3590502C33B2AC00E417B1 /* SceneDelegate.swift in Sources */,
 				FA3590862C35223300E417B1 /* FullScreenPhotoVC.swift in Sources */,
 				FA63FF972C368B450070165E /* CrashlyticsCrashButton.swift in Sources */,
