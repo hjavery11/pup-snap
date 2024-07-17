@@ -12,10 +12,13 @@ struct PairingView: View {
     @ObservedObject var viewModel: SettingsViewModel
     @FocusState private var keyIsFocused: Bool
     
+    var pairingKey: String?
+    
     var body: some View {
         NavigationStack {
             List {
                 Section {
+                    Text(pairingKey ?? "No key")
                     HStack {
                         Text("My Key")
                             .font(.title3)

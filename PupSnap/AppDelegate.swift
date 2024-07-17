@@ -19,6 +19,36 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     var window: UIWindow?
     
+    func application(_ application: UIApplication, continue userActivity: NSUserActivity, restorationHandler: @escaping ([UIUserActivityRestoring]?) -> Void) -> Bool {
+          if userActivity.activityType == NSUserActivityTypeBrowsingWeb, let url = userActivity.webpageURL {
+              // Handle the URL accordingly
+              handleIncomingURL(url)
+              return true
+          }
+          return false
+      }
+      
+      private func handleIncomingURL(_ url: URL) {
+          // Parse the URL and navigate to the appropriate screen in your app
+          print("Incoming URL: \(url)")
+          if let host = url.host, host == "pupsnapapp.com" {
+              if url.pathComponents.contains("pair") {
+                  let pairingKey = url.lastPathComponent
+                  print("Pairing Key: \(pairingKey)")
+                  // Navigate to the specific view controller in your app
+                  navigateToPairingScreen(with: pairingKey)
+              }
+          }
+      }
+      
+    private func navigateToPairingScreen(with pairingKey: String) {
+           if let rootViewController = window?.rootViewController as? UINavigationController {
+               let settingsViewController = SettingsVC()
+               settingsViewController.pairingKey = pairingKey
+               rootViewController.pushViewController(settingsViewController, animated: true)
+           }
+       }
+    
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         // Override point for customization after application launch.
         #if DEBUG
@@ -31,50 +61,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
        
         FirebaseApp.configure()
         
-        Auth.auth().signInAnonymously { authResult, error in
-            if let error = error {
-                print("Error signing in anonymously: \(error.localizedDescription)")
-                return
-            }
-            guard let user = authResult?.user else { return }
-            
-            let userKey = PersistenceManager.retrieveKey()
-            let functions = Functions.functions()
-            functions.httpsCallable("setCustomClaims").call(["uid": user.uid, "pairingKey": userKey]) { result, error in
-                if let error = error {
-                    print("Error setting custom claims: \(error.localizedDescription)")
-                } else {
-                    print("Custom claims set successfully for UID/Pairing key: \(user.uid)/\(userKey)")
-                    // Fetch new ID token to ensure the custom claims are applied
-                    user.getIDTokenForcingRefresh(true) { idToken, error in
-                        if let error = error {
-                            print("Error fetching ID token: \(error.localizedDescription)")
-                            return
-                        }
-                        // Print the ID token
-                        if let idToken = idToken {
-                            print("ID Token: \(idToken)")
-                        }
-                        // Verify the custom claims
-                        Auth.auth().currentUser?.getIDTokenResult(completion: { (result, error) in
-                            if let error = error {
-                                print("Error fetching ID token result: \(error.localizedDescription)")
-                                return
-                            }
-                            if let claims = result?.claims {
-                                print("Custom claims: \(claims)")
-                                // Ensure the pairing key claim exists
-                                if let pairingKey = claims["pairingKey"] as? Int {
-                                    print("Pairing key successfully found: \(pairingKey)")
-                                } else {
-                                    print("Custom claim for pairing key not found")
-                                }
-                            }
-                        })
-                    }
-                }
-            }
-        }
+  
+        
 
 
 
@@ -95,13 +83,21 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         }
         
         //get pairing key, or set if first launch
-        let userKey = PersistenceManager.retrieveKey()
+      //PersistenceManager.unsetKey() //testing purposes to force a new key without uninstalling
         
+       // PhotoDatabaseManager.shared.syncPhotosToDatabase()
+        
+        
+        let userKey = PersistenceManager.retrieveKey()
+  
         //only do async code to fetch all keys if userKey isnt created yet
         if userKey == 0 {
+            print("user key was 0")
             Task {
                 do {
                     let allKeys = try await NetworkManager.shared.retrieveAllKeys()
+                    print("all keys array was \(allKeys)")
+                    
                     guard !allKeys.isEmpty else {
                         print("No keys returned from database")
                         return
@@ -116,13 +112,16 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                     //save new key to user defaults
                     PersistenceManager.setKey(key: newKey)
                     print("New user key set to : \(newKey)")
+                    PersistenceManager.setUser(key: newKey)
                   
 
                 } catch {
                     print("Error retrieeving all keys from database: \(error.localizedDescription)")
                 }
             }
-        }    
+        }  else {
+            PersistenceManager.setUser(key: userKey)
+        }
         
         // Fetch and activate Remote Config on app startup
         RemoteConfigManager.shared.fetchAndActivate { changed, error in

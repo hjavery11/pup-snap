@@ -7,11 +7,14 @@
 
 import UIKit
 import FirebaseStorage
+import FirebaseFunctions
+import FirebaseAuth
 
 class NetworkManager {
     static let shared = NetworkManager()
     private let firebaseHelper = FirebaseHelper()
     private let dbHelper = DatabaseHelper()
+    private let functions = Functions.functions()
 
     private init() {}
 
@@ -67,10 +70,10 @@ class NetworkManager {
     }
   
 
-    func deletePhoto(photo: Photo) async throws {
+    func deletePhoto(photo: Photo, last: Bool) async throws {
         do {
             try await firebaseHelper.deleteImage(url: photo.path!)
-            try await dbHelper.deletePhotoFromDB(photo: photo)
+            try await dbHelper.deletePhotoFromDB(photo: photo, last: last)
             print("deleted photo: \(photo.path ?? "") and id: \(String(describing: photo.id))")
         } catch {
             print("something went wrong deleting photo: \(error)")
@@ -87,7 +90,57 @@ class NetworkManager {
     }   
     
     func retrieveAllKeys() async throws -> [Int] {
-        try await dbHelper.retrieveAllKeys()
+            let result = try await functions.httpsCallable("getAllKeys").call()
+            if let data = result.data as? [String: Any],
+               let keys = data["keys"] as? [Int] {
+                return keys
+            } else {
+                return []
+            }
+        }
+    
+    func initializeKey(pairingKey: Int) async throws {
+           let result = try await functions.httpsCallable("initializeKey").call(["pairingKey": pairingKey])
+           if let data = result.data as? [String: Any], let message = data["message"] as? String {
+               print(message)
+           }
+       }
+    
+    func setClaims(for user: User, with userKey: Int) {
+        functions.httpsCallable("setCustomClaims").call(["uid": user.uid, "pairingKey": userKey]) { result, error in
+            if let error = error {
+                print("Error setting custom claims: \(error.localizedDescription)")
+            } else {
+                print("Custom claims set successfully for UID/Pairing key: \(user.uid)/\(userKey)")
+                //   Fetch new ID token to ensure the custom claims are applied
+                user.getIDTokenForcingRefresh(true) { idToken, error in
+                    if let error = error {
+                        print("Error fetching ID token: \(error.localizedDescription)")
+                        return
+                    }
+                    // Print the ID token
+                    if let idToken = idToken {
+                        print("ID Token: \(idToken)")
+                    }
+                    // Verify the custom claims
+                    Auth.auth().currentUser?.getIDTokenResult(completion: { (result, error) in
+                        if let error = error {
+                            print("Error fetching ID token result: \(error.localizedDescription)")
+                            return
+                        }
+                        if let claims = result?.claims {
+                            print("Custom claims: \(claims)")
+                            // Ensure the pairing key claim exists
+                            if let pairingKey = claims["pairingKey"] as? Int {
+                                print("Pairing key successfully found: \(pairingKey)")
+                            } else {
+                                print("Custom claim for pairing key not found")
+                            }
+                        }
+                    })
+                }
+            }
+        }
     }
    
 

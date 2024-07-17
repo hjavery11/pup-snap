@@ -193,7 +193,13 @@ class FeedVC: UIViewController, FullScreenPhotoVCDelegate {
         Task {
             do {
                 let deletedPhoto = photoArray[indexPath.item]
-                try await NetworkManager.shared.deletePhoto(photo: deletedPhoto)
+                var last: Bool
+                if photoArray.count == 1 {
+                   last = true
+                } else {
+                    last = false
+                }
+                try await NetworkManager.shared.deletePhoto(photo: deletedPhoto, last: last)
                 photoArray.remove(at: indexPath.item)
                
                 applySnapshot()

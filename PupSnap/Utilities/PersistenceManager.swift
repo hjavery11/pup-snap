@@ -7,6 +7,7 @@
 
 import Foundation
 import FirebaseMessaging
+import FirebaseAuth
 
 
 enum PersistenceManager {
@@ -41,12 +42,22 @@ enum PersistenceManager {
         return key
     }
     
+    static func unsetKey() {
+        defaults.removeObject(forKey: Keys.key)
+    }
+    
     static func setKey(key: Int) {
         Task {
             do {
                 try await unsubscribeFromPairingKey()
                 defaults.set(key, forKey: Keys.key)
-                subscribeToPairingKey(pairingKey: String(key))
+                subscribeToPairingKey(pairingKey: String(key))        
+                do {
+                    try await NetworkManager.shared.initializeKey(pairingKey: key)
+                } catch {
+                    print("Error attempting to initalize key: \(error)")
+                }
+               
             } catch {
                 print("Error unsubscribing from pairing key with error: \(error.localizedDescription)")
             }
@@ -61,6 +72,19 @@ enum PersistenceManager {
             }else {
                 print("Subscribed to topic: \(topic)")
             }
+        }
+        
+       
+    }
+    
+    static func setUser(key: Int) {
+        Auth.auth().signInAnonymously { authResult, error in
+            if let error = error {
+                print("Error signing in anonymously: \(error.localizedDescription)")
+                return
+            }
+            guard let user = authResult?.user else { return }
+            NetworkManager.shared.setClaims(for: user, with: key)
         }
     }
     

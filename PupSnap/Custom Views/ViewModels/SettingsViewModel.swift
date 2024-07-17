@@ -9,7 +9,7 @@ import Foundation
 
 @MainActor class SettingsViewModel: ObservableObject {     
     
-     let dogPhotos: [String] = [
+     @Published var dogPhotos: [String] = [
         "sophie-iso",
         "australian-shephard-1",
         "australian-shephard-2",
@@ -31,6 +31,7 @@ import Foundation
         "poodle-white",
         "rottweiler-1"
     ]
+    
 
     
     @Published var showingChangeKey: Bool = false
@@ -50,15 +51,20 @@ import Foundation
     @Published var showNameConfirmation: Bool = false
     @Published var newDogName: String = ""
     
+    @Published var userKey = PersistenceManager.retrieveKey()
+    
     init() {
         self.selectedPhoto = PersistenceManager.getDogPhoto() ?? "sophie-iso"
         self.dogName = PersistenceManager.getDogName() ?? ""
         self.newDogName = dogName
+        
+        print("user key is \(userKey)")
     }
     
     var alertMessage: String = ""
     
-    @Published var userKey = PersistenceManager.retrieveKey()
+   
+
     
     func changeKey() async throws {
        let allKeys = try await NetworkManager.shared.retrieveAllKeys()
@@ -69,6 +75,7 @@ import Foundation
         if allKeys.contains(newKey) || newKey == 123456 {
             self.userKey = newKey
             PersistenceManager.setKey(key: newKey)
+            PersistenceManager.setUser(key: newKey)
         } else {
             self.alertMessage = SophieError.invalidKey.rawValue
             throw SophieError.invalidKey
@@ -79,6 +86,10 @@ import Foundation
         if self.newPhoto != "" {
             PersistenceManager.updateDogPhoto(photo: self.newPhoto)
             showIconSuccess = true
+            self.dogPhotos.removeAll {
+                $0 == newPhoto
+            }
+            self.dogPhotos.append(self.selectedPhoto!)
          
         }
     }

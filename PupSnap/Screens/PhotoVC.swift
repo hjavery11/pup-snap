@@ -64,7 +64,7 @@ class PhotoVC: UIViewController, UINavigationControllerDelegate, UIImagePickerCo
     func setDogInfo() {
         let dogName = PersistenceManager.getDogName() ?? "Sophie"
         let icon = PersistenceManager.getDogPhoto() ?? "sophie-iso"
-        let text = "Hi, I'm \(dogName) \nTap on me to add a photo!"
+        let text = "Hi, I'm \(dogName).\nTap on me to add a photo!"
         
         dog.image = UIImage(named: icon)
         self.speechBubbleText = text
@@ -72,7 +72,7 @@ class PhotoVC: UIViewController, UINavigationControllerDelegate, UIImagePickerCo
     }
     
     func updateSpeechBubbleText(_ text: String) {
-           speechBubbleText = text          
+           speechBubbleText = text
        }
     
     override func viewDidLayoutSubviews() {

@@ -1,5 +1,5 @@
 //
-//  SettingsVC.swift
+//  SettingsView.swift
 //  PupSnap
 //
 //  Created by Harrison Javery on 7/15/24.
@@ -10,6 +10,7 @@ import SwiftUI
 struct SettingsView: View {
     
     @StateObject var viewModel = SettingsViewModel()
+    var pairingKey: String?
     
     var body: some View {
         NavigationStack {
@@ -18,7 +19,7 @@ struct SettingsView: View {
                     List {
                         HStack {
                             NavigationLink("Pairing") {
-                                PairingView(viewModel: viewModel)
+                                PairingView(viewModel: viewModel, pairingKey: pairingKey)
                             }
                             
                         }

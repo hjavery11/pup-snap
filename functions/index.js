@@ -2,6 +2,58 @@ const functions = require('firebase-functions');
 const admin = require('firebase-admin');
 admin.initializeApp();
 
+exports.initializeKey = functions.https.onCall(async (data, context) => {
+    if (!context.auth) {
+        throw new functions.https.HttpsError('unauthenticated', 'The function must be called while authenticated.');
+    }
+
+    const pairingKey = data.pairingKey;
+
+    try {
+        const ref = admin.database().ref(`/${pairingKey}`);
+        console.log(`Checking if key at path: /${pairingKey} exists`);
+
+        // Verify if the key exists and check if the photos key is populated
+        const snapshot = await ref.once('value');
+        const data = snapshot.val();
+
+        if (data && data.photos) {
+            console.log(`Photos key already exists at path: /${pairingKey}`);
+            return { message: `Photos key already exists for key ${pairingKey}` };
+        } else {
+            console.log(`Initializing key at path: /${pairingKey}`);
+            // Initialize the key with an empty string
+            await ref.set(``);
+
+            console.log(`Data set at path: /${pairingKey}`);
+            return { message: `Key ${pairingKey} initialized successfully.` };
+        }
+    } catch (error) {
+        console.error('Error initializing key:', error);
+        throw new functions.https.HttpsError('unknown', 'Failed to initialize key', error);
+    }
+});
+
+exports.getAllKeys = functions.https.onCall(async (data, context) => {
+    // Only allow authenticated users to call this function
+    if (!context.auth) {
+        throw new functions.https.HttpsError('unauthenticated', 'The function must be called while authenticated.');
+    }
+
+    try {
+        const snapshot = await admin.database().ref('/').once('value');
+        const data = snapshot.val();
+
+        // Extract the keys from the top-level objects
+        const keys = Object.keys(data).map(key => parseInt(key, 10)).filter(key => !isNaN(key));
+
+        return { keys: keys };
+    } catch (error) {
+        console.error('Error retrieving keys:', error);
+        throw new functions.https.HttpsError('unknown', 'Failed to retrieve keys', error);
+    }
+});
+
 exports.setCustomClaims = functions.https.onCall(async (data, context) => {
     const uid = data.uid;
     const pairingKey = String(data.pairingKey);

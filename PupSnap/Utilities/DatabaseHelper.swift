@@ -91,14 +91,21 @@ class DatabaseHelper {
         
     }
     
-    func deletePhotoFromDB(photo: Photo) async throws{
+    func deletePhotoFromDB(photo: Photo, last: Bool) async throws{
         let userKey = PersistenceManager.retrieveKey()
         let photosRef = ref.child(String(userKey)).child("photos")
+       
         if let id = photo.id{
-            try await photosRef.child(id).removeValue()
+            if last {
+                try await ref.child(String(userKey)).setValue("")
+            } else {
+                try await photosRef.child(id).removeValue()
+            }
         } else {
             print("no id found for photo to delete: \(photo)")
         }
+        
+        
     }
     
     func fetchPhotos() async throws -> [Photo]{
@@ -129,20 +136,18 @@ class DatabaseHelper {
     }
     
     func retrieveAllKeys() async throws -> [Int]{
-        let snapshot = try await ref.getData()
-        guard let topLevelData = snapshot.value as? [String: Any] else {
+        let snapshot = try await ref.child("publicKeys").getData()
+        guard let topLevelData = snapshot.value as? [String: Bool] else {
             print("No top-level data found")
             return []
         }
         
         let allKeys = topLevelData.keys.compactMap { key -> Int? in
-            let intKey = Int(key)
-            return intKey
+            return Int(key)
         }
         
         return allKeys
     }
-
 }
 
 extension DatabaseHelper {
@@ -167,54 +172,96 @@ extension DatabaseHelper {
 
 
 // All this is DB setup script for syncing out of sync firebase storage with realtime database
-//import Foundation
-//import FirebaseDatabase
-//
-//class PhotoDatabaseManager {
-//
-//    static let shared = PhotoDatabaseManager()
-//
-//    private init() {
-//    }
-//
-//    private let databaseRef = Database.database().reference()
-//
-//    // Function to generate a random 8-digit integer
-//    private func generateRandom8DigitInteger() -> Int {
-//        return Int.random(in: 10000000...99999999)
-//    }
-//
-//    // Function to move photo data to a new top-level key
-//    func movePhotosToNewKey() {
-//        // Step 1: Retrieve everything currently under "photos"
-//        databaseRef.child("photos").observeSingleEvent(of: .value) { snapshot in
-//            guard let photosData = snapshot.value as? [String: Any] else {
-//                print("No photos data found")
-//                return
-//            }
-//
-//            // Step 2: Create a new top-level key and set it to a random 8-digit integer
-//            let randomKey = self.generateRandom8DigitInteger()
-//            let keyString = String(randomKey)
-//
-//            // Step 3: Move everything from "photos" to inside that 8-digit key
-//            self.databaseRef.child(keyString).child("photos").setValue(photosData) { error, _ in
-//                if let error = error {
-//                    print("Error moving photos to new key: \(error.localizedDescription)")
-//                    return
-//                } else {
-//                    print("Successfully moved photos to new key")
-//
-//                    // Delete old "photos" node after moving
-//                    self.databaseRef.child("photos").removeValue { error, _ in
-//                        if let error = error {
-//                            print("Error deleting old photos node: \(error.localizedDescription)")
-//                        } else {
-//                            print("Successfully deleted old photos node")
-//                        }
-//                    }
-//                }
-//            }
-//        }
-//    }
-//}
+import Foundation
+import FirebaseDatabase
+import FirebaseStorage
+
+class PhotoDatabaseManager {
+
+    static let shared = PhotoDatabaseManager()
+    private let storageRef = Storage.storage().reference().child("images")
+      private let databaseRef = Database.database().reference().child("56706732/photos")
+
+    private init() {
+    }
+
+    func syncPhotosToDatabase() {
+         // List all files under images/
+         storageRef.listAll { (result, error) in
+             if let error = error {
+                 print("Error listing files: \(error.localizedDescription)")
+                 return
+             }
+             
+             // Iterate through the items
+             for item in result!.items {
+                 let path = item.fullPath
+                 self.createDatabaseEntry(for: path)
+             }
+         }
+     }
+     
+     private func createDatabaseEntry(for path: String) {
+         let photoID = UUID().uuidString
+         let photoRef = databaseRef.child(photoID)
+         
+         // Create a photo object with default values
+         let photoObject: [String: Any] = [
+             "caption": "", // default caption
+             "ratings": [PersistenceManager.retrieveID() : 0], // default empty ratings dictionary
+             "path": path,
+             "timestamp": Int(Date().timeIntervalSince1970)
+         ]
+         
+         // Write to the database
+         photoRef.setValue(photoObject) { (error, ref) in
+             if let error = error {
+                 print("Error creating database entry: \(error.localizedDescription)")
+             } else {
+                 print("Database entry created for path: \(path)")
+             }
+         }
+     }
+
+    // Function to generate a random 8-digit integer
+    private func generateRandom8DigitInteger() -> Int {
+        return Int.random(in: 10000000...99999999)
+    }
+
+    
+    
+    
+    // Function to move photo data to a new top-level key
+    func movePhotosToNewKey() {
+        // Step 1: Retrieve everything currently under "photos"
+        databaseRef.child("photos").observeSingleEvent(of: .value) { snapshot in
+            guard let photosData = snapshot.value as? [String: Any] else {
+                print("No photos data found")
+                return
+            }
+
+            // Step 2: Create a new top-level key and set it to a random 8-digit integer
+            let randomKey = self.generateRandom8DigitInteger()
+            let keyString = String(randomKey)
+
+            // Step 3: Move everything from "photos" to inside that 8-digit key
+            self.databaseRef.child(keyString).child("photos").setValue(photosData) { error, _ in
+                if let error = error {
+                    print("Error moving photos to new key: \(error.localizedDescription)")
+                    return
+                } else {
+                    print("Successfully moved photos to new key")
+
+                    // Delete old "photos" node after moving
+                    self.databaseRef.child("photos").removeValue { error, _ in
+                        if let error = error {
+                            print("Error deleting old photos node: \(error.localizedDescription)")
+                        } else {
+                            print("Successfully deleted old photos node")
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
