@@ -46,8 +46,6 @@
 		FAD07D722C46E90200A3ECBF /* FirebaseRemoteConfigSwift in Frameworks */ = {isa = PBXBuildFile; productRef = FAD07D712C46E90200A3ECBF /* FirebaseRemoteConfigSwift */; };
 		FAD07D742C46EA7D00A3ECBF /* RemoteConfigManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAD07D732C46EA7D00A3ECBF /* RemoteConfigManager.swift */; };
 		FAD07D762C46F9A200A3ECBF /* UIApplication+Ext.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAD07D752C46F9A200A3ECBF /* UIApplication+Ext.swift */; };
-		FAD07D7B2C47686600A3ECBF /* Coordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAD07D7A2C47686600A3ECBF /* Coordinator.swift */; };
-		FAD07D7D2C4768A500A3ECBF /* MainCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAD07D7C2C4768A500A3ECBF /* MainCoordinator.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -85,8 +83,6 @@
 		FAD07D6F2C46E42100A3ECBF /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		FAD07D732C46EA7D00A3ECBF /* RemoteConfigManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RemoteConfigManager.swift; sourceTree = "<group>"; };
 		FAD07D752C46F9A200A3ECBF /* UIApplication+Ext.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIApplication+Ext.swift"; sourceTree = "<group>"; };
-		FAD07D7A2C47686600A3ECBF /* Coordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Coordinator.swift; sourceTree = "<group>"; };
-		FAD07D7C2C4768A500A3ECBF /* MainCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainCoordinator.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -232,8 +228,6 @@
 		FAD07D792C47685C00A3ECBF /* Coordinator */ = {
 			isa = PBXGroup;
 			children = (
-				FAD07D7A2C47686600A3ECBF /* Coordinator.swift */,
-				FAD07D7C2C4768A500A3ECBF /* MainCoordinator.swift */,
 			);
 			path = Coordinator;
 			sourceTree = "<group>";
@@ -362,13 +356,11 @@
 				FA3590622C33B30000E417B1 /* FeedVC.swift in Sources */,
 				FA35906B2C34A46E00E417B1 /* SophiePhotoCell.swift in Sources */,
 				FAD07D452C46571400A3ECBF /* DogView.swift in Sources */,
-				FAD07D7D2C4768A500A3ECBF /* MainCoordinator.swift in Sources */,
 				FAD07D3C2C45C9E300A3ECBF /* SettingsVC.swift in Sources */,
 				FA63FFCD2C39231B0070165E /* PersistenceManager.swift in Sources */,
 				FA63FFCB2C391DB80070165E /* SophieError.swift in Sources */,
 				FA63FFBF2C37E2710070165E /* RatingViewController.swift in Sources */,
 				FA63FFC92C3916B00070165E /* Photo.swift in Sources */,
-				FAD07D7B2C47686600A3ECBF /* Coordinator.swift in Sources */,
 				FA3590522C33B2AC00E417B1 /* PhotoVC.swift in Sources */,
 				FA35904E2C33B2AC00E417B1 /* AppDelegate.swift in Sources */,
 				FAD07D3E2C45CE9100A3ECBF /* PairingView.swift in Sources */,
