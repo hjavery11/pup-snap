@@ -51,13 +51,6 @@ enum PersistenceManager {
         defaults.removeObject(forKey: Keys.key)
     }
     
-    static func changeKey(key: Int) async throws {
-        try await unsubscribeFromPairingKey()
-        defaults.set(key, forKey: Keys.key)
-        try await subscribeToPairingKey(pairingKey: String(key))
-        try await NetworkManager.shared.initializeKey(pairingKey: key)
-    }
-    
     static func subscribeToPairingKey(pairingKey: String) async throws {
         let topic = "pairingKey_\(pairingKey)"
         do {
@@ -96,18 +89,12 @@ enum PersistenceManager {
             print("New user key set to :\(newKey)")
             // initalize the key which is a firebase function that creates an empty object in the datbaase so the user has access to it
             try await NetworkManager.shared.initializeKey(pairingKey: newKey)
-            
-            //now do user setup
-            let authResult = try await Auth.auth().signInAnonymously()
-            let user = authResult.user
-            let token = try await user.getIDToken()
-            try await NetworkManager.shared.setClaims(for: user, with: newKey)
-            //force token refresh to ensure new claims are applied
-            let refreshedToken = try await user.getIDTokenResult(forcingRefresh: true)
+            try await NetworkManager.shared.setClaims(with: newKey)
+
             //end of user setup. Should now have claims setup to be able to access database
         } else {
             //returning user
-            let authResult = try await Auth.auth().signInAnonymously()            
+            //let _ = try await Auth.auth().signInAnonymously() commenting out for now tot see if i need to call everytime
         }
     }
     

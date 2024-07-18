@@ -13,8 +13,6 @@ struct PairingView: View {
     @ObservedObject var viewModel: SettingsViewModel
     @FocusState private var keyIsFocused: Bool
     
-    var pairingKey: String?
-    
     var body: some View {
         NavigationStack {
             List {
@@ -32,7 +30,7 @@ struct PairingView: View {
                         Text("Change Key")
                             .font(.footnote)
                             .onTapGesture {
-                                viewModel.showingChangeKey = true
+                                viewModel.showingChangeKey = true                              
                             }
                     }
                     
@@ -53,18 +51,12 @@ struct PairingView: View {
         } message: {
             Text(viewModel.alertMessage)
         }
-        .alert("Are you sure?", isPresented: $viewModel.showingConfirmation) {
+        .alert("Are you sure?", isPresented: $viewModel.showingPairingConfirmation) {
             Button("No", role: .cancel) {viewModel.showingChangeKey = true}
             Button("Yes", role: .destructive) {
                 Task {
                     do {
                         try await viewModel.changeKey()
-                        if pairingKey != nil {
-                            DispatchQueue.main.asyncAfter(deadline: .now() + 1){
-                                exit(0)
-                            }
-                        }
-                      
                     } catch {
                         viewModel.showingChangeKeyError = true
                     }
@@ -73,21 +65,16 @@ struct PairingView: View {
                 
             }
         } message: {
-            let text = pairingKey != nil ? "Your new key will be set to: \(viewModel.newKey). \n\nChanging your key will remove access to your current key.\n\nThe app will close after changing" : "Your new key will be set to: \(viewModel.newKey).\n\nChanging your key will remove access to your current key."
+            let text = viewModel.shareConfirmationMessage ? "Your pairing key will be changed to \(viewModel.newKey) to join the feed that was shared with you. Press cancel if you do not wish to join the shared feed." : "Your new key will be set to: \(viewModel.newKey).\n\nChanging your key will remove access to your current key."
             Text(text)
           
-        }
-        .onAppear {
-            if let sharedKey = pairingKey {
-                viewModel.newKey = sharedKey
-                viewModel.showingConfirmation = true
-            }
-        }
+        }       
         .sheet(isPresented: $viewModel.showingChangeKey) {
             VStack {
                 Text("Change Key")
                 TextField("New key", text: $viewModel.newKey)
                     .frame(height: 40)
+                    .keyboardType(.numberPad)
                     .padding(.leading, 5)
                     .border(viewModel.newKeyError ? Color(.systemRed) : Color(.secondaryLabel), width: 0.5)
                     .background(Color(.tertiarySystemFill))
@@ -99,7 +86,7 @@ struct PairingView: View {
                         keyIsFocused = false
                         viewModel.showingChangeKey = false
                         DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
-                            viewModel.showingConfirmation = true
+                            viewModel.showingPairingConfirmation = true
                         }
                       
                     } else {

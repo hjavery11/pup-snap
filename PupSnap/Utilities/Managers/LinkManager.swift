@@ -9,11 +9,8 @@ import UIKit
 
 class LinkManager {
     static let shared = LinkManager()
+    var sharedKey: Int?
     
     private init() {}
-    
-    func handlePairingKey(for key: Int) {
-        
-    }
-    
+
 }

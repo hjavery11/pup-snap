@@ -48,12 +48,6 @@
 		FAD07D762C46F9A200A3ECBF /* UIApplication+Ext.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAD07D752C46F9A200A3ECBF /* UIApplication+Ext.swift */; };
 		FAD07D7F2C4781CE00A3ECBF /* LinkManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAD07D7E2C4781CE00A3ECBF /* LinkManager.swift */; };
 		FAD07D822C4790C100A3ECBF /* BranchSDK in Frameworks */ = {isa = PBXBuildFile; productRef = FAD07D812C4790C100A3ECBF /* BranchSDK */; };
-		FAD07D852C482C2100A3ECBF /* CoreServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FAD07D842C482C2100A3ECBF /* CoreServices.framework */; };
-		FAD07D872C482C2A00A3ECBF /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FAD07D862C482C2A00A3ECBF /* SystemConfiguration.framework */; };
-		FAD07D892C482C3200A3ECBF /* CoreTelephony.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FAD07D882C482C3200A3ECBF /* CoreTelephony.framework */; };
-		FAD07D8B2C482C3A00A3ECBF /* WebKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FAD07D8A2C482C3A00A3ECBF /* WebKit.framework */; };
-		FAD07D8D2C482C4200A3ECBF /* CoreSpotlight.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FAD07D8C2C482C4200A3ECBF /* CoreSpotlight.framework */; };
-		FAD07D8F2C482C6A00A3ECBF /* StoreKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FAD07D8E2C482C6A00A3ECBF /* StoreKit.framework */; settings = {ATTRIBUTES = (Weak, ); }; };
 		FAD07D912C483AD900A3ECBF /* PasteModalVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAD07D902C483AD900A3ECBF /* PasteModalVC.swift */; };
 		FAD07D932C48C2EA00A3ECBF /* LoadingVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAD07D922C48C2EA00A3ECBF /* LoadingVC.swift */; };
 		FAD07D952C49664900A3ECBF /* remote_config_defaults.plist in Resources */ = {isa = PBXBuildFile; fileRef = FAD07D942C49664900A3ECBF /* remote_config_defaults.plist */; };
@@ -95,12 +89,6 @@
 		FAD07D732C46EA7D00A3ECBF /* RemoteConfigManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RemoteConfigManager.swift; sourceTree = "<group>"; };
 		FAD07D752C46F9A200A3ECBF /* UIApplication+Ext.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIApplication+Ext.swift"; sourceTree = "<group>"; };
 		FAD07D7E2C4781CE00A3ECBF /* LinkManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LinkManager.swift; sourceTree = "<group>"; };
-		FAD07D842C482C2100A3ECBF /* CoreServices.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreServices.framework; path = System/Library/Frameworks/CoreServices.framework; sourceTree = SDKROOT; };
-		FAD07D862C482C2A00A3ECBF /* SystemConfiguration.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SystemConfiguration.framework; path = System/Library/Frameworks/SystemConfiguration.framework; sourceTree = SDKROOT; };
-		FAD07D882C482C3200A3ECBF /* CoreTelephony.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreTelephony.framework; path = System/Library/Frameworks/CoreTelephony.framework; sourceTree = SDKROOT; };
-		FAD07D8A2C482C3A00A3ECBF /* WebKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WebKit.framework; path = System/Library/Frameworks/WebKit.framework; sourceTree = SDKROOT; };
-		FAD07D8C2C482C4200A3ECBF /* CoreSpotlight.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreSpotlight.framework; path = System/Library/Frameworks/CoreSpotlight.framework; sourceTree = SDKROOT; };
-		FAD07D8E2C482C6A00A3ECBF /* StoreKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = StoreKit.framework; path = System/Library/Frameworks/StoreKit.framework; sourceTree = SDKROOT; };
 		FAD07D902C483AD900A3ECBF /* PasteModalVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PasteModalVC.swift; sourceTree = "<group>"; };
 		FAD07D922C48C2EA00A3ECBF /* LoadingVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoadingVC.swift; sourceTree = "<group>"; };
 		FAD07D942C49664900A3ECBF /* remote_config_defaults.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = remote_config_defaults.plist; path = ../../../../Downloads/remote_config_defaults.plist; sourceTree = "<group>"; };
@@ -111,12 +99,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				FAD07D8F2C482C6A00A3ECBF /* StoreKit.framework in Frameworks */,
-				FAD07D8D2C482C4200A3ECBF /* CoreSpotlight.framework in Frameworks */,
-				FAD07D8B2C482C3A00A3ECBF /* WebKit.framework in Frameworks */,
-				FAD07D892C482C3200A3ECBF /* CoreTelephony.framework in Frameworks */,
-				FAD07D872C482C2A00A3ECBF /* SystemConfiguration.framework in Frameworks */,
-				FAD07D852C482C2100A3ECBF /* CoreServices.framework in Frameworks */,
 				FAD07D822C4790C100A3ECBF /* BranchSDK in Frameworks */,
 				FA63FFC12C3908280070165E /* FirebaseDatabase in Frameworks */,
 				FAD07D722C46E90200A3ECBF /* FirebaseRemoteConfigSwift in Frameworks */,
@@ -256,12 +238,6 @@
 		FAD07D832C482C2100A3ECBF /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				FAD07D8E2C482C6A00A3ECBF /* StoreKit.framework */,
-				FAD07D8C2C482C4200A3ECBF /* CoreSpotlight.framework */,
-				FAD07D8A2C482C3A00A3ECBF /* WebKit.framework */,
-				FAD07D882C482C3200A3ECBF /* CoreTelephony.framework */,
-				FAD07D862C482C2A00A3ECBF /* SystemConfiguration.framework */,
-				FAD07D842C482C2100A3ECBF /* CoreServices.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";

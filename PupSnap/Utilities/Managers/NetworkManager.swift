@@ -116,10 +116,14 @@ class NetworkManager {
         
        }
     
-    func setClaims(for user: User, with userKey: Int) async throws {
+    func setClaims(with userKey: Int) async throws {
+        // do user setup
+        let authResult = try await Auth.auth().signInAnonymously()
+        let user = authResult.user
         do {
             let result = try await functions.httpsCallable("setCustomClaims").call(["uid": user.uid, "pairingKey": userKey])
             print(result.data)
+           try await user.getIDTokenResult(forcingRefresh: true)
         } catch {
             throw PSError.setClaims(underlyingError: error)
         }

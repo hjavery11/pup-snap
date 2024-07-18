@@ -36,7 +36,7 @@ import Foundation
     
     @Published var showingChangeKey: Bool = false
     @Published var newKey: String = ""
-    @Published var showingConfirmation: Bool = false
+    @Published var showingPairingConfirmation: Bool = false
     @Published var newKeyError: Bool = false
     @Published var showingChangeKeyError: Bool = false
     @Published var pushNotifs: Bool = true
@@ -50,8 +50,9 @@ import Foundation
     @Published var dogNameSuccess: Bool = false
     @Published var showNameConfirmation: Bool = false
     @Published var newDogName: String = ""
-    
+    var alertMessage: String = ""
     @Published var userKey = PersistenceManager.retrieveKey()
+    var shareConfirmationMessage: Bool = false
     
     init() {
         self.selectedPhoto = PersistenceManager.getDogPhoto() ?? "sophie-iso"
@@ -61,7 +62,18 @@ import Foundation
         print("user key is \(userKey)")
     }
     
-    var alertMessage: String = ""
+    init(pairingKey: Int) {
+        self.selectedPhoto = PersistenceManager.getDogPhoto() ?? "sophie-iso"
+        self.dogName = PersistenceManager.getDogName() ?? ""
+        self.newDogName = dogName
+        self.newKey = String(pairingKey)
+        self.showingPairingConfirmation = true
+        self.shareConfirmationMessage = true
+        
+        print("user key is \(userKey)")
+    }
+    
+   
     
    
 
@@ -72,13 +84,19 @@ import Foundation
             self.alertMessage = PSError.invalidKey(underlyingError: nil).localizedDescription
             throw PSError.invalidKey(underlyingError: nil)
         }
-        if allKeys.contains(newKey) || newKey == 123456 {
+        if allKeys.contains(newKey) {
             self.userKey = newKey
-            //try await PersistenceManager.setKey(key: newKey)
-           // try await PersistenceManager.setUser(key: newKey)
+            PersistenceManager.unsetKey()
+            PersistenceManager.setKey(to: newKey)
+            do {
+                try await NetworkManager.shared.setClaims(with: newKey)
+            } catch {
+                self.alertMessage = PSError.setClaims(underlyingError: error).localizedDescription
+                throw PSError.setClaims()
+            }
         } else {
             self.alertMessage = PSError.invalidKey(underlyingError: nil).localizedDescription
-            throw PSError.invalidKey(underlyingError: nil)
+            throw PSError.invalidKey()
         }
     }
     

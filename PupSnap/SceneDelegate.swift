@@ -8,12 +8,14 @@
 import UIKit
 import BranchSDK
 import Combine
+import SwiftUI
 
 class SceneDelegate: UIResponder, UIWindowSceneDelegate, UITabBarControllerDelegate {
     
     var window: UIWindow?
     var tabBarController: UITabBarController?
-    private var cancellable: AnyCancellable?
+    private var cancellables = Set<AnyCancellable>()
+    
     
     func scene(_ scene: UIScene, willConnectTo session: UISceneSession, options connectionOptions: UIScene.ConnectionOptions) {
         print("delegatetest scenedelegate first scene function")
@@ -27,9 +29,19 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate, UITabBarControllerDeleg
         window?.rootViewController = loadingVC
         window?.makeKeyAndVisible()
         
-        cancellable = AppDelegate.setupCompletionSubject.sink { [weak self] in
+        // Trigger setupScene as soon as setupCompletionSubject is completed
+        AppDelegate.setupCompletionSubject.sink { [weak self] in
             self?.setupScene(connectionOptions: connectionOptions, scene: scene)
         }
+        .store(in: &cancellables)
+        
+        // Trigger setupBranchLink only when both setupCompletionSubject and branchLinkSubject have emitted values
+        AppDelegate.setupCompletionSubject
+            .combineLatest(AppDelegate.branchLinkSubject)
+            .sink { [weak self] (_, key) in
+                self?.setupBranchLink(key: key)
+            }
+            .store(in: &cancellables)
         
     }
     
@@ -46,13 +58,13 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate, UITabBarControllerDeleg
         
         // Add observer for the notification
         NotificationCenter.default.addObserver(self, selector: #selector(presentFullScreenPhotoVC(_:)), name: NSNotification.Name("PresentFullScreenPhotoVC"), object: nil)
+    }
+    
+    private func setupBranchLink(key: Int) {
+        print("Attempting to show PairingView with detected pairing key from branch")
+        let hostingController = UIHostingController(rootView: PairingView(viewModel: SettingsViewModel()))
+        window?.rootViewController?.present(hostingController, animated: true)
         
-        // Handle URL if app was launched with a URL
-        if let url = connectionOptions.userActivities.first?.webpageURL {
-            DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
-                self.handleIncomingURL(url)
-            }
-        }
     }
     
     
@@ -66,29 +78,6 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate, UITabBarControllerDeleg
     func scene(_ scene: UIScene, continue userActivity: NSUserActivity) {
         print("delegatetest scene delegate NSUserAcitvity")
         Branch.getInstance().continue(userActivity)
-    }
-    
-    private func handleIncomingURL(_ url: URL) {
-        print("Incoming URL: \(url)")
-        if let host = url.host, host == "pupsnapapp.com" {
-            if url.pathComponents.contains("pair") {
-                let pairingKey = url.lastPathComponent
-                print("Pairing Key: \(pairingKey)")
-                navigateToPairingScreen(with: pairingKey)
-            }
-        }
-    }
-    
-    
-    
-    private func navigateToPairingScreen(with pairingKey: String) {
-        if let rootViewController = window?.rootViewController as? UITabBarController,
-           let navController = rootViewController.selectedViewController as? UINavigationController {
-            let settingsViewController = SettingsVC()
-            settingsViewController.pairingKey = pairingKey
-            navController.isNavigationBarHidden = true
-            navController.pushViewController(settingsViewController, animated: true)
-        }
     }
     
     func createPhotoVC() -> UINavigationController {
@@ -139,12 +128,6 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate, UITabBarControllerDeleg
     }
     
     @objc func presentFullScreenPhotoVC(_ notification: Notification) {
-        //    id: photoId,
-        //                caption: photoData.caption || '',
-        //                path: photoData.path || '',
-        //                ratings: JSON.stringify(photoData.ratings || {}),
-        //                timestamp: String(photoData.timestamp || '')
-        
         print(notification)
         
         guard let userInfo = notification.userInfo else { return }

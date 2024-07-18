@@ -21,6 +21,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, MessagingDelegate {
     
     var window: UIWindow?
     static let setupCompletionSubject = PassthroughSubject<Void, Never>()
+    static let branchLinkSubject = PassthroughSubject<Int, Never>()
     
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         
@@ -43,20 +44,14 @@ class AppDelegate: UIResponder, UIApplicationDelegate, MessagingDelegate {
         UNUserNotificationCenter.current().delegate = self
         Messaging.messaging().delegate = self
         
-        let authOptions: UNAuthorizationOptions = [.alert, .badge, .sound]
+        application.registerForRemoteNotifications()      
+       
         Task {
             do {
-                try await UNUserNotificationCenter.current().requestAuthorization(options: authOptions)
-                application.registerForRemoteNotifications()
-             
-                print("Finished basic messaging setup and assigned self to messsaging delegate")
-                do {
-                    try await PersistenceManager.launchSetup()
-                    print("launch setup complete. sending completion from app delegate to scene delegate")
-                    AppDelegate.setupCompletionSubject.send(())
-                } catch {
-                    print("Error on persistancemanager.launch setup")
-                }
+                try await PersistenceManager.launchSetup()
+                print("launch setup complete. sending completion from app delegate to scene delegate")
+                AppDelegate.setupCompletionSubject.send(())
+                
             } catch {
                 print("Error requesting authorization to UNUserNotiacationCenter with error: \(error)")
             }
@@ -70,11 +65,22 @@ class AppDelegate: UIResponder, UIApplicationDelegate, MessagingDelegate {
         
         // Initialize Branch session
         Branch.getInstance().initSession(launchOptions: launchOptions) { (params, error) in
-            let paramList = params as? [String: AnyObject]
-            print("branch params from app delegate: \(String(describing: paramList))")
-            if let sharedPairingKey = params?["pairingKey"] as? Int {
-                print("handling pairing key branch param")
-                LinkManager.shared.handlePairingKey(for: sharedPairingKey)
+            if let params = params as? [String: AnyObject] {
+                if let pairingKeyValue = params["pairingKey"] {
+                    if let sharedPairingKey = pairingKeyValue as? Int {
+                        print("handling pairing key branch param as Int: \(sharedPairingKey)")
+                        AppDelegate.branchLinkSubject.send(sharedPairingKey)
+                    } else if let pairingKeyString = pairingKeyValue as? String, let sharedPairingKey = Int(pairingKeyString) {
+                        print("handling pairing key branch param as String: \(sharedPairingKey)")
+                        AppDelegate.branchLinkSubject.send(sharedPairingKey)
+                    } else {
+                        print("Invalid pairing key format: \(pairingKeyValue)")
+                    }
+                } else {
+                    print("pairingKey not found in params")
+                }
+            } else {
+                print("Invalid params format")
             }
         }
         
@@ -108,7 +114,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, MessagingDelegate {
     }
     
     func messaging(_ messaging: Messaging, didReceiveRegistrationToken fcmToken: String?) {
-        guard let fcmToken = fcmToken else {
+        guard let _ = fcmToken else {
             return
         }
         Task {
