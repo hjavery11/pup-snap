@@ -20,6 +20,7 @@ enum PSError: Error {
     case subscribeError(underlyingError: Error? = nil)
     case authError(underlyingError: Error? = nil)
     case unsubscribeError(underlyingError: Error? = nil)
+    case remoteConfigError(underlyingError: Error? = nil)
     
     var localizedDescription: String {
         switch self {
@@ -47,6 +48,8 @@ enum PSError: Error {
             return "Something went wrong signing in user anonymously. \(underlyingError?.localizedDescription ?? "")"
         case .unsubscribeError(let underlyingError):
             return "Error unsubscribing from pairing key. \(underlyingError?.localizedDescription ?? "")"
+        case .remoteConfigError(let underlyingError):
+            return "Error setting up remote config: \(underlyingError?.localizedDescription ?? "")"
         }
     }
 }

@@ -8,6 +8,7 @@
 import Foundation
 import FirebaseMessaging
 import FirebaseAuth
+import FirebaseRemoteConfigInternal
 
 
 enum PersistenceManager {
@@ -124,5 +125,5 @@ enum PersistenceManager {
     
     static func getDogName() -> String? {
         defaults.string(forKey: Keys.dogName)
-    }
+    }  
 }

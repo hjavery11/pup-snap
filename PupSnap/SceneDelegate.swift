@@ -18,10 +18,19 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate, UITabBarControllerDeleg
     func scene(_ scene: UIScene, willConnectTo session: UISceneSession, options connectionOptions: UIScene.ConnectionOptions) {
         print("delegatetest scenedelegate first scene function")
         
+        guard let windowScene = (scene as? UIWindowScene) else { return }
+        
+        window = UIWindow(frame: windowScene.coordinateSpace.bounds)
+        window?.windowScene = windowScene
+        
+        let loadingVC = LoadingVC()
+        window?.rootViewController = loadingVC
+        window?.makeKeyAndVisible()
+        
         cancellable = AppDelegate.setupCompletionSubject.sink { [weak self] in
             self?.setupScene(connectionOptions: connectionOptions, scene: scene)
         }
-         
+        
     }
     
     private func setupScene(connectionOptions: UIScene.ConnectionOptions, scene: UIScene) {
@@ -167,9 +176,9 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate, UITabBarControllerDeleg
         // Called when the scene has moved from an inactive state to an active state.
         // Use this method to restart any tasks that were paused (or not yet started) when the scene was inactive.
         print("delegatetest scene delegate did become active")
-        // Access the stored Branch link data    
+        // Access the stored Branch link data
         //Enable tab bar
-       
+        
     }
     
     func sceneWillResignActive(_ scene: UIScene) {

@@ -23,7 +23,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, MessagingDelegate {
     static let setupCompletionSubject = PassthroughSubject<Void, Never>()
     
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
-        FirebaseApp.configure()
+        
         
         // Override point for customization after application launch.
 #if DEBUG
@@ -34,7 +34,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate, MessagingDelegate {
         print("is not debug")
 #endif
         
+      
         AppCheck.setAppCheckProviderFactory(providerFactory)
+        
+        FirebaseApp.configure()
         
         print("delegatetest appdelegate didfinishlaunchingwithoptions")
         UNUserNotificationCenter.current().delegate = self
@@ -67,12 +70,23 @@ class AppDelegate: UIResponder, UIApplicationDelegate, MessagingDelegate {
         
         // Initialize Branch session
         Branch.getInstance().initSession(launchOptions: launchOptions) { (params, error) in
-            LinkManager.shared.params = params as? [String: AnyObject]
-            print("branch params from app delegate: \(String(describing: params as? [String:AnyObject]))")
-            LinkManager.shared.handleDeepLink()
+            let paramList = params as? [String: AnyObject]
+            print("branch params from app delegate: \(String(describing: paramList))")
+            if let sharedPairingKey = params?["pairingKey"] as? Int {
+                print("handling pairing key branch param")
+                LinkManager.shared.handlePairingKey(for: sharedPairingKey)
+            }
         }
-        //remote config setup
         
+        
+        //remote config setup
+        Task {
+            do {
+                try await RemoteConfigManager.shared.fetchAndActivate()
+            } catch {
+                print("Error on remote config setup: \(error)")
+            }           
+        }
         print("delegatetest end of did finish launching with options")
         return true
     }

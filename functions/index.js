@@ -178,8 +178,8 @@ exports.notifyOnNewPhotoEntry = functions.database.ref('{pairingKey}/photos/{pho
             payload: {
                 aps: {
                     alert: {
-                        title: 'New Sophie Photo!',
-                        body: 'A new photo has been uploaded.',
+                         title: 'New PupSnap Photo!',
+                         body: 'A new photo has been uploaded to your PupSnap Feed.',
                     },
                     sound: 'default'
                 },
