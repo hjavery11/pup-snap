@@ -69,16 +69,16 @@ import Foundation
     func changeKey() async throws {
        let allKeys = try await NetworkManager.shared.retrieveAllKeys()
         guard let newKey = Int(self.newKey) else {            
-            self.alertMessage = SophieError.invalidKey.rawValue
-            throw SophieError.invalidKey
+            self.alertMessage = PSError.invalidKey(underlyingError: nil).localizedDescription
+            throw PSError.invalidKey(underlyingError: nil)
         }
         if allKeys.contains(newKey) || newKey == 123456 {
             self.userKey = newKey
-            PersistenceManager.setKey(key: newKey)
-            PersistenceManager.setUser(key: newKey)
+            //try await PersistenceManager.setKey(key: newKey)
+           // try await PersistenceManager.setUser(key: newKey)
         } else {
-            self.alertMessage = SophieError.invalidKey.rawValue
-            throw SophieError.invalidKey
+            self.alertMessage = PSError.invalidKey(underlyingError: nil).localizedDescription
+            throw PSError.invalidKey(underlyingError: nil)
         }
     }
     

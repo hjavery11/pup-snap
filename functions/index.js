@@ -63,7 +63,7 @@ exports.setCustomClaims = functions.https.onCall(async (data, context) => {
         // Set custom user claims on this newly created user.
         return admin.auth().setCustomUserClaims(uid, { pairingKey: pairingKey })
             .then(() => {
-                return { message: `Custom claims set for user ${uid}` };
+                return { message: `Custom claims set for user ${uid} for pairing key ${pairingKey}` };
             })
             .catch(error => {
                 return { error: error.message };

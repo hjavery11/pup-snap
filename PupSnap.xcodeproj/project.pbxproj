@@ -33,7 +33,7 @@
 		FA63FFC52C390CDF0070165E /* DatabaseHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA63FFC42C390CDF0070165E /* DatabaseHelper.swift */; };
 		FA63FFC72C390E9C0070165E /* AppCheckProviderFactory.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA63FFC62C390E9C0070165E /* AppCheckProviderFactory.swift */; };
 		FA63FFC92C3916B00070165E /* Photo.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA63FFC82C3916B00070165E /* Photo.swift */; };
-		FA63FFCB2C391DB80070165E /* SophieError.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA63FFCA2C391DB80070165E /* SophieError.swift */; };
+		FA63FFCB2C391DB80070165E /* PSError.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA63FFCA2C391DB80070165E /* PSError.swift */; };
 		FA63FFCD2C39231B0070165E /* PersistenceManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA63FFCC2C39231B0070165E /* PersistenceManager.swift */; };
 		FAD07D382C45ACB700A3ECBF /* FirebaseAuth in Frameworks */ = {isa = PBXBuildFile; productRef = FAD07D372C45ACB700A3ECBF /* FirebaseAuth */; };
 		FAD07D3A2C45C9B900A3ECBF /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAD07D392C45C9B900A3ECBF /* SettingsView.swift */; };
@@ -81,7 +81,7 @@
 		FA63FFC42C390CDF0070165E /* DatabaseHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DatabaseHelper.swift; sourceTree = "<group>"; };
 		FA63FFC62C390E9C0070165E /* AppCheckProviderFactory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppCheckProviderFactory.swift; sourceTree = "<group>"; };
 		FA63FFC82C3916B00070165E /* Photo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Photo.swift; sourceTree = "<group>"; };
-		FA63FFCA2C391DB80070165E /* SophieError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SophieError.swift; sourceTree = "<group>"; };
+		FA63FFCA2C391DB80070165E /* PSError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PSError.swift; sourceTree = "<group>"; };
 		FA63FFCC2C39231B0070165E /* PersistenceManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PersistenceManager.swift; sourceTree = "<group>"; };
 		FAD07D392C45C9B900A3ECBF /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
 		FAD07D3B2C45C9E300A3ECBF /* SettingsVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsVC.swift; sourceTree = "<group>"; };
@@ -206,7 +206,7 @@
 				FA3590752C34D95C00E417B1 /* FirebaseHelper.swift */,
 				FA3590712C34D65C00E417B1 /* NetworkManager.swift */,
 				FA63FFC62C390E9C0070165E /* AppCheckProviderFactory.swift */,
-				FA63FFCA2C391DB80070165E /* SophieError.swift */,
+				FA63FFCA2C391DB80070165E /* PSError.swift */,
 				FA63FFCC2C39231B0070165E /* PersistenceManager.swift */,
 				FAD07D732C46EA7D00A3ECBF /* RemoteConfigManager.swift */,
 				FAD07D7E2C4781CE00A3ECBF /* LinkManager.swift */,
@@ -393,7 +393,7 @@
 				FAD07D452C46571400A3ECBF /* DogView.swift in Sources */,
 				FAD07D3C2C45C9E300A3ECBF /* SettingsVC.swift in Sources */,
 				FA63FFCD2C39231B0070165E /* PersistenceManager.swift in Sources */,
-				FA63FFCB2C391DB80070165E /* SophieError.swift in Sources */,
+				FA63FFCB2C391DB80070165E /* PSError.swift in Sources */,
 				FA63FFBF2C37E2710070165E /* RatingViewController.swift in Sources */,
 				FA63FFC92C3916B00070165E /* Photo.swift in Sources */,
 				FA3590522C33B2AC00E417B1 /* PhotoVC.swift in Sources */,

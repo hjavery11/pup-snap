@@ -17,27 +17,13 @@ import BranchSDK
 import Combine
 
 @main
-class AppDelegate: UIResponder, UIApplicationDelegate {
+class AppDelegate: UIResponder, UIApplicationDelegate, MessagingDelegate {
     
     var window: UIWindow?
     static let setupCompletionSubject = PassthroughSubject<Void, Never>()
     
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
-        
-        print("delegatetest appdelegate didfinishlaunchingwithoptions")
         FirebaseApp.configure()
-        // Check the pasteboard before Branch initialization
-        Branch.getInstance().checkPasteboardOnInstall()
-        //Should change to using UIPasteBoard instead of checkPasteboardOnInstall but skipping for now. Might be able to configure custom alert modal in the future
-        
-        
-        // Initialize Branch session
-        Branch.getInstance().initSession(launchOptions: launchOptions) { (params, error) in
-            LinkManager.shared.params = params as? [String: AnyObject]
-            print("branch params from app delegate: \(String(describing: params as? [String:AnyObject]))")
-            LinkManager.shared.handleDeepLink()
-        }
-       
         
         // Override point for customization after application launch.
 #if DEBUG
@@ -50,112 +36,51 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         
         AppCheck.setAppCheckProviderFactory(providerFactory)
         
-       
-        
-        Messaging.messaging().delegate = self
+        print("delegatetest appdelegate didfinishlaunchingwithoptions")
         UNUserNotificationCenter.current().delegate = self
+        Messaging.messaging().delegate = self
         
-        // Request for push notification permissions
-        UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .badge, .sound]) { granted, _ in
-            print("Permission granted: \(granted)")
-            if granted {
-                DispatchQueue.main.async {
-                    application.registerForRemoteNotifications()
-                }
-            }
-        }
-        
-        //get pairing key, or set if first launch
-        //PersistenceManager.unsetKey() //testing purposes to force a new key without uninstalling
-        
-        // PhotoDatabaseManager.shared.syncPhotosToDatabase()
-        
-        
-        let userKey = PersistenceManager.retrieveKey()
-        
-        //only do async code to fetch all keys if userKey isnt created yet
-        if userKey == 0 {
-            print("user key was 0")
-            Task {
+        let authOptions: UNAuthorizationOptions = [.alert, .badge, .sound]
+        Task {
+            do {
+                try await UNUserNotificationCenter.current().requestAuthorization(options: authOptions)
+                application.registerForRemoteNotifications()
+             
+                print("Finished basic messaging setup and assigned self to messsaging delegate")
                 do {
-                    let allKeys = try await NetworkManager.shared.retrieveAllKeys()
-                    print("all keys array was \(allKeys)")
-                    
-                    guard !allKeys.isEmpty else {
-                        print("No keys returned from database")
-                        return
-                    }
-                    
-                    //generate new 8-digit int key not in current keys
-                    var newKey: Int
-                    repeat {
-                        newKey = Int.random(in: 10000000...99999999)
-                    } while allKeys.contains(newKey)
-                    
-                    //save new key to user defaults
-                    PersistenceManager.setKeyFirstTime(key: newKey) {
-                        print("Set key first time completion handler")
-                    }
-                    print("New user key set to : \(newKey)")
-                    PersistenceManager.setUser(key: newKey)
-                    print("setUser was just called inside app delegate")
+                    try await PersistenceManager.launchSetup()
+                    print("launch setup complete. sending completion from app delegate to scene delegate")
                     AppDelegate.setupCompletionSubject.send(())
-                    
-                    
                 } catch {
-                    print("Error retrieving all keys from database: \(error.localizedDescription)")
+                    print("Error on persistancemanager.launch setup")
                 }
+            } catch {
+                print("Error requesting authorization to UNUserNotiacationCenter with error: \(error)")
             }
-        }  else {
-            PersistenceManager.setUser(key: userKey)
-            print("setUser was just called inside app delegate")
-            AppDelegate.setupCompletionSubject.send(())
         }
         
-        // Fetch and activate Remote Config on app startup
-        RemoteConfigManager.shared.fetchAndActivate { changed, error in
-            if let error = error {
-                print("Error fetching and activating Remote Config: \(error)")
-            } else {
-                print("Remote Config fetched and activated on startup.")
-            }
+        
+        // Check the pasteboard before Branch initialization
+        Branch.getInstance().checkPasteboardOnInstall()
+        //Should change to using UIPasteBoard instead of checkPasteboardOnInstall but skipping for now. Might be able to configure custom alert modal in the future
+        
+        
+        // Initialize Branch session
+        Branch.getInstance().initSession(launchOptions: launchOptions) { (params, error) in
+            LinkManager.shared.params = params as? [String: AnyObject]
+            print("branch params from app delegate: \(String(describing: params as? [String:AnyObject]))")
+            LinkManager.shared.handleDeepLink()
         }
+        //remote config setup
         
         print("delegatetest end of did finish launching with options")
         return true
     }
     
     func application(_ application: UIApplication, didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data) {
+        //messaging setup
         Messaging.messaging().apnsToken = deviceToken
-        
-        // Fetch the FCM token once the APNs token is set
-        Messaging.messaging().token { token, error in
-            if let error = error {
-                print("Error fetching FCM token: \(error)")
-                return
-            }
-            guard let token = token else {
-                print("FCM token not available")
-                return
-            }
-            print("FCM Token: \(token)")
-            
-            let userKey = PersistenceManager.retrieveKey()
-            if userKey != 0 {
-                PersistenceManager.subscribeToPairingKey(pairingKey: String(userKey))
-            }
-            
-            
-            // Subscribe to a topic after successfully fetching the FCM token
-            Messaging.messaging().subscribe(toTopic: "allUsers") { error in
-                if let error = error {
-                    print("Error subscribing to topic: \(error)")
-                } else {
-                    print("Subscribed to allUsers topic")
-                }
-            }
-            
-        }
+        print("Set apns token to fcm token in applicationdelegate didRegisterForRemoteNotificationsWithDeviceToken")
     }
     
     func application(_ app: UIApplication, open url: URL, options: [UIApplication.OpenURLOptionsKey : Any] = [:]) -> Bool {
@@ -167,6 +92,21 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         Branch.getInstance().continue(userActivity)
         return true
     }
+    
+    func messaging(_ messaging: Messaging, didReceiveRegistrationToken fcmToken: String?) {
+        guard let fcmToken = fcmToken else {
+            return
+        }
+        Task {
+            do {
+                let token = try await Messaging.messaging().token()
+                print("FCM registration token: \(token)")
+            } catch {
+                print("Error fetching FCM registration token: \(error)")
+            }
+        }
+    }
+    
     
     // MARK: UISceneSession Lifecycle
     
@@ -204,23 +144,35 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     }
 }
 
-extension AppDelegate: MessagingDelegate {
-    func messaging(_ messaging: Messaging, didReceiveRegistrationToken fcmToken: String?) {
-        print("FCM Token: \(String(describing: fcmToken))")
-    }
-}
-
 extension AppDelegate: UNUserNotificationCenterDelegate {
-    // Handle notifications received in foreground
-    func userNotificationCenter(_ center: UNUserNotificationCenter, willPresent notification: UNNotification, withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions) -> Void) {
-        self.logToFile(("Notification received in foreground: \(notification.request.content.userInfo)"))
-        completionHandler([.banner, .badge, .sound])
-    }
-    // Handle notification when the app is in background or terminated
-    func userNotificationCenter(_ center: UNUserNotificationCenter, didReceive response: UNNotificationResponse, withCompletionHandler completionHandler: @escaping () -> Void) {
-        let userInfo = response.notification.request.content.userInfo
-        self.logToFile(("Notification received in background or terminated: \(userInfo)"))
-        NotificationCenter.default.post(name: NSNotification.Name("PresentFullScreenPhotoVC"), object: nil, userInfo: userInfo)
-        completionHandler()
-    }
+  // Receive displayed notifications for iOS 10 devices.
+  func userNotificationCenter(_ center: UNUserNotificationCenter,
+                              willPresent notification: UNNotification) async
+    -> UNNotificationPresentationOptions {
+    let userInfo = notification.request.content.userInfo
+
+    // With swizzling disabled you must let Messaging know about the message, for Analytics
+     Messaging.messaging().appDidReceiveMessage(userInfo)
+
+    // ...
+
+    // Print full message.
+    print(userInfo)
+
+    // Change this to your preferred presentation option
+        return [[.banner, .sound, .list]]
+  }
+
+  func userNotificationCenter(_ center: UNUserNotificationCenter,
+                              didReceive response: UNNotificationResponse) async {
+    let userInfo = response.notification.request.content.userInfo
+
+    // ...
+
+    // With swizzling disabled you must let Messaging know about the message, for Analytics
+     Messaging.messaging().appDidReceiveMessage(userInfo)
+
+    // Print full message.
+    print(userInfo)
+  }
 }

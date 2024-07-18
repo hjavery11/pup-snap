@@ -42,66 +42,72 @@ enum PersistenceManager {
         return key
     }
     
+    static func setKey(to key:Int) {
+        defaults.set(key, forKey: Keys.key)
+        
+    }
     static func unsetKey() {
         defaults.removeObject(forKey: Keys.key)
     }
     
-    static func setKeyFirstTime(key: Int,completion: @escaping () -> Void) {
-        Task {
-            defaults.set(key, forKey: Keys.key)
-            subscribeToPairingKey(pairingKey: String(key))
-            do {
-                try await NetworkManager.shared.initializeKey(pairingKey: key)
-                completion()
-            } catch {
-                print("Error attempting to initalize key: \(error)")
-            }
-            
-        }
+    static func changeKey(key: Int) async throws {
+        try await unsubscribeFromPairingKey()
+        defaults.set(key, forKey: Keys.key)
+        try await subscribeToPairingKey(pairingKey: String(key))
+        try await NetworkManager.shared.initializeKey(pairingKey: key)
     }
     
-    static func setKey(key: Int) {
-        Task {
-            do {
-                try await unsubscribeFromPairingKey()
-                defaults.set(key, forKey: Keys.key)
-                subscribeToPairingKey(pairingKey: String(key))        
-                do {
-                    try await NetworkManager.shared.initializeKey(pairingKey: key)
-                } catch {
-                    print("Error attempting to initalize key: \(error)")
-                }
-               
-            } catch {
-                print("Error unsubscribing from pairing key with error: \(error.localizedDescription)")
-            }
-        }
-    }
-    
-    static func subscribeToPairingKey(pairingKey: String) {
+    static func subscribeToPairingKey(pairingKey: String) async throws {
         let topic = "pairingKey_\(pairingKey)"
-        Messaging.messaging().subscribe(toTopic: topic) { error in
-            if let error=error {
-                print("Error subscribign to topic: \(error)")
-            }else {
-                print("Subscribed to topic: \(topic)")
-            }
+        do {
+            try await Messaging.messaging().subscribe(toTopic: topic)
+            print("Subscribed to topic: \(topic)")
+        } catch {
+            throw PSError.subscribeError(underlyingError: error)
         }
-        
-       
     }
-    
-    static func setUser(key: Int) async throws{
-        let authResult = try await Auth.auth().signInAnonymously()
-        let user = authResult.user
-        NetworkManager.shared.setClaims(for: user, with: key)
-     
-        print("end of setUser inside persistance manager")
-    }
-    
+
     static func unsubscribeFromPairingKey() async throws {
         let key = defaults.integer(forKey: Keys.key)
-        try await Messaging.messaging().unsubscribe(fromTopic: "pairingKey_\(key)")
+        do {
+            try await Messaging.messaging().unsubscribe(fromTopic: "pairingKey_\(key)")
+        } catch {
+            throw PSError.unsubscribeError(underlyingError: error)
+        }
+    }
+    
+    static func launchSetup() async throws {
+        let userKey = self.retrieveKey()
+        //check if key is 0 which means its a first time launch
+        if userKey == 0 {
+            let allKeys = try await NetworkManager.shared.retrieveAllKeys()
+            guard !allKeys.isEmpty else {
+                print("No keys returned from database. Exiting launch")
+                return
+            }
+            //generate new 8-digit int key not in current keys
+            var newKey: Int
+            repeat {
+                newKey = Int.random(in: 10000000...99999999)
+            } while allKeys.contains(newKey)
+            //save key to user defaults
+            self.setKey(to: newKey)
+            print("New user key set to :\(newKey)")
+            // initalize the key which is a firebase function that creates an empty object in the datbaase so the user has access to it
+            try await NetworkManager.shared.initializeKey(pairingKey: newKey)
+            
+            //now do user setup
+            let authResult = try await Auth.auth().signInAnonymously()
+            let user = authResult.user
+            let token = try await user.getIDToken()
+            try await NetworkManager.shared.setClaims(for: user, with: newKey)
+            //force token refresh to ensure new claims are applied
+            let refreshedToken = try await user.getIDTokenResult(forcingRefresh: true)
+            //end of user setup. Should now have claims setup to be able to access database
+        } else {
+            //returning user
+            let authResult = try await Auth.auth().signInAnonymously()            
+        }
     }
     
     static func updateDogPhoto(photo: String) {

@@ -80,7 +80,7 @@ class DatabaseHelper {
         let photosRef = ref.child(String(userKey)).child("photos")
         guard let photoId = photo.id else {
             print("No unique photo found for photo")
-            throw SophieError.photoAccess
+            throw PSError.photoAccess(underlyingError: nil)
         }
         
         let ratingRef = photosRef.child(photoId).child("ratings")
@@ -108,7 +108,7 @@ class DatabaseHelper {
         
     }
     
-    func fetchPhotos() async throws -> [Photo]{
+    func fetchPhotos() async throws -> [Photo]{        
         let userKey = PersistenceManager.retrieveKey()
         let photosRef = ref.child(String(userKey)).child("photos")
         do{
@@ -175,6 +175,7 @@ extension DatabaseHelper {
 import Foundation
 import FirebaseDatabase
 import FirebaseStorage
+import FirebaseAuth
 
 class PhotoDatabaseManager {
 
