@@ -23,18 +23,21 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate, UITabBarControllerDeleg
         print("delegatetest scenedelegate first scene function")
         
         guard let windowScene = (scene as? UIWindowScene) else { return }
-        
-        //  Workaround for SceneDelegate `continueUserActivity` not getting called on cold start:
-        if let userActivity = connectionOptions.userActivities.first {
-            self.scene(scene, continue: userActivity)
-            BranchScene.shared().scene(scene, continue: userActivity)
-        } else if !connectionOptions.urlContexts.isEmpty {
-            BranchScene.shared().scene(scene, openURLContexts: connectionOptions.urlContexts)
-        }
-        
-        if let notificationResponse = connectionOptions.notificationResponse {
-            self.notificationResponse = true
-        }
+        print(connectionOptions.userActivities)
+        print(connectionOptions.notificationResponse as Any)
+ 
+//        
+//        //  Workaround for SceneDelegate `continueUserActivity` not getting called on cold start:
+//        if let userActivity = connectionOptions.userActivities.first {
+//            self.scene(scene, continue: userActivity)
+//            BranchScene.shared().scene(scene, continue: userActivity)
+//        } else if !connectionOptions.urlContexts.isEmpty {
+//            BranchScene.shared().scene(scene, openURLContexts: connectionOptions.urlContexts)
+//        }
+//        
+//        if let notificationResponse = connectionOptions.notificationResponse {
+//            self.notificationResponse = true
+//        }
         
         
         

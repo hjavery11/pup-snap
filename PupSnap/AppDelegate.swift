@@ -41,7 +41,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, MessagingDelegate {
         
         FirebaseApp.configure()
         
-        print("delegatetest appdelegate didfinishlaunchingwithoptions")
+        print("delegatetest appdelegate didfinishlaunchingwithoptions with launch options: \(String(describing: launchOptions))")
         UNUserNotificationCenter.current().delegate = self
         Messaging.messaging().delegate = self
         
@@ -51,24 +51,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate, MessagingDelegate {
         Branch.getInstance().checkPasteboardOnInstall()
         //Should change to using UIPasteBoard instead of checkPasteboardOnInstall but skipping for now. Might be able to configure custom alert modal in the future
         
-        // Initialize Branch session
-        Branch.getInstance().initSession(launchOptions: launchOptions) { (params, error) in
-            if let params = params as? [String: AnyObject], let pairingKeyValue = params["pairingKey"] {
-                if let sharedPairingKey = pairingKeyValue as? Int {
-                    print("handling pairing key branch param as Int: \(sharedPairingKey)")
-                    AppDelegate.branchLinkSubject.send(sharedPairingKey)
-                } else if let pairingKeyString = pairingKeyValue as? String, let sharedPairingKey = Int(pairingKeyString) {
-                    print("handling pairing key branch param as String: \(sharedPairingKey)")
-                    AppDelegate.branchLinkSubject.send(sharedPairingKey)
-                } else {
-                    print("Invalid pairing key format: \(pairingKeyValue)")
-                    self.runStandardSetup()
-                }
-            } else {
-                print("pairingKey not found in params")
-                self.runStandardSetup()
-            }
-        }
+        initializeBranch(launchOptions)
+        
+       
         
         print("delegatetest end of did finish launching with options")
         return true
@@ -95,6 +80,21 @@ class AppDelegate: UIResponder, UIApplicationDelegate, MessagingDelegate {
                 try await RemoteConfigManager.shared.fetchAndActivate()
             } catch {
                 print("Error on remote config setup: \(error)")
+            }
+        }
+    }
+    
+    func initializeBranch(_ launchOptions:[UIApplication.LaunchOptionsKey: Any]? ) {
+        // Initialize Branch session
+        Branch.getInstance().initSession(launchOptions: launchOptions) { (params, error) in
+            if let params = params as? [String: AnyObject], let pairingKeyValue = params["pairingKey"] {
+                if let sharedPairingKey = pairingKeyValue as? Int {
+                    print("handling pairing key branch param as Int: \(sharedPairingKey)")
+                    AppDelegate.branchLinkSubject.send(sharedPairingKey)
+                } else if let pairingKeyString = pairingKeyValue as? String, let sharedPairingKey = Int(pairingKeyString) {
+                    print("handling pairing key branch param as String: \(sharedPairingKey)")
+                    AppDelegate.branchLinkSubject.send(sharedPairingKey)
+                }
             }
         }
     }
@@ -163,25 +163,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate, MessagingDelegate {
         // Use this method to release any resources that were specific to the discarded scenes, as they will not return.
     }
     
-    func logToFile(_ message: String) {
-        let fileManager = FileManager.default
-        let urls = fileManager.urls(for: .documentDirectory, in: .userDomainMask)
-        if let documentDirectory: NSURL = urls.first as NSURL? {
-            let logFilePath = documentDirectory.appendingPathComponent("app.log")
-            if let logFilePath = logFilePath {
-                let logMessage = "\(Date()): \(message)\n"
-                if fileManager.fileExists(atPath: logFilePath.path) {
-                    if let fileHandle = try? FileHandle(forWritingTo: logFilePath) {
-                        fileHandle.seekToEndOfFile()
-                        fileHandle.write(logMessage.data(using: .utf8)!)
-                        fileHandle.closeFile()
-                    }
-                } else {
-                    try? logMessage.write(to: logFilePath, atomically: true, encoding: .utf8)
-                }
-            }
-        }
-    }
 }
 
 extension AppDelegate: UNUserNotificationCenterDelegate {
@@ -193,15 +174,14 @@ extension AppDelegate: UNUserNotificationCenterDelegate {
         
         // With swizzling disabled you must let Messaging know about the message, for Analytics
         //Messaging.messaging().appDidReceiveMessage(userInfo)
-        
-        // ...
-        
-        // Print full message.
-        print("printing from  first app delegate function : \(userInfo)")
+    
+   
+        print("did receieve notification while app launched")
         
         
         // Change this to your preferred presentation option
-        return [[.banner, .sound, .list]]
+        //return [[.banner, .sound, .list]]
+        return []
     }
     
     //notification clicked (while in app, unsure if backgrouded

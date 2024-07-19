@@ -31,6 +31,7 @@
 		FA63FFCB2C391DB80070165E /* PSError.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA63FFCA2C391DB80070165E /* PSError.swift */; };
 		FA63FFCD2C39231B0070165E /* PersistenceManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA63FFCC2C39231B0070165E /* PersistenceManager.swift */; };
 		FA80BCCA2C4ADC9400CE7C50 /* NotificationPhotoVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA80BCC92C4ADC9400CE7C50 /* NotificationPhotoVC.swift */; };
+		FA80BCCC2C4AFA9300CE7C50 /* LaunchManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA80BCCB2C4AFA9300CE7C50 /* LaunchManager.swift */; };
 		FAD07D3A2C45C9B900A3ECBF /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAD07D392C45C9B900A3ECBF /* SettingsView.swift */; };
 		FAD07D3C2C45C9E300A3ECBF /* SettingsVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAD07D3B2C45C9E300A3ECBF /* SettingsVC.swift */; };
 		FAD07D3E2C45CE9100A3ECBF /* PairingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAD07D3D2C45CE9100A3ECBF /* PairingView.swift */; };
@@ -76,6 +77,7 @@
 		FA63FFCA2C391DB80070165E /* PSError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PSError.swift; sourceTree = "<group>"; };
 		FA63FFCC2C39231B0070165E /* PersistenceManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PersistenceManager.swift; sourceTree = "<group>"; };
 		FA80BCC92C4ADC9400CE7C50 /* NotificationPhotoVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationPhotoVC.swift; sourceTree = "<group>"; };
+		FA80BCCB2C4AFA9300CE7C50 /* LaunchManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LaunchManager.swift; sourceTree = "<group>"; };
 		FAD07D392C45C9B900A3ECBF /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
 		FAD07D3B2C45C9E300A3ECBF /* SettingsVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsVC.swift; sourceTree = "<group>"; };
 		FAD07D3D2C45CE9100A3ECBF /* PairingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PairingView.swift; sourceTree = "<group>"; };
@@ -250,6 +252,7 @@
 				FA63FFCC2C39231B0070165E /* PersistenceManager.swift */,
 				FA3590712C34D65C00E417B1 /* NetworkManager.swift */,
 				FAD07D732C46EA7D00A3ECBF /* RemoteConfigManager.swift */,
+				FA80BCCB2C4AFA9300CE7C50 /* LaunchManager.swift */,
 			);
 			path = Managers;
 			sourceTree = "<group>";
@@ -405,6 +408,7 @@
 				FA3590762C34D95C00E417B1 /* StorageHelper.swift in Sources */,
 				FA63FFAD2C372D370070165E /* PhotoEditorVC.swift in Sources */,
 				FA3590722C34D65C00E417B1 /* NetworkManager.swift in Sources */,
+				FA80BCCC2C4AFA9300CE7C50 /* LaunchManager.swift in Sources */,
 				FA3590782C34E14B00E417B1 /* SpinnerVC.swift in Sources */,
 				FA63FFC52C390CDF0070165E /* DatabaseHelper.swift in Sources */,
 				FA63FFB22C3745660070165E /* LineView.swift in Sources */,
