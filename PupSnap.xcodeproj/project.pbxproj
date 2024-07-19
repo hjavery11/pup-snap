@@ -30,6 +30,7 @@
 		FA63FFC92C3916B00070165E /* Photo.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA63FFC82C3916B00070165E /* Photo.swift */; };
 		FA63FFCB2C391DB80070165E /* PSError.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA63FFCA2C391DB80070165E /* PSError.swift */; };
 		FA63FFCD2C39231B0070165E /* PersistenceManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA63FFCC2C39231B0070165E /* PersistenceManager.swift */; };
+		FA80BCCA2C4ADC9400CE7C50 /* NotificationPhotoVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA80BCC92C4ADC9400CE7C50 /* NotificationPhotoVC.swift */; };
 		FAD07D3A2C45C9B900A3ECBF /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAD07D392C45C9B900A3ECBF /* SettingsView.swift */; };
 		FAD07D3C2C45C9E300A3ECBF /* SettingsVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAD07D3B2C45C9E300A3ECBF /* SettingsVC.swift */; };
 		FAD07D3E2C45CE9100A3ECBF /* PairingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAD07D3D2C45CE9100A3ECBF /* PairingView.swift */; };
@@ -74,6 +75,7 @@
 		FA63FFC82C3916B00070165E /* Photo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Photo.swift; sourceTree = "<group>"; };
 		FA63FFCA2C391DB80070165E /* PSError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PSError.swift; sourceTree = "<group>"; };
 		FA63FFCC2C39231B0070165E /* PersistenceManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PersistenceManager.swift; sourceTree = "<group>"; };
+		FA80BCC92C4ADC9400CE7C50 /* NotificationPhotoVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationPhotoVC.swift; sourceTree = "<group>"; };
 		FAD07D392C45C9B900A3ECBF /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
 		FAD07D3B2C45C9E300A3ECBF /* SettingsVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsVC.swift; sourceTree = "<group>"; };
 		FAD07D3D2C45CE9100A3ECBF /* PairingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PairingView.swift; sourceTree = "<group>"; };
@@ -163,6 +165,7 @@
 				FA3590852C35223300E417B1 /* FullScreenPhotoVC.swift */,
 				FA63FFAC2C372D370070165E /* PhotoEditorVC.swift */,
 				FAD07D3B2C45C9E300A3ECBF /* SettingsVC.swift */,
+				FA80BCC92C4ADC9400CE7C50 /* NotificationPhotoVC.swift */,
 			);
 			path = "\U0010Screens";
 			sourceTree = "<group>";
@@ -425,6 +428,7 @@
 				FAD07D762C46F9A200A3ECBF /* UIApplication+Ext.swift in Sources */,
 				FAD07D3A2C45C9B900A3ECBF /* SettingsView.swift in Sources */,
 				FAD07D6E2C465BC600A3ECBF /* Dog.swift in Sources */,
+				FA80BCCA2C4ADC9400CE7C50 /* NotificationPhotoVC.swift in Sources */,
 				FAD07D432C46098A00A3ECBF /* SettingsViewModel.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

@@ -9,6 +9,7 @@ import UIKit
 import BranchSDK
 import Combine
 import SwiftUI
+import FirebaseStorage
 
 class SceneDelegate: UIResponder, UIWindowSceneDelegate, UITabBarControllerDelegate {
     
@@ -16,19 +17,26 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate, UITabBarControllerDeleg
     var tabBarController: UITabBarController?
     private var cancellables = Set<AnyCancellable>()
     
+    var notificationResponse = false
     
     func scene(_ scene: UIScene, willConnectTo session: UISceneSession, options connectionOptions: UIScene.ConnectionOptions) {
         print("delegatetest scenedelegate first scene function")
         
         guard let windowScene = (scene as? UIWindowScene) else { return }
         
-      //  Workaround for SceneDelegate `continueUserActivity` not getting called on cold start:
-             if let userActivity = connectionOptions.userActivities.first {
-                 self.scene(scene, continue: userActivity)
-               BranchScene.shared().scene(scene, continue: userActivity)
-             } else if !connectionOptions.urlContexts.isEmpty {
-               BranchScene.shared().scene(scene, openURLContexts: connectionOptions.urlContexts)
-             }
+        //  Workaround for SceneDelegate `continueUserActivity` not getting called on cold start:
+        if let userActivity = connectionOptions.userActivities.first {
+            self.scene(scene, continue: userActivity)
+            BranchScene.shared().scene(scene, continue: userActivity)
+        } else if !connectionOptions.urlContexts.isEmpty {
+            BranchScene.shared().scene(scene, openURLContexts: connectionOptions.urlContexts)
+        }
+        
+        if let notificationResponse = connectionOptions.notificationResponse {
+            self.notificationResponse = true
+        }
+        
+        
         
         window = UIWindow(frame: windowScene.coordinateSpace.bounds)
         window?.windowScene = windowScene
@@ -51,6 +59,13 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate, UITabBarControllerDeleg
             }
             .store(in: &cancellables)
         
+        // Trigger handleNotification only when notificationSubject emits a value
+        AppDelegate.notificationSubject
+            .sink { [weak self] userInfo in
+                self?.handleNotification(userInfo: userInfo)
+            }
+            .store(in: &cancellables)
+        
     }
     
     private func setupScene(connectionOptions: UIScene.ConnectionOptions, scene: UIScene) {
@@ -64,8 +79,12 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate, UITabBarControllerDeleg
         window?.rootViewController = tabBarController
         window?.makeKeyAndVisible()
         
-        // Add observer for the notification
-        NotificationCenter.default.addObserver(self, selector: #selector(presentFullScreenPhotoVC(_:)), name: NSNotification.Name("PresentFullScreenPhotoVC"), object: nil)
+        
+    }
+    
+    private func handleNotification(userInfo: [AnyHashable: Any]) {
+        print("Handling notification with userInfo: \(userInfo)")
+        presentFullScreenPhotoVC(userInfo: userInfo)
     }
     
     private func setupBranchLink(key: Int) {
@@ -135,26 +154,27 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate, UITabBarControllerDeleg
         }
     }
     
-    @objc func presentFullScreenPhotoVC(_ notification: Notification) {
-        print(notification)
-        
-        guard let userInfo = notification.userInfo else { return }
-        guard let filePath = userInfo["path"] as? String,
-              let caption = userInfo["caption"] as? String,
+    private func presentFullScreenPhotoVC(userInfo: [AnyHashable: Any]) {
+        guard let caption = userInfo["caption"] as? String,
               let ratingsString = userInfo["ratings"] as? String,
               let timestampString = userInfo["timestamp"] as? String,
               let id = userInfo["id"] as? String,
               let ratingsData = ratingsString.data(using: .utf8),
-              let ratings = try? JSONSerialization.jsonObject(with: ratingsData, options: []) as? [String: Int],
-              let timestamp = Int(timestampString) else { return }
+              let _ = try? JSONSerialization.jsonObject(with: ratingsData, options: []) as? [String: Int],
+              let _ = Int(timestampString) else { return }
         
-        //let photo = Photo(caption: caption, ratings: ratings, timestamp: timestamp, path: filePath, image: nil, id: id)
-        //let fullScreenVC = FullScreenPhotoVC(photo: photo, indexPath: nil)
+        let userKey = PersistenceManager.retrieveKey()
         
-        //let navigationController = UINavigationController(rootViewController: fullScreenVC)
-        // window?.rootViewController?.present(navigationController, animated: true, completion: nil)
+        let storageRef = Storage.storage().reference().child("images")
+        let reference = storageRef.child(String(userKey)).child(id + ".jpg")
+        let newImageView = UIImageView()
+        
+        newImageView.sd_setImage(with: reference, placeholderImage: UIImage(named: "placeholder_image"))
+        print("Attempting to send notification to view with image info \(reference.fullPath)")
+        let newImageVC = NotificationPhotoVC(imageView: newImageView, caption: caption)
+        let navigationController = UINavigationController(rootViewController: newImageVC)
+        window?.rootViewController?.present(navigationController, animated: true, completion: nil)
     }
-    
     
     func sceneDidDisconnect(_ scene: UIScene) {
         // Called as the scene is being released by the system.

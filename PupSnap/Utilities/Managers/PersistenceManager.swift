@@ -102,6 +102,8 @@ enum PersistenceManager {
             let authResult = try await Auth.auth().signInAnonymously()
             let user = authResult.user
             
+            
+            //@TODO: Update this to move the generating of the key to the server and return back the new key to avoid people being able to see all keys
             let allKeys = try await NetworkManager.shared.retrieveAllKeys()
             guard !allKeys.isEmpty else {
                 print("No keys returned from database. Exiting launch")

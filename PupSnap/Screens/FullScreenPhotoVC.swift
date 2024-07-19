@@ -25,6 +25,7 @@ class FullScreenPhotoVC: UIViewController, RatingViewControllerDelegate {
     var photo: Photo
     var indexPath: IndexPath?
     
+    
     init(photo: Photo, indexPath: IndexPath?, image: UIImage) {
         self.photo = photo
         self.indexPath = indexPath

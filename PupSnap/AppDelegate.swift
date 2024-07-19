@@ -22,10 +22,13 @@ class AppDelegate: UIResponder, UIApplicationDelegate, MessagingDelegate {
     var window: UIWindow?
     static let setupCompletionSubject = PassthroughSubject<Void, Never>()
     static let branchLinkSubject = PassthroughSubject<Int, Never>()
+    static let notificationSubject = PassthroughSubject<[AnyHashable: Any], Never>()
+    
+    var launchedFromNotification = false
     
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         
-     
+        
         // Override point for customization after application launch.
 #if DEBUG
         let providerFactory = AppCheckDebugProviderFactory()
@@ -42,54 +45,77 @@ class AppDelegate: UIResponder, UIApplicationDelegate, MessagingDelegate {
         UNUserNotificationCenter.current().delegate = self
         Messaging.messaging().delegate = self
         
-        application.registerForRemoteNotifications()      
+        application.registerForRemoteNotifications()
         
         // Check the pasteboard before Branch initialization
         Branch.getInstance().checkPasteboardOnInstall()
         //Should change to using UIPasteBoard instead of checkPasteboardOnInstall but skipping for now. Might be able to configure custom alert modal in the future
-      
+        
         // Initialize Branch session
-              Branch.getInstance().initSession(launchOptions: launchOptions) { (params, error) in
-                  if let params = params as? [String: AnyObject], let pairingKeyValue = params["pairingKey"] {
-                      if let sharedPairingKey = pairingKeyValue as? Int {
-                          print("handling pairing key branch param as Int: \(sharedPairingKey)")
-                          AppDelegate.branchLinkSubject.send(sharedPairingKey)
-                      } else if let pairingKeyString = pairingKeyValue as? String, let sharedPairingKey = Int(pairingKeyString) {
-                          print("handling pairing key branch param as String: \(sharedPairingKey)")
-                          AppDelegate.branchLinkSubject.send(sharedPairingKey)
-                      } else {
-                          print("Invalid pairing key format: \(pairingKeyValue)")
-                          self.runStandardSetup()
-                      }
-                  } else {
-                      print("pairingKey not found in params")
-                      self.runStandardSetup()
-                  }
-              }
-       
+        Branch.getInstance().initSession(launchOptions: launchOptions) { (params, error) in
+            if let params = params as? [String: AnyObject], let pairingKeyValue = params["pairingKey"] {
+                if let sharedPairingKey = pairingKeyValue as? Int {
+                    print("handling pairing key branch param as Int: \(sharedPairingKey)")
+                    AppDelegate.branchLinkSubject.send(sharedPairingKey)
+                } else if let pairingKeyString = pairingKeyValue as? String, let sharedPairingKey = Int(pairingKeyString) {
+                    print("handling pairing key branch param as String: \(sharedPairingKey)")
+                    AppDelegate.branchLinkSubject.send(sharedPairingKey)
+                } else {
+                    print("Invalid pairing key format: \(pairingKeyValue)")
+                    self.runStandardSetup()
+                }
+            } else {
+                print("pairingKey not found in params")
+                self.runStandardSetup()
+            }
+        }
+        
         print("delegatetest end of did finish launching with options")
         return true
     }
-       private func runStandardSetup() {
-           Task {
-               do {
-                   try await PersistenceManager.launchSetup()
-                   print("launch setup complete. sending completion from app delegate to scene delegate")
-                   AppDelegate.setupCompletionSubject.send(())
-               } catch {
-                   print("Error requesting authorization to UNUserNotiacationCenter with error: \(error)")
+    private func runStandardSetup() {
+        if launchedFromNotification {
+                   return
                }
-           }
-           
-           // Remote config setup
-           Task {
-               do {
-                   try await RemoteConfigManager.shared.fetchAndActivate()
-               } catch {
-                   print("Error on remote config setup: \(error)")
-               }
-           }
-       }
+        Task {
+            do {
+                try await PersistenceManager.launchSetup()
+                print("launch setup complete. sending completion from app delegate to scene delegate")
+                // Request notification permissions
+                requestNotificationPermissions()
+                AppDelegate.setupCompletionSubject.send(())
+            } catch {
+                print("Error requesting authorization to UNUserNotiacationCenter with error: \(error)")
+            }
+        }
+        
+        // Remote config setup
+        Task {
+            do {
+                try await RemoteConfigManager.shared.fetchAndActivate()
+            } catch {
+                print("Error on remote config setup: \(error)")
+            }
+        }
+    }
+    
+    func requestNotificationPermissions() {
+        let center = UNUserNotificationCenter.current()
+        center.requestAuthorization(options: [.alert, .sound, .badge]) { granted, error in
+            if let error = error {
+                print("Error requesting notification permissions: \(error)")
+                return
+            }
+            
+            if granted {
+                DispatchQueue.main.async {
+                    UIApplication.shared.registerForRemoteNotifications()
+                }
+            } else {
+                print("Notification permissions denied.")
+            }
+        }
+    }
     
     func application(_ application: UIApplication, didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data) {
         //messaging setup
@@ -159,34 +185,37 @@ class AppDelegate: UIResponder, UIApplicationDelegate, MessagingDelegate {
 }
 
 extension AppDelegate: UNUserNotificationCenterDelegate {
-  // Receive displayed notifications for iOS 10 devices.
-  func userNotificationCenter(_ center: UNUserNotificationCenter,
-                              willPresent notification: UNNotification) async
+    // Notification receieved while in app (not clicked)
+    func userNotificationCenter(_ center: UNUserNotificationCenter,
+                                willPresent notification: UNNotification) async
     -> UNNotificationPresentationOptions {
-    let userInfo = notification.request.content.userInfo
-
-    // With swizzling disabled you must let Messaging know about the message, for Analytics
-     Messaging.messaging().appDidReceiveMessage(userInfo)
-
-    // ...
-
-    // Print full message.
-    print(userInfo)
-
-    // Change this to your preferred presentation option
+        let userInfo = notification.request.content.userInfo
+        
+        // With swizzling disabled you must let Messaging know about the message, for Analytics
+        //Messaging.messaging().appDidReceiveMessage(userInfo)
+        
+        // ...
+        
+        // Print full message.
+        print("printing from  first app delegate function : \(userInfo)")
+        
+        
+        // Change this to your preferred presentation option
         return [[.banner, .sound, .list]]
-  }
-
-  func userNotificationCenter(_ center: UNUserNotificationCenter,
-                              didReceive response: UNNotificationResponse) async {
-    let userInfo = response.notification.request.content.userInfo
-
-    // ...
-
-    // With swizzling disabled you must let Messaging know about the message, for Analytics
-     Messaging.messaging().appDidReceiveMessage(userInfo)
-
-    // Print full message.
-    print(userInfo)
-  }
+    }
+    
+    //notification clicked (while in app, unsure if backgrouded
+    func userNotificationCenter(_ center: UNUserNotificationCenter,
+                                didReceive response: UNNotificationResponse) async {
+        let userInfo = response.notification.request.content.userInfo
+        
+        // ...
+        
+        // With swizzling disabled you must let Messaging know about the message, for Analytics
+            // Messaging.messaging().appDidReceiveMessage(userInfo)
+       
+        // Print full message.
+        print("printing from  last app delegate function : \(userInfo)")
+        AppDelegate.notificationSubject.send(userInfo)
+    }
 }
