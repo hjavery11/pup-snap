@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import SDWebImage
 
 class FeedVC: UIViewController, FullScreenPhotoVCDelegate {
     
@@ -32,6 +33,7 @@ class FeedVC: UIViewController, FullScreenPhotoVCDelegate {
         fetchPhotos()
         
     }
+    
     
     override func viewDidAppear(_ animated: Bool) {
         setTitle()
@@ -159,8 +161,8 @@ class FeedVC: UIViewController, FullScreenPhotoVCDelegate {
         currentImageIndex = indexPath.item
         
         guard let photo = cell.photo else { return }
-        
-        let fullScreenVC = FullScreenPhotoVC(photo: photo, indexPath: indexPath)
+        guard let image = cell.thumbnailImageView.image else { return }
+        let fullScreenVC = FullScreenPhotoVC(photo: photo, indexPath: indexPath, image: image)
         fullScreenVC.delegate = self
         if let navController = self.navigationController {
             navController.pushViewController(fullScreenVC, animated: true)
@@ -205,13 +207,25 @@ class FeedVC: UIViewController, FullScreenPhotoVCDelegate {
                 applySnapshot()
                
             } catch {
-                let alert = UIAlertController(title: "Error", message: "Could not delete photo: \(error.localizedDescription)", preferredStyle: .alert)
-                let alertAction = UIAlertAction(title: "Ok", style: .default, handler: nil)
-             
-                alert.addAction(alertAction)
-            
-                present(alert, animated: true, completion: nil)
+//                let alert = UIAlertController(title: "Error", message: "Could not delete photo: \(error.localizedDescription)", preferredStyle: .alert)
+//                let alertAction = UIAlertAction(title: "Ok", style: .default, handler: nil)
+//             
+//                alert.addAction(alertAction)
+//            
+//                present(alert, animated: true, completion: nil)
                 print("Error occured deleting photo: \(error)")
+                let deletedPhoto = photoArray[indexPath.item]
+                var last: Bool
+                if photoArray.count == 1 {
+                   last = true
+                } else {
+                    last = false
+                }
+                try await NetworkManager.shared.deletePhoto(photo: deletedPhoto, last: last)
+                photoArray.remove(at: indexPath.item)
+               
+                applySnapshot()
+             
             }
            
         }
@@ -230,6 +244,10 @@ class FeedVC: UIViewController, FullScreenPhotoVCDelegate {
         }
     }
     
+    func getCellForItem(at indexPath: IndexPath) -> SophiePhotoCell? {
+        return collectionView.cellForItem(at: indexPath) as? SophiePhotoCell
+    }
+    
     func displayPriorImage(currentVC: FullScreenPhotoVC) {
         guard let currentImageIndex = currentImageIndex else { return }
         let priorIndex = currentImageIndex - 1
@@ -244,6 +262,10 @@ class FeedVC: UIViewController, FullScreenPhotoVCDelegate {
         
         self.currentImageIndex = priorIndex
         
+        // Retrieve the cell and get the image from its thumbnailImageView
+           guard let priorCell = getCellForItem(at: newIndexPath),
+                 let priorImage = priorCell.thumbnailImageView.image else { return }
+        
         let currentImageView = currentVC.imageView
         
         //change captions
@@ -252,7 +274,7 @@ class FeedVC: UIViewController, FullScreenPhotoVCDelegate {
         currentVC.setUserRating()
         
         // Create a new image view for the prior image
-        let newImageView = UIImageView(image: priorPhoto.image)
+        let newImageView = UIImageView(image: priorImage)
         newImageView.contentMode = .scaleAspectFit
         newImageView.frame = currentImageView.bounds
         newImageView.frame.origin.x = -currentImageView.frame.width
@@ -266,7 +288,7 @@ class FeedVC: UIViewController, FullScreenPhotoVCDelegate {
             currentImageView.frame.origin.x = 0
             newImageView.removeFromSuperview()
         })
-        currentImageView.image = priorPhoto.image
+        currentImageView.image = priorImage
         
     }
     
@@ -283,6 +305,10 @@ class FeedVC: UIViewController, FullScreenPhotoVCDelegate {
         currentVC.photo = nextPhoto
         currentVC.indexPath = newIndexPath
         
+        // Retrieve the cell and get the image from its thumbnailImageView
+            guard let nextCell = getCellForItem(at: newIndexPath),
+                  let nextImage = nextCell.thumbnailImageView.image else { return }
+        
         let currentImageView = currentVC.imageView
         
         //change captions
@@ -291,7 +317,7 @@ class FeedVC: UIViewController, FullScreenPhotoVCDelegate {
         currentVC.setUserRating()
         
         // Create a new image view for the next image
-        let newImageView = UIImageView(image: nextPhoto.image)
+        let newImageView = UIImageView(image: nextImage)
         newImageView.contentMode = .scaleAspectFit
         newImageView.frame = currentImageView.bounds
         newImageView.frame.origin.x = currentImageView.frame.width
@@ -305,7 +331,7 @@ class FeedVC: UIViewController, FullScreenPhotoVCDelegate {
             currentImageView.frame.origin.x = 0
             newImageView.removeFromSuperview()
         })
-        currentImageView.image = nextPhoto.image
+        currentImageView.image = nextImage
     }
     
 }

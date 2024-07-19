@@ -6,16 +6,20 @@
 //
 
 import UIKit
+import FirebaseStorage
+import FirebaseStorageUI
 
 class SophiePhotoCell: UICollectionViewCell {
 
     static let reuseID = "SophiePhotoCell"
     var photo: Photo?
     var thumbnailImageView = UIImageView()
+    // Create a storage reference from our storage service
+    let storageRef: StorageReference
     
- 
-
     override init(frame: CGRect) {
+        // Get a reference to the storage service
+        storageRef = Storage.storage().reference().child("images")
         super.init(frame: frame)
         configure()
     }
@@ -40,7 +44,10 @@ class SophiePhotoCell: UICollectionViewCell {
     }
 
     func set(photo: Photo) {
+        let userKey = PersistenceManager.retrieveKey()
         self.photo = photo
-        thumbnailImageView.image = photo.image
+        let reference = self.storageRef.child(String(userKey)).child(photo.id + ".jpg")
+
+        self.thumbnailImageView.sd_setImage(with: reference, placeholderImage: UIImage(named: "placeholder_image"))
     }
 }

@@ -16,6 +16,7 @@ class SettingsVC: UIViewController {
         super.viewDidLoad()
         title = "Settings"
         navigationController?.navigationBar.prefersLargeTitles = true
+
         
         addChild(settingsView)
         view.addSubview(settingsView.view)
@@ -35,3 +36,7 @@ class SettingsVC: UIViewController {
     }    
    
 }
+
+
+
+

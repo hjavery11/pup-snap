@@ -25,7 +25,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, MessagingDelegate {
     
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         
-        
+     
         // Override point for customization after application launch.
 #if DEBUG
         let providerFactory = AppCheckDebugProviderFactory()
@@ -34,8 +34,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate, MessagingDelegate {
         let providerFactory = YourSimpleAppCheckProviderFactory()
         print("is not debug")
 #endif
-        
-      
         AppCheck.setAppCheckProviderFactory(providerFactory)
         
         FirebaseApp.configure()
@@ -45,57 +43,53 @@ class AppDelegate: UIResponder, UIApplicationDelegate, MessagingDelegate {
         Messaging.messaging().delegate = self
         
         application.registerForRemoteNotifications()      
-       
-        Task {
-            do {
-                try await PersistenceManager.launchSetup()
-                print("launch setup complete. sending completion from app delegate to scene delegate")
-                AppDelegate.setupCompletionSubject.send(())
-                
-            } catch {
-                print("Error requesting authorization to UNUserNotiacationCenter with error: \(error)")
-            }
-        }
-        
         
         // Check the pasteboard before Branch initialization
         Branch.getInstance().checkPasteboardOnInstall()
         //Should change to using UIPasteBoard instead of checkPasteboardOnInstall but skipping for now. Might be able to configure custom alert modal in the future
-        
-        
+      
         // Initialize Branch session
-        Branch.getInstance().initSession(launchOptions: launchOptions) { (params, error) in
-            if let params = params as? [String: AnyObject] {
-                if let pairingKeyValue = params["pairingKey"] {
-                    if let sharedPairingKey = pairingKeyValue as? Int {
-                        print("handling pairing key branch param as Int: \(sharedPairingKey)")
-                        AppDelegate.branchLinkSubject.send(sharedPairingKey)
-                    } else if let pairingKeyString = pairingKeyValue as? String, let sharedPairingKey = Int(pairingKeyString) {
-                        print("handling pairing key branch param as String: \(sharedPairingKey)")
-                        AppDelegate.branchLinkSubject.send(sharedPairingKey)
-                    } else {
-                        print("Invalid pairing key format: \(pairingKeyValue)")
-                    }
-                } else {
-                    print("pairingKey not found in params")
-                }
-            } else {
-                print("Invalid params format")
-            }
-        }
-        
-        
-        //remote config setup
-        Task {
-            do {
-                try await RemoteConfigManager.shared.fetchAndActivate()
-            } catch {
-                print("Error on remote config setup: \(error)")
-            }           
-        }
+              Branch.getInstance().initSession(launchOptions: launchOptions) { (params, error) in
+                  if let params = params as? [String: AnyObject], let pairingKeyValue = params["pairingKey"] {
+                      if let sharedPairingKey = pairingKeyValue as? Int {
+                          print("handling pairing key branch param as Int: \(sharedPairingKey)")
+                          AppDelegate.branchLinkSubject.send(sharedPairingKey)
+                      } else if let pairingKeyString = pairingKeyValue as? String, let sharedPairingKey = Int(pairingKeyString) {
+                          print("handling pairing key branch param as String: \(sharedPairingKey)")
+                          AppDelegate.branchLinkSubject.send(sharedPairingKey)
+                      } else {
+                          print("Invalid pairing key format: \(pairingKeyValue)")
+                          self.runStandardSetup()
+                      }
+                  } else {
+                      print("pairingKey not found in params")
+                      self.runStandardSetup()
+                  }
+              }
+       
         print("delegatetest end of did finish launching with options")
         return true
-    }
+    }       
+       private func runStandardSetup() {
+           Task {
+               do {
+                   try await PersistenceManager.launchSetup()
+                   print("launch setup complete. sending completion from app delegate to scene delegate")
+                   AppDelegate.setupCompletionSubject.send(())
+               } catch {
+                   print("Error requesting authorization to UNUserNotiacationCenter with error: \(error)")
+               }
+           }
+           
+           // Remote config setup
+           Task {
+               do {
+                   try await RemoteConfigManager.shared.fetchAndActivate()
+               } catch {
+                   print("Error on remote config setup: \(error)")
+               }
+           }
+       }
     
     func application(_ application: UIApplication, didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data) {
         //messaging setup

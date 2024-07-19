@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		C97615825BE1DC581AC37CDE /* Pods_PupSnap.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BDF558EF0579FA9B93E0CD40 /* Pods_PupSnap.framework */; };
 		FA35904E2C33B2AC00E417B1 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA35904D2C33B2AC00E417B1 /* AppDelegate.swift */; };
 		FA3590502C33B2AC00E417B1 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA35904F2C33B2AC00E417B1 /* SceneDelegate.swift */; };
 		FA3590522C33B2AC00E417B1 /* PhotoVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA3590512C33B2AC00E417B1 /* PhotoVC.swift */; };
@@ -14,28 +15,21 @@
 		FA35905A2C33B2AD00E417B1 /* Base in Resources */ = {isa = PBXBuildFile; fileRef = FA3590592C33B2AD00E417B1 /* Base */; };
 		FA3590622C33B30000E417B1 /* FeedVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA3590612C33B30000E417B1 /* FeedVC.swift */; };
 		FA35906B2C34A46E00E417B1 /* SophiePhotoCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA35906A2C34A46E00E417B1 /* SophiePhotoCell.swift */; };
-		FA3590702C34D44800E417B1 /* FirebaseStorage in Frameworks */ = {isa = PBXBuildFile; productRef = FA35906F2C34D44800E417B1 /* FirebaseStorage */; };
 		FA3590722C34D65C00E417B1 /* NetworkManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA3590712C34D65C00E417B1 /* NetworkManager.swift */; };
-		FA3590762C34D95C00E417B1 /* FirebaseHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA3590752C34D95C00E417B1 /* FirebaseHelper.swift */; };
+		FA3590762C34D95C00E417B1 /* StorageHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA3590752C34D95C00E417B1 /* StorageHelper.swift */; };
 		FA3590782C34E14B00E417B1 /* SpinnerVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA3590772C34E14B00E417B1 /* SpinnerVC.swift */; };
-		FA3590812C35037A00E417B1 /* FirebaseFunctions in Frameworks */ = {isa = PBXBuildFile; productRef = FA3590802C35037A00E417B1 /* FirebaseFunctions */; };
-		FA3590832C35037A00E417B1 /* FirebaseMessaging in Frameworks */ = {isa = PBXBuildFile; productRef = FA3590822C35037A00E417B1 /* FirebaseMessaging */; };
 		FA3590862C35223300E417B1 /* FullScreenPhotoVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA3590852C35223300E417B1 /* FullScreenPhotoVC.swift */; };
-		FA63FF942C368A350070165E /* FirebaseCrashlytics in Frameworks */ = {isa = PBXBuildFile; productRef = FA63FF932C368A350070165E /* FirebaseCrashlytics */; };
 		FA63FF972C368B450070165E /* CrashlyticsCrashButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA63FF962C368B450070165E /* CrashlyticsCrashButton.swift */; };
 		FA63FFAD2C372D370070165E /* PhotoEditorVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA63FFAC2C372D370070165E /* PhotoEditorVC.swift */; };
 		FA63FFB02C373ED40070165E /* SpeechBubbleView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA63FFAF2C373ED40070165E /* SpeechBubbleView.swift */; };
 		FA63FFB22C3745660070165E /* LineView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA63FFB12C3745660070165E /* LineView.swift */; };
 		FA63FFB52C37519F0070165E /* UIImageView+Ext.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA63FFB42C37519F0070165E /* UIImageView+Ext.swift */; };
 		FA63FFBF2C37E2710070165E /* RatingViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA63FFBE2C37E2710070165E /* RatingViewController.swift */; };
-		FA63FFC12C3908280070165E /* FirebaseDatabase in Frameworks */ = {isa = PBXBuildFile; productRef = FA63FFC02C3908280070165E /* FirebaseDatabase */; };
-		FA63FFC32C39090A0070165E /* FirebaseAppCheck in Frameworks */ = {isa = PBXBuildFile; productRef = FA63FFC22C39090A0070165E /* FirebaseAppCheck */; };
 		FA63FFC52C390CDF0070165E /* DatabaseHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA63FFC42C390CDF0070165E /* DatabaseHelper.swift */; };
 		FA63FFC72C390E9C0070165E /* AppCheckProviderFactory.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA63FFC62C390E9C0070165E /* AppCheckProviderFactory.swift */; };
 		FA63FFC92C3916B00070165E /* Photo.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA63FFC82C3916B00070165E /* Photo.swift */; };
 		FA63FFCB2C391DB80070165E /* PSError.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA63FFCA2C391DB80070165E /* PSError.swift */; };
 		FA63FFCD2C39231B0070165E /* PersistenceManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA63FFCC2C39231B0070165E /* PersistenceManager.swift */; };
-		FAD07D382C45ACB700A3ECBF /* FirebaseAuth in Frameworks */ = {isa = PBXBuildFile; productRef = FAD07D372C45ACB700A3ECBF /* FirebaseAuth */; };
 		FAD07D3A2C45C9B900A3ECBF /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAD07D392C45C9B900A3ECBF /* SettingsView.swift */; };
 		FAD07D3C2C45C9E300A3ECBF /* SettingsVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAD07D3B2C45C9E300A3ECBF /* SettingsVC.swift */; };
 		FAD07D3E2C45CE9100A3ECBF /* PairingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAD07D3D2C45CE9100A3ECBF /* PairingView.swift */; };
@@ -43,17 +37,18 @@
 		FAD07D452C46571400A3ECBF /* DogView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAD07D442C46571400A3ECBF /* DogView.swift */; };
 		FAD07D6E2C465BC600A3ECBF /* Dog.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAD07D6D2C465BC600A3ECBF /* Dog.swift */; };
 		FAD07D702C46E42100A3ECBF /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = FAD07D6F2C46E42100A3ECBF /* GoogleService-Info.plist */; };
-		FAD07D722C46E90200A3ECBF /* FirebaseRemoteConfigSwift in Frameworks */ = {isa = PBXBuildFile; productRef = FAD07D712C46E90200A3ECBF /* FirebaseRemoteConfigSwift */; };
 		FAD07D742C46EA7D00A3ECBF /* RemoteConfigManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAD07D732C46EA7D00A3ECBF /* RemoteConfigManager.swift */; };
 		FAD07D762C46F9A200A3ECBF /* UIApplication+Ext.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAD07D752C46F9A200A3ECBF /* UIApplication+Ext.swift */; };
 		FAD07D7F2C4781CE00A3ECBF /* LinkManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAD07D7E2C4781CE00A3ECBF /* LinkManager.swift */; };
-		FAD07D822C4790C100A3ECBF /* BranchSDK in Frameworks */ = {isa = PBXBuildFile; productRef = FAD07D812C4790C100A3ECBF /* BranchSDK */; };
 		FAD07D912C483AD900A3ECBF /* PasteModalVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAD07D902C483AD900A3ECBF /* PasteModalVC.swift */; };
 		FAD07D932C48C2EA00A3ECBF /* LoadingVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAD07D922C48C2EA00A3ECBF /* LoadingVC.swift */; };
 		FAD07D952C49664900A3ECBF /* remote_config_defaults.plist in Resources */ = {isa = PBXBuildFile; fileRef = FAD07D942C49664900A3ECBF /* remote_config_defaults.plist */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		1D4E08169BCCF250D857905A /* Pods-PupSnap.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-PupSnap.release.xcconfig"; path = "Target Support Files/Pods-PupSnap/Pods-PupSnap.release.xcconfig"; sourceTree = "<group>"; };
+		BDF558EF0579FA9B93E0CD40 /* Pods_PupSnap.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_PupSnap.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		E44E6795DF65B22051E32CF3 /* Pods-PupSnap.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-PupSnap.debug.xcconfig"; path = "Target Support Files/Pods-PupSnap/Pods-PupSnap.debug.xcconfig"; sourceTree = "<group>"; };
 		FA35904A2C33B2AC00E417B1 /* PupSnap.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = PupSnap.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		FA35904D2C33B2AC00E417B1 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		FA35904F2C33B2AC00E417B1 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -64,7 +59,7 @@
 		FA3590612C33B30000E417B1 /* FeedVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedVC.swift; sourceTree = "<group>"; };
 		FA35906A2C34A46E00E417B1 /* SophiePhotoCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SophiePhotoCell.swift; sourceTree = "<group>"; };
 		FA3590712C34D65C00E417B1 /* NetworkManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkManager.swift; sourceTree = "<group>"; };
-		FA3590752C34D95C00E417B1 /* FirebaseHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirebaseHelper.swift; sourceTree = "<group>"; };
+		FA3590752C34D95C00E417B1 /* StorageHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StorageHelper.swift; sourceTree = "<group>"; };
 		FA3590772C34E14B00E417B1 /* SpinnerVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpinnerVC.swift; sourceTree = "<group>"; };
 		FA3590842C350A7800E417B1 /* PupSnap.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = PupSnap.entitlements; sourceTree = "<group>"; };
 		FA3590852C35223300E417B1 /* FullScreenPhotoVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FullScreenPhotoVC.swift; sourceTree = "<group>"; };
@@ -99,27 +94,37 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				FAD07D822C4790C100A3ECBF /* BranchSDK in Frameworks */,
-				FA63FFC12C3908280070165E /* FirebaseDatabase in Frameworks */,
-				FAD07D722C46E90200A3ECBF /* FirebaseRemoteConfigSwift in Frameworks */,
-				FA3590832C35037A00E417B1 /* FirebaseMessaging in Frameworks */,
-				FA63FF942C368A350070165E /* FirebaseCrashlytics in Frameworks */,
-				FA3590702C34D44800E417B1 /* FirebaseStorage in Frameworks */,
-				FA63FFC32C39090A0070165E /* FirebaseAppCheck in Frameworks */,
-				FAD07D382C45ACB700A3ECBF /* FirebaseAuth in Frameworks */,
-				FA3590812C35037A00E417B1 /* FirebaseFunctions in Frameworks */,
+				C97615825BE1DC581AC37CDE /* Pods_PupSnap.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		141EF022FA14240D44AE90D3 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				BDF558EF0579FA9B93E0CD40 /* Pods_PupSnap.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		CC794781CE31525F9625A00C /* Pods */ = {
+			isa = PBXGroup;
+			children = (
+				E44E6795DF65B22051E32CF3 /* Pods-PupSnap.debug.xcconfig */,
+				1D4E08169BCCF250D857905A /* Pods-PupSnap.release.xcconfig */,
+			);
+			path = Pods;
+			sourceTree = "<group>";
+		};
 		FA3590412C33B2AC00E417B1 = {
 			isa = PBXGroup;
 			children = (
 				FA35904C2C33B2AC00E417B1 /* PupSnap */,
 				FA35904B2C33B2AC00E417B1 /* Products */,
-				FAD07D832C482C2100A3ECBF /* Frameworks */,
+				CC794781CE31525F9625A00C /* Pods */,
+				141EF022FA14240D44AE90D3 /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -235,13 +240,6 @@
 			path = ViewModels;
 			sourceTree = "<group>";
 		};
-		FAD07D832C482C2100A3ECBF /* Frameworks */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			name = Frameworks;
-			sourceTree = "<group>";
-		};
 		FAD07D962C4967D400A3ECBF /* Managers */ = {
 			isa = PBXGroup;
 			children = (
@@ -256,7 +254,7 @@
 		FAD07D972C4967DB00A3ECBF /* Helpers */ = {
 			isa = PBXGroup;
 			children = (
-				FA3590752C34D95C00E417B1 /* FirebaseHelper.swift */,
+				FA3590752C34D95C00E417B1 /* StorageHelper.swift */,
 				FA63FFC42C390CDF0070165E /* DatabaseHelper.swift */,
 			);
 			path = Helpers;
@@ -269,27 +267,18 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = FA35905E2C33B2AD00E417B1 /* Build configuration list for PBXNativeTarget "PupSnap" */;
 			buildPhases = (
+				39A22AD1C14E88816FDD7DC5 /* [CP] Check Pods Manifest.lock */,
 				FA3590462C33B2AC00E417B1 /* Sources */,
 				FA3590472C33B2AC00E417B1 /* Frameworks */,
 				FA3590482C33B2AC00E417B1 /* Resources */,
 				FA63FF952C368AD30070165E /* ShellScript */,
+				2A3941C3F8E2B76CFD534D65 /* [CP] Embed Pods Frameworks */,
 			);
 			buildRules = (
 			);
 			dependencies = (
 			);
 			name = PupSnap;
-			packageProductDependencies = (
-				FA35906F2C34D44800E417B1 /* FirebaseStorage */,
-				FA3590802C35037A00E417B1 /* FirebaseFunctions */,
-				FA3590822C35037A00E417B1 /* FirebaseMessaging */,
-				FA63FF932C368A350070165E /* FirebaseCrashlytics */,
-				FA63FFC02C3908280070165E /* FirebaseDatabase */,
-				FA63FFC22C39090A0070165E /* FirebaseAppCheck */,
-				FAD07D372C45ACB700A3ECBF /* FirebaseAuth */,
-				FAD07D712C46E90200A3ECBF /* FirebaseRemoteConfigSwift */,
-				FAD07D812C4790C100A3ECBF /* BranchSDK */,
-			);
 			productName = SophiePhotos;
 			productReference = FA35904A2C33B2AC00E417B1 /* PupSnap.app */;
 			productType = "com.apple.product-type.application";
@@ -318,10 +307,6 @@
 				Base,
 			);
 			mainGroup = FA3590412C33B2AC00E417B1;
-			packageReferences = (
-				FA35906E2C34D44800E417B1 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */,
-				FAD07D802C4790C100A3ECBF /* XCRemoteSwiftPackageReference "ios-branch-deep-linking" */,
-			);
 			productRefGroup = FA35904B2C33B2AC00E417B1 /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
@@ -346,6 +331,45 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
+		2A3941C3F8E2B76CFD534D65 /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-PupSnap/Pods-PupSnap-frameworks-${CONFIGURATION}-input-files.xcfilelist",
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-PupSnap/Pods-PupSnap-frameworks-${CONFIGURATION}-output-files.xcfilelist",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-PupSnap/Pods-PupSnap-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		39A22AD1C14E88816FDD7DC5 /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-PupSnap-checkManifestLockResult.txt",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			showEnvVarsInLog = 0;
+		};
 		FA63FF952C368AD30070165E /* ShellScript */ = {
 			isa = PBXShellScriptBuildPhase;
 			alwaysOutOfDate = 1;
@@ -355,11 +379,6 @@
 			inputFileListPaths = (
 			);
 			inputPaths = (
-				"${DWARF_DSYM_FOLDER_PATH}/${DWARF_DSYM_FILE_NAME}",
-				"${DWARF_DSYM_FOLDER_PATH}/${DWARF_DSYM_FILE_NAME}",
-				"${DWARF_DSYM_FOLDER_PATH}/${DWARF_DSYM_FILE_NAME}/Contents/Info.plist",
-				"$(TARGET_BUILD_DIR)/$(UNLOCALIZED_RESOURCES_FOLDER_PATH)/GoogleService-Info.plist",
-				"$(TARGET_BUILD_DIR)/$(EXECUTABLE_PATH)",
 			);
 			outputFileListPaths = (
 			);
@@ -367,7 +386,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "# Type a script or drag a script file from your workspace to insert its path.\n\"${BUILD_DIR%/Build/*}/SourcePackages/checkouts/firebase-ios-sdk/Crashlytics/run\"\n";
+			shellScript = "# Type a script or drag a script file from your workspace to insert its path.\nif [ -f \"${PODS_ROOT}/FirebaseCrashlytics/run\" ]; then\n    \"${PODS_ROOT}/FirebaseCrashlytics/run\"\nelse\n    echo \"Crashlytics run script not found, skipping...\"\nfi\n";
 		};
 /* End PBXShellScriptBuildPhase section */
 
@@ -380,7 +399,7 @@
 				FA63FFC72C390E9C0070165E /* AppCheckProviderFactory.swift in Sources */,
 				FAD07D742C46EA7D00A3ECBF /* RemoteConfigManager.swift in Sources */,
 				FAD07D932C48C2EA00A3ECBF /* LoadingVC.swift in Sources */,
-				FA3590762C34D95C00E417B1 /* FirebaseHelper.swift in Sources */,
+				FA3590762C34D95C00E417B1 /* StorageHelper.swift in Sources */,
 				FA63FFAD2C372D370070165E /* PhotoEditorVC.swift in Sources */,
 				FA3590722C34D65C00E417B1 /* NetworkManager.swift in Sources */,
 				FA3590782C34E14B00E417B1 /* SpinnerVC.swift in Sources */,
@@ -461,7 +480,7 @@
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
-				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = NO;
 				GCC_C_LANGUAGE_STANDARD = gnu17;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_NO_COMMON_BLOCKS = YES;
@@ -524,7 +543,7 @@
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
-				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = NO;
 				GCC_C_LANGUAGE_STANDARD = gnu17;
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
@@ -545,6 +564,7 @@
 		};
 		FA35905F2C33B2AD00E417B1 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = E44E6795DF65B22051E32CF3 /* Pods-PupSnap.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
@@ -568,7 +588,10 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				OTHER_LDFLAGS = "-ObjC";
+				OTHER_LDFLAGS = (
+					"$(inherited)",
+					"-ObjC",
+				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.HEJ.PupSnap;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -584,6 +607,7 @@
 		};
 		FA3590602C33B2AD00E417B1 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 1D4E08169BCCF250D857905A /* Pods-PupSnap.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
@@ -606,7 +630,10 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				OTHER_LDFLAGS = "-ObjC";
+				OTHER_LDFLAGS = (
+					"$(inherited)",
+					"-ObjC",
+				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.HEJ.PupSnap;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -642,73 +669,6 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
-
-/* Begin XCRemoteSwiftPackageReference section */
-		FA35906E2C34D44800E417B1 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/firebase/firebase-ios-sdk";
-			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 10.28.1;
-			};
-		};
-		FAD07D802C4790C100A3ECBF /* XCRemoteSwiftPackageReference "ios-branch-deep-linking" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/BranchMetrics/ios-branch-deep-linking";
-			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 3.4.4;
-			};
-		};
-/* End XCRemoteSwiftPackageReference section */
-
-/* Begin XCSwiftPackageProductDependency section */
-		FA35906F2C34D44800E417B1 /* FirebaseStorage */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = FA35906E2C34D44800E417B1 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
-			productName = FirebaseStorage;
-		};
-		FA3590802C35037A00E417B1 /* FirebaseFunctions */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = FA35906E2C34D44800E417B1 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
-			productName = FirebaseFunctions;
-		};
-		FA3590822C35037A00E417B1 /* FirebaseMessaging */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = FA35906E2C34D44800E417B1 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
-			productName = FirebaseMessaging;
-		};
-		FA63FF932C368A350070165E /* FirebaseCrashlytics */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = FA35906E2C34D44800E417B1 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
-			productName = FirebaseCrashlytics;
-		};
-		FA63FFC02C3908280070165E /* FirebaseDatabase */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = FA35906E2C34D44800E417B1 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
-			productName = FirebaseDatabase;
-		};
-		FA63FFC22C39090A0070165E /* FirebaseAppCheck */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = FA35906E2C34D44800E417B1 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
-			productName = FirebaseAppCheck;
-		};
-		FAD07D372C45ACB700A3ECBF /* FirebaseAuth */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = FA35906E2C34D44800E417B1 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
-			productName = FirebaseAuth;
-		};
-		FAD07D712C46E90200A3ECBF /* FirebaseRemoteConfigSwift */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = FA35906E2C34D44800E417B1 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
-			productName = FirebaseRemoteConfigSwift;
-		};
-		FAD07D812C4790C100A3ECBF /* BranchSDK */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = FAD07D802C4790C100A3ECBF /* XCRemoteSwiftPackageReference "ios-branch-deep-linking" */;
-			productName = BranchSDK;
-		};
-/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = FA3590422C33B2AC00E417B1 /* Project object */;
 }

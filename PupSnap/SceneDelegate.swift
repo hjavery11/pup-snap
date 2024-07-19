@@ -141,10 +141,10 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate, UITabBarControllerDeleg
               let timestamp = Int(timestampString) else { return }
         
         let photo = Photo(caption: caption, ratings: ratings, timestamp: timestamp, path: filePath, image: nil, id: id)
-        let fullScreenVC = FullScreenPhotoVC(photo: photo, indexPath: nil)
+        //let fullScreenVC = FullScreenPhotoVC(photo: photo, indexPath: nil)
         
-        let navigationController = UINavigationController(rootViewController: fullScreenVC)
-        window?.rootViewController?.present(navigationController, animated: true, completion: nil)
+        //let navigationController = UINavigationController(rootViewController: fullScreenVC)
+       // window?.rootViewController?.present(navigationController, animated: true, completion: nil)
     }
     
     

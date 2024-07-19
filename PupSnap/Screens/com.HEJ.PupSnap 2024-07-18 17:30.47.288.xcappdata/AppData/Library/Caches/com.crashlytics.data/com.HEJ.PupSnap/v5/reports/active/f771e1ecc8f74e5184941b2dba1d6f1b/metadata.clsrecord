@@ -1,0 +1,4 @@
+{"identity":{"generator":"Crashlytics iOS SDK/10.29.0","display_version":"10.29.0","build_version":"10.29.0","started_at":1721348928,"session_id":"f771e1ecc8f74e5184941b2dba1d6f1b","app_quality_session_id":"1087bc821c014038970b0866e8fbfde5","install_id":"","beta_token":"","absolute_log_timestamps":true}}
+{"host":{"model":"iPhone13,2","machine":"D53gAP","os_build_version":"21F90","os_display_version":"17.5.1","platform":"ios","firebase_platform":"ios","locale":"en_US"}}
+{"application":{"bundle_id":"com.HEJ.PupSnap","custom_bundle_id":null,"build_version":"1","display_version":"1.0","extension_id":null}}
+{"executable":{"architecture":"arm64","uuid":"ce056836f4de3793964bf2337f7fcbcf","base":4296474624,"size":606208,"encrypted":false,"minimum_sdk_version":"0.0.0","built_sdk_version":"0.0.0"}}

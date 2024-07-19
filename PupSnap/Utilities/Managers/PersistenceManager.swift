@@ -8,7 +8,7 @@
 import Foundation
 import FirebaseMessaging
 import FirebaseAuth
-import FirebaseRemoteConfigInternal
+import FirebaseRemoteConfig
 
 
 enum PersistenceManager {
@@ -51,7 +51,7 @@ enum PersistenceManager {
         defaults.removeObject(forKey: Keys.key)
     }
     
-    static func subscribeToPairingKey(pairingKey: String) async throws {
+    static func subscribeToPairingKey(pairingKey: Int) async throws {
         let topic = "pairingKey_\(pairingKey)"
         do {
             try await Messaging.messaging().subscribe(toTopic: topic)
@@ -59,6 +59,18 @@ enum PersistenceManager {
         } catch {
             throw PSError.subscribeError(underlyingError: error)
         }
+    }
+    
+    static func changeKey(to key: Int) async throws{
+        //first set the claims and make sure it works before deleting key
+        try await NetworkManager.shared.setClaims(with: key)
+        //deleting key and unsubscxribing for pushes
+        try await self.unsubscribeFromPairingKey()
+        self.unsetKey()
+        
+        //now set and subscribe to new key
+        try await self.subscribeToPairingKey(pairingKey: key)
+        self.setKey(to: key)
     }
 
     static func unsubscribeFromPairingKey() async throws {
@@ -70,10 +82,26 @@ enum PersistenceManager {
         }
     }
     
+    static func getAuthUser() async throws-> User {
+        var user: User
+        if let currentUser = Auth.auth().currentUser {
+            user = currentUser
+        } else {
+            let authResult = try await Auth.auth().signInAnonymously()
+            let newUser = authResult.user
+            user = newUser
+        }
+        return user
+    }
+    
     static func launchSetup() async throws {
         let userKey = self.retrieveKey()
         //check if key is 0 which means its a first time launch
         if userKey == 0 {
+            // do user setup
+            let authResult = try await Auth.auth().signInAnonymously()
+            let user = authResult.user
+            
             let allKeys = try await NetworkManager.shared.retrieveAllKeys()
             guard !allKeys.isEmpty else {
                 print("No keys returned from database. Exiting launch")
@@ -90,11 +118,14 @@ enum PersistenceManager {
             // initalize the key which is a firebase function that creates an empty object in the datbaase so the user has access to it
             try await NetworkManager.shared.initializeKey(pairingKey: newKey)
             try await NetworkManager.shared.setClaims(with: newKey)
+            try await user.getIDTokenResult(forcingRefresh: true)
 
             //end of user setup. Should now have claims setup to be able to access database
         } else {
-            //returning user
-            //let _ = try await Auth.auth().signInAnonymously() commenting out for now tot see if i need to call everytime
+            // do things here for returning users
+            let authResult = try await Auth.auth().signInAnonymously()
+            let user = authResult.user
+            try await user.getIDTokenResult(forcingRefresh: true)
         }
     }
     

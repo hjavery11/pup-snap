@@ -89,7 +89,7 @@ import Foundation
             PersistenceManager.unsetKey()
             PersistenceManager.setKey(to: newKey)
             do {
-                try await NetworkManager.shared.setClaims(with: newKey)
+                try await PersistenceManager.changeKey(to: newKey)            
             } catch {
                 self.alertMessage = PSError.setClaims(underlyingError: error).localizedDescription
                 throw PSError.setClaims()
@@ -107,7 +107,10 @@ import Foundation
             self.dogPhotos.removeAll {
                 $0 == newPhoto
             }
-            self.dogPhotos.append(self.selectedPhoto!)
+            if let photo = PersistenceManager.getDogPhoto() {
+                self.dogPhotos.append(photo)
+            }
+            
          
         }
     }

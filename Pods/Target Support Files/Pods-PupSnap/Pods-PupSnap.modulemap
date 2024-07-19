@@ -1,0 +1,6 @@
+framework module Pods_PupSnap {
+  umbrella header "Pods-PupSnap-umbrella.h"
+
+  export *
+  module * { export * }
+}

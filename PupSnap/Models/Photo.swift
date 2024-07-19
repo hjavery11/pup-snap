@@ -12,17 +12,24 @@ class Photo: Decodable {
     let caption: String
     var ratings: [String: Int]
     let timestamp: Int
-    var path: String?
     var image: UIImage?
-    var id: String?
+    private var _id: String?
     
-    init(caption: String, ratings: [String : Int], timestamp: Int, path: String? = nil, image: UIImage? = nil, id: String? = nil) {
+    var id: String {
+        get {
+            return _id ?? ""
+        }
+        set {
+            _id = newValue
+        }
+    }
+    
+    init(caption: String, ratings: [String : Int], timestamp: Int, path: String? = nil, image: UIImage? = nil, id: String) {
         self.caption = caption
         self.ratings = ratings
         self.timestamp = timestamp
-        self.path = path
         self.image = image
-        self.id = id
+        self._id = id
     }
     
     func addRating(user: String, rating: Int) {
@@ -32,7 +39,7 @@ class Photo: Decodable {
     
     
     private enum CodingKeys: String, CodingKey {
-        case caption, ratings, timestamp, path
+        case caption, ratings, timestamp
     }
    
     
@@ -45,7 +52,7 @@ extension Photo : Comparable {
         if lhs.timestamp != rhs.timestamp {
             return lhs.timestamp > rhs.timestamp
         } else {
-            return lhs.id ?? "" > rhs.id ?? ""
+            return lhs.id > rhs.id
         }
     }
    
