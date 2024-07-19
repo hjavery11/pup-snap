@@ -46,13 +46,33 @@ struct PairingView: View {
             .listStyle(.grouped)
             
         }
+        .alert("Pairing", isPresented: $viewModel.comingFromBranchLink) {
+            Button("Ok", role: .none) {
+                Task {
+                    do {
+                        try await viewModel.changeKey()
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
+                            exit(0)
+                        }
+                    } catch {
+                        viewModel.showingChangeKeyError = true
+                    }
+                    
+                }
+                
+            }
+        } message: {
+            let text = "Your pairing key will be changed to \(viewModel.newKey) to join the feed that was shared with you. Please note the app has to reset after applying the key."
+            Text(text)
+          
+        }
         .alert("Something went wrong", isPresented: $viewModel.showingChangeKeyError) {
             Button("Ok") {viewModel.showingChangeKeyError = false}
         } message: {
             Text(viewModel.alertMessage)
         }
         .alert("Are you sure?", isPresented: $viewModel.showingPairingConfirmation) {
-            Button("No", role: .cancel) {viewModel.showingChangeKey = true}
+            Button("Cancel", role: .cancel) {viewModel.showingChangeKey = true}
             Button("Yes", role: .destructive) {
                 Task {
                     do {
@@ -65,10 +85,11 @@ struct PairingView: View {
                 
             }
         } message: {
-            let text = viewModel.shareConfirmationMessage ? "Your pairing key will be changed to \(viewModel.newKey) to join the feed that was shared with you. Press cancel if you do not wish to join the shared feed." : "Your new key will be set to: \(viewModel.newKey).\n\nChanging your key will remove access to your current key."
+            let text = "Your new key will be set to: \(viewModel.newKey).\n\nChanging your key will remove access to your current key."
             Text(text)
           
-        }       
+        }      
+        
         .sheet(isPresented: $viewModel.showingChangeKey) {
             VStack {
                 Text("Change Key")

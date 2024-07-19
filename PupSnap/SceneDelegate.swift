@@ -22,6 +22,14 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate, UITabBarControllerDeleg
         
         guard let windowScene = (scene as? UIWindowScene) else { return }
         
+      //  Workaround for SceneDelegate `continueUserActivity` not getting called on cold start:
+             if let userActivity = connectionOptions.userActivities.first {
+                 self.scene(scene, continue: userActivity)
+               BranchScene.shared().scene(scene, continue: userActivity)
+             } else if !connectionOptions.urlContexts.isEmpty {
+               BranchScene.shared().scene(scene, openURLContexts: connectionOptions.urlContexts)
+             }
+        
         window = UIWindow(frame: windowScene.coordinateSpace.bounds)
         window?.windowScene = windowScene
         
@@ -30,15 +38,15 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate, UITabBarControllerDeleg
         window?.makeKeyAndVisible()
         
         // Trigger setupScene as soon as setupCompletionSubject is completed
-        AppDelegate.setupCompletionSubject.sink { [weak self] in
-            self?.setupScene(connectionOptions: connectionOptions, scene: scene)
-        }
-        .store(in: &cancellables)
-        
-        // Trigger setupBranchLink only when both setupCompletionSubject and branchLinkSubject have emitted values
         AppDelegate.setupCompletionSubject
-            .combineLatest(AppDelegate.branchLinkSubject)
-            .sink { [weak self] (_, key) in
+            .sink { [weak self] in
+                self?.setupScene(connectionOptions: connectionOptions, scene: scene)
+            }
+            .store(in: &cancellables)
+        
+        // Trigger setupBranchLink only when branchLinkSubject emits a value
+        AppDelegate.branchLinkSubject
+            .sink { [weak self] key in
                 self?.setupBranchLink(key: key)
             }
             .store(in: &cancellables)
@@ -62,7 +70,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate, UITabBarControllerDeleg
     
     private func setupBranchLink(key: Int) {
         print("Attempting to show PairingView with detected pairing key from branch")
-        let hostingController = UIHostingController(rootView: PairingView(viewModel: SettingsViewModel()))
+        let hostingController = UIHostingController(rootView: PairingView(viewModel: SettingsViewModel(pairingKey: key)))
         window?.rootViewController?.present(hostingController, animated: true)
         
     }
@@ -140,11 +148,11 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate, UITabBarControllerDeleg
               let ratings = try? JSONSerialization.jsonObject(with: ratingsData, options: []) as? [String: Int],
               let timestamp = Int(timestampString) else { return }
         
-        let photo = Photo(caption: caption, ratings: ratings, timestamp: timestamp, path: filePath, image: nil, id: id)
+        //let photo = Photo(caption: caption, ratings: ratings, timestamp: timestamp, path: filePath, image: nil, id: id)
         //let fullScreenVC = FullScreenPhotoVC(photo: photo, indexPath: nil)
         
         //let navigationController = UINavigationController(rootViewController: fullScreenVC)
-       // window?.rootViewController?.present(navigationController, animated: true, completion: nil)
+        // window?.rootViewController?.present(navigationController, animated: true, completion: nil)
     }
     
     

@@ -69,7 +69,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, MessagingDelegate {
        
         print("delegatetest end of did finish launching with options")
         return true
-    }       
+    }
        private func runStandardSetup() {
            Task {
                do {

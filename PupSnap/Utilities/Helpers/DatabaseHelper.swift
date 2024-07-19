@@ -58,14 +58,14 @@ class DatabaseHelper {
                     
                     var photos: [Photo] = []
                     for (key, photo) in photoDictionary {
-                        var mutablePhoto = photo
+                        let mutablePhoto = photo
                         mutablePhoto.id = key
                         photos.append(mutablePhoto)
                     }
                     
                     return photos
                 } catch {
-                    // Handle errors from setClaims or retrying fetching photos         
+                    // Handle errors from setClaims or retrying fetching photos
                     throw PSError.fetchPhotos(underlyingError: error)
                 }
             } else {

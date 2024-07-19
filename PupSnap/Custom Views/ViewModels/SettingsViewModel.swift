@@ -52,7 +52,9 @@ import Foundation
     @Published var newDogName: String = ""
     var alertMessage: String = ""
     @Published var userKey = PersistenceManager.retrieveKey()
-    var shareConfirmationMessage: Bool = false
+    var comingFromBranchLink: Bool = false
+    
+    
     
     init() {
         self.selectedPhoto = PersistenceManager.getDogPhoto() ?? "sophie-iso"
@@ -67,16 +69,10 @@ import Foundation
         self.dogName = PersistenceManager.getDogName() ?? ""
         self.newDogName = dogName
         self.newKey = String(pairingKey)
-        self.showingPairingConfirmation = true
-        self.shareConfirmationMessage = true
+        self.comingFromBranchLink = true
         
         print("user key is \(userKey)")
     }
-    
-   
-    
-   
-
     
     func changeKey() async throws {
        let allKeys = try await NetworkManager.shared.retrieveAllKeys()
