@@ -38,6 +38,10 @@ class PhotoVC: UIViewController, UINavigationControllerDelegate, UIImagePickerCo
     
     // Reference to the height constraint of referenceImageView
     var referenceImageViewHeightConstraint: NSLayoutConstraint?
+    
+    //success toast
+    private let successToastVC = UIHostingController(rootView: SuccessToast())
+    private var topConstant: NSLayoutConstraint?
    
     
     
@@ -54,12 +58,20 @@ class PhotoVC: UIViewController, UINavigationControllerDelegate, UIImagePickerCo
         setupCameraView()
         setupDogPhoto()
         setupSpeechBubble()
+        
+        configureSuccessToast()
 
     }
     
     override func viewDidAppear(_ animated: Bool) {
         setDogInfo()
+        
+        if LaunchManager.shared.showToast {
+            showSwiftUIToast()
+            LaunchManager.shared.showToast = false
+        }
     }
+  
     
     func setDogInfo() {
         let dogName = PersistenceManager.getDogName() ?? "Sophie"
@@ -314,52 +326,37 @@ class PhotoVC: UIViewController, UINavigationControllerDelegate, UIImagePickerCo
         return isEmulator
     }
     
-    func setupCrashButton() {
-        let crashButton = CrashlyticsCrashButton()
-        crashButton.translatesAutoresizingMaskIntoConstraints = false
-        view.addSubview(crashButton)
+    private func configureSuccessToast() {
+        addChild(successToastVC)
+        successToastVC.view.translatesAutoresizingMaskIntoConstraints = false
+        view.addSubview(successToastVC.view)
+        successToastVC.didMove(toParent: self)
         
-        // Set up constraints
+        successToastVC.view.backgroundColor = .clear
+        
+        topConstant = successToastVC.view.topAnchor.constraint(equalTo: view.topAnchor, constant: -500)
+        
         NSLayoutConstraint.activate([
-            crashButton.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            crashButton.centerYAnchor.constraint(equalTo: view.centerYAnchor),
-            crashButton.widthAnchor.constraint(equalToConstant: 100),
-            crashButton.heightAnchor.constraint(equalToConstant: 30)
+            topConstant!,
+            successToastVC.view.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -15),
+            successToastVC.view.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 15)
         ])
+    }
+    
+    private func showSwiftUIToast() {
+        topConstant?.constant = 10
+        
+        UIView.animateKeyframes(withDuration: 4, delay: 0, options: .calculationModeLinear, animations: {
+            UIView.addKeyframe(withRelativeStartTime: 0.1, relativeDuration: 0.1) {
+                self.view.layoutIfNeeded()
+            }
+            
+            UIView.addKeyframe(withRelativeStartTime: 0.9, relativeDuration: 0.1) {
+                self.topConstant?.constant = -500
+                self.view.layoutIfNeeded()
+            }
+        })
     }
     
 }
 
-//keeping this here because it took a while to figure out how to draw a line between 2 view points, so in case I go back to this method
-
-//func addLineView() {
-//        let lineView = LineView()
-//        lineView.translatesAutoresizingMaskIntoConstraints = false
-//        view.addSubview(lineView)
-//        self.lineView = lineView
-//
-//        // The lineView should not interfere with the layout of other views.
-//        NSLayoutConstraint.activate([
-//            lineView.topAnchor.constraint(equalTo: view.topAnchor),
-//            lineView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
-//            lineView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-//            lineView.trailingAnchor.constraint(equalTo: view.trailingAnchor)
-//        ])
-//
-//        // Initial update of the line view
-//        updateLineView()
-//    }
-//
-//    func updateLineView() {
-//        guard let lineView = lineView,
-//              let speechBubbleView = speechBubbleHostingController?.view else { return }
-//
-//        // Convert the center points of both views to the coordinate space of the `lineView`
-//        let sophieCenterInLineView = sophie.convert(CGPoint(x: sophie.bounds.midX, y: sophie.bounds.midY), to: lineView)
-//        let bubbleCenterInLineView = speechBubbleView.convert(CGPoint(x: speechBubbleView.bounds.midX, y: speechBubbleView.bounds.midY), to: lineView)
-//
-//        print("Sophie Center: \(sophieCenterInLineView)")
-//        print("Bubble Center: \(bubbleCenterInLineView)")
-//
-//        lineView.setPoints(start: sophieCenterInLineView, end: bubbleCenterInLineView)
-//    }

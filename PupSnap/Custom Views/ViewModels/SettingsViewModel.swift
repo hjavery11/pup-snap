@@ -40,6 +40,7 @@ import Foundation
     @Published var newKeyError: Bool = false
     @Published var showingChangeKeyError: Bool = false
     @Published var pushNotifs: Bool = true
+    @Published var isLoading: Bool = false
     
     //dog view
     @Published var showIconConfirmation: Bool = false
@@ -53,6 +54,7 @@ import Foundation
     var alertMessage: String = ""
     @Published var userKey = PersistenceManager.retrieveKey()
     var comingFromBranchLink: Bool = false
+    var firstTimeLaunch: Bool = false
     
     
     
@@ -60,8 +62,6 @@ import Foundation
         self.selectedPhoto = PersistenceManager.getDogPhoto() ?? "sophie-iso"
         self.dogName = PersistenceManager.getDogName() ?? ""
         self.newDogName = dogName
-        
-        print("user key is \(userKey)")
     }
     
     init(pairingKey: Int) {
@@ -70,11 +70,19 @@ import Foundation
         self.newDogName = dogName
         self.newKey = String(pairingKey)
         self.comingFromBranchLink = true
+    }
+    
+    init(pairingKey: Int, firstTimeLaunch: Bool) {
+        self.selectedPhoto = PersistenceManager.getDogPhoto() ?? "sophie-iso"
+        self.dogName = PersistenceManager.getDogName() ?? ""
+        self.newDogName = dogName
         
-        print("user key is \(userKey)")
+        self.newKey = String(pairingKey)
+        self.firstTimeLaunch = firstTimeLaunch
     }
     
     func changeKey() async throws {
+        //TODO: Change this to use a function in the cloud to check the new key so people cant sniff out all keys
        let allKeys = try await NetworkManager.shared.retrieveAllKeys()
         guard let newKey = Int(self.newKey) else {            
             self.alertMessage = PSError.invalidKey(underlyingError: nil).localizedDescription
@@ -82,8 +90,6 @@ import Foundation
         }
         if allKeys.contains(newKey) {
             self.userKey = newKey
-            PersistenceManager.unsetKey()
-            PersistenceManager.setKey(to: newKey)
             do {
                 try await PersistenceManager.changeKey(to: newKey)            
             } catch {
@@ -94,6 +100,15 @@ import Foundation
             self.alertMessage = PSError.invalidKey(underlyingError: nil).localizedDescription
             throw PSError.invalidKey()
         }
+    }
+    
+    func subscribeToBranchKey() async throws {
+        guard let newKey = Int(self.newKey) else {
+            self.alertMessage = PSError.invalidKey(underlyingError: nil).localizedDescription
+            throw PSError.invalidKey(underlyingError: nil)
+        }
+        
+        try await PersistenceManager.branchKeySetup(key: newKey)
     }
     
     func updateDogPhoto() {

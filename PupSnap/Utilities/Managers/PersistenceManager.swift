@@ -72,6 +72,12 @@ enum PersistenceManager {
         try await self.subscribeToPairingKey(pairingKey: key)
         self.setKey(to: key)
     }
+    
+    static func branchKeySetup(key: Int) async throws {
+        try await NetworkManager.shared.setClaims(with: key)
+        try await self.subscribeToPairingKey(pairingKey: key)
+        self.setKey(to: key)
+    }
 
     static func unsubscribeFromPairingKey() async throws {
         let key = defaults.integer(forKey: Keys.key)

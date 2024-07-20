@@ -26,18 +26,12 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate, UITabBarControllerDeleg
         print(connectionOptions.userActivities)
         print(connectionOptions.notificationResponse as Any)
  
-//        
-//        //  Workaround for SceneDelegate `continueUserActivity` not getting called on cold start:
-//        if let userActivity = connectionOptions.userActivities.first {
-//            self.scene(scene, continue: userActivity)
-//            BranchScene.shared().scene(scene, continue: userActivity)
-//        } else if !connectionOptions.urlContexts.isEmpty {
-//            BranchScene.shared().scene(scene, openURLContexts: connectionOptions.urlContexts)
-//        }
-//        
-//        if let notificationResponse = connectionOptions.notificationResponse {
-//            self.notificationResponse = true
-//        }
+        
+        //  Workaround for SceneDelegate `continueUserActivity` not getting called on cold start:
+        if let userActivity = connectionOptions.userActivities.first {
+            self.scene(scene, continue: userActivity)          
+        }
+
         
         
         
@@ -69,18 +63,26 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate, UITabBarControllerDeleg
             }
             .store(in: &cancellables)
         
+        //Trigger branch first time install launch
+        AppDelegate.branchFirstTimeLaunch
+            .sink { [weak self] key in
+                self?.setupBranchFirstLaunch(key)
+            }
+            .store(in: &cancellables)
+        
     }
     
     private func setupScene(connectionOptions: UIScene.ConnectionOptions, scene: UIScene) {
         print("scene delegate is setting up scene from combine")
-        guard let windowScene = (scene as? UIWindowScene) else { return }
         
-        window = UIWindow(frame: windowScene.coordinateSpace.bounds)
-        window?.windowScene = windowScene
         tabBarController = createTabbar()
         tabBarController?.delegate = self
         window?.rootViewController = tabBarController
-        window?.makeKeyAndVisible()
+        
+        LaunchManager.shared.hasFinishedSceneLaunchSetup = true
+        
+        //check to see if branch key setup is needed now that scene is ready
+        LaunchManager.shared.branchSetup()
         
         
     }
@@ -93,8 +95,16 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate, UITabBarControllerDeleg
     private func setupBranchLink(key: Int) {
         print("Attempting to show PairingView with detected pairing key from branch")
         let hostingController = UIHostingController(rootView: PairingView(viewModel: SettingsViewModel(pairingKey: key)))
+        hostingController.modalPresentationStyle = .fullScreen
         window?.rootViewController?.present(hostingController, animated: true)
         
+    }
+    
+    private func setupBranchFirstLaunch(_ key: Int) {
+        print("attempting to show first time branch install")
+        let hostingController = UIHostingController(rootView: PairingView(viewModel: SettingsViewModel(pairingKey: key)))
+        hostingController.modalPresentationStyle = .fullScreen
+        window?.rootViewController?.present(hostingController, animated: true)
     }
     
     

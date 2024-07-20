@@ -23,8 +23,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, MessagingDelegate {
     static let setupCompletionSubject = PassthroughSubject<Void, Never>()
     static let branchLinkSubject = PassthroughSubject<Int, Never>()
     static let notificationSubject = PassthroughSubject<[AnyHashable: Any], Never>()
-    
-    var launchedFromNotification = false
+    static let branchFirstTimeLaunch = PassthroughSubject<Int, Never>()
     
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         
@@ -44,31 +43,37 @@ class AppDelegate: UIResponder, UIApplicationDelegate, MessagingDelegate {
         print("delegatetest appdelegate didfinishlaunchingwithoptions with launch options: \(String(describing: launchOptions))")
         UNUserNotificationCenter.current().delegate = self
         Messaging.messaging().delegate = self
-        
         application.registerForRemoteNotifications()
-        
+       
         // Check the pasteboard before Branch initialization
         Branch.getInstance().checkPasteboardOnInstall()
-        //Should change to using UIPasteBoard instead of checkPasteboardOnInstall but skipping for now. Might be able to configure custom alert modal in the future
+       
+        if Branch.getInstance().willShowPasteboardToast() {
+            initializeBranchFirstLaunch(launchOptions)
+            return true
+        }
+        
+       
         
         initializeBranch(launchOptions)
         
-       
+        runStandardSetup()
         
         print("delegatetest end of did finish launching with options")
         return true
     }
     private func runStandardSetup() {
-        if launchedFromNotification {
-                   return
-               }
         Task {
             do {
                 try await PersistenceManager.launchSetup()
-                print("launch setup complete. sending completion from app delegate to scene delegate")
                 // Request notification permissions
                 requestNotificationPermissions()
+                
+                LaunchManager.shared.hasFinishedUserLaunchSetup = true
+                print("launch setup complete. sending completion from app delegate to scene delegate")
+               
                 AppDelegate.setupCompletionSubject.send(())
+                
             } catch {
                 print("Error requesting authorization to UNUserNotiacationCenter with error: \(error)")
             }
@@ -90,10 +95,29 @@ class AppDelegate: UIResponder, UIApplicationDelegate, MessagingDelegate {
             if let params = params as? [String: AnyObject], let pairingKeyValue = params["pairingKey"] {
                 if let sharedPairingKey = pairingKeyValue as? Int {
                     print("handling pairing key branch param as Int: \(sharedPairingKey)")
-                    AppDelegate.branchLinkSubject.send(sharedPairingKey)
+                    LaunchManager.shared.launchingFromBranchLink = true
+                    LaunchManager.shared.sharedPairingKey = sharedPairingKey
+                    LaunchManager.shared.branchSetup()
                 } else if let pairingKeyString = pairingKeyValue as? String, let sharedPairingKey = Int(pairingKeyString) {
                     print("handling pairing key branch param as String: \(sharedPairingKey)")
-                    AppDelegate.branchLinkSubject.send(sharedPairingKey)
+                    LaunchManager.shared.launchingFromBranchLink = true
+                    LaunchManager.shared.sharedPairingKey = sharedPairingKey
+                    LaunchManager.shared.branchSetup()
+                }
+            }
+        }
+    }
+    
+    func initializeBranchFirstLaunch(_ launchOptions:[UIApplication.LaunchOptionsKey: Any]? ) {
+        // Initialize Branch session
+        Branch.getInstance().initSession(launchOptions: launchOptions) { (params, error) in
+            if let params = params as? [String: AnyObject], let pairingKeyValue = params["pairingKey"] {
+                if let sharedPairingKey = pairingKeyValue as? Int {
+                    print("handling pairing key branch param as Int: \(sharedPairingKey)")
+                    LaunchManager.shared.branchFirstTimeLaunch(sharedPairingKey)
+                } else if let pairingKeyString = pairingKeyValue as? String, let sharedPairingKey = Int(pairingKeyString) {
+                    print("handling pairing key branch param as String: \(sharedPairingKey)")
+                    LaunchManager.shared.branchFirstTimeLaunch(sharedPairingKey)
                 }
             }
         }
@@ -170,7 +194,7 @@ extension AppDelegate: UNUserNotificationCenterDelegate {
     func userNotificationCenter(_ center: UNUserNotificationCenter,
                                 willPresent notification: UNNotification) async
     -> UNNotificationPresentationOptions {
-        let userInfo = notification.request.content.userInfo
+        let _ = notification.request.content.userInfo
         
         // With swizzling disabled you must let Messaging know about the message, for Analytics
         //Messaging.messaging().appDidReceiveMessage(userInfo)

@@ -8,52 +8,59 @@
 import SwiftUI
 
 struct PairingView: View {
-    @Environment(\.presentationMode) var presentationMode
+    @Environment(\.presentationMode) private var presentationMode
     
     @ObservedObject var viewModel: SettingsViewModel
     @FocusState private var keyIsFocused: Bool
     
     var body: some View {
-        NavigationStack {
-            List {
-                Section {
-                    HStack {
-                        Text("My Key")
-                            .font(.title3)
-                        Spacer()
-                        Text(String(viewModel.userKey))
-                            .font(.title3)
+        ZStack{
+            NavigationStack {
+                List {
+                    Section {
+                        HStack {
+                            Text("My Key")
+                                .font(.title3)
+                            Spacer()
+                            Text(String(viewModel.userKey))
+                                .font(.title3)
+                        }
+                        
+                        HStack {
+                            Spacer()
+                            Text("Change Key")
+                                .font(.footnote)
+                                .onTapGesture {
+                                    viewModel.showingChangeKey = true
+                                }
+                        }
+                        
+                        // ShareLink("Share My Key",item: URL(string: "https://pupsnapapp.com/pair/\(viewModel.userKey)")!, subject: Text("Join me on PupSnap to see all my photos!"))
+                        ShareLink("Share My Key",item: URL(string: "https://pupsnapapp.com/pair/56706732")!, subject: Text("Join me on PupSnap to see all my photos!"))
+                        
+                    } header: {
+                        Text("Pairing")
+                    } footer: {
+                        Text("Share your key with other users to allow them to subscribe to your photos and post photos of their own to the feed.")
                     }
-                    
-                    HStack {
-                        Spacer()
-                        Text("Change Key")
-                            .font(.footnote)
-                            .onTapGesture {
-                                viewModel.showingChangeKey = true                              
-                            }
-                    }
-                    
-                   // ShareLink("Share My Key",item: URL(string: "https://pupsnapapp.com/pair/\(viewModel.userKey)")!, subject: Text("Join me on PupSnap to see all my photos!"))
-                    ShareLink("Share My Key",item: URL(string: "https://pupsnapapp.com/pair/56706732")!, subject: Text("Join me on PupSnap to see all my photos!"))
-            
-                } header: {
-                    Text("Pairing")
-                } footer: {
-                    Text("Share your key with other users to allow them to subscribe to your photos and post photos of their own to the feed.")
                 }
+                .listStyle(.grouped)
+                
             }
-            .listStyle(.grouped)
-            
-        }
+            if viewModel.isLoading {
+                ProgressView("Applying...")                
+                    .tint(Color(.systemPurple))
+            }
+        }  
         .alert("Pairing", isPresented: $viewModel.comingFromBranchLink) {
             Button("Ok", role: .none) {
                 Task {
                     do {
+                        viewModel.isLoading = true
                         try await viewModel.changeKey()
-                        DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
-                            exit(0)
-                        }
+                        viewModel.isLoading = false
+                        LaunchManager.shared.showToast = true
+                        presentationMode.wrappedValue.dismiss()
                     } catch {
                         viewModel.showingChangeKeyError = true
                     }
@@ -62,7 +69,24 @@ struct PairingView: View {
                 
             }
         } message: {
-            let text = "Your pairing key will be changed to \(viewModel.newKey) to join the feed that was shared with you. Please note the app has to reset after applying the key."
+            let text = "Your pairing key will be changed to \(viewModel.newKey) to join the feed that was shared with you."
+            Text(text)
+          
+        }
+        .alert("Pairing", isPresented: $viewModel.firstTimeLaunch) {
+            Button("Ok", role: .none) {
+                Task {
+                    do {
+                        try await viewModel.subscribeToBranchKey()
+                    } catch {
+                        viewModel.showingChangeKeyError = true
+                    }
+                    
+                }
+                
+            }
+        } message: {
+            let text = "You are joining the feed of the person who shared this app with you."
             Text(text)
           
         }
@@ -128,8 +152,4 @@ struct PairingView: View {
     
     }
   
-}
-
-#Preview {
-    PairingView(viewModel: SettingsViewModel())
 }
