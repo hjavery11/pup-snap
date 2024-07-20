@@ -15,6 +15,7 @@ class LaunchManager {
     var hasFinishedSceneLaunchSetup: Bool = false
     var launchingFromBranchLink: Bool = false
     var launchingFromPushNotification: Bool = false
+    var firstTimeLaunch: Bool = false
     
     var showToast: Bool = false
     
@@ -24,14 +25,22 @@ class LaunchManager {
     
     func branchSetup() {
         guard let sharedPairingKey = self.sharedPairingKey else { return }
-        if hasFinishedUserLaunchSetup && launchingFromBranchLink && hasFinishedSceneLaunchSetup{
-            AppDelegate.branchLinkSubject.send(sharedPairingKey)          
+        if sharedPairingKey != PersistenceManager.retrieveKey() { // handling weird case where after app applies the change and is reopened, it still tries to change the key again
+            if hasFinishedUserLaunchSetup && launchingFromBranchLink && hasFinishedSceneLaunchSetup{
+                AppDelegate.branchLinkSubject.send(sharedPairingKey)
+            }
         }
     }
     
     func branchFirstTimeLaunch(_ key: Int) {
+        self.firstTimeLaunch = true
         AppDelegate.branchFirstTimeLaunch.send(key)
     }    
+    
+    func cleanup() {
+        self.firstTimeLaunch = false
+        UIPasteboard.remove(withName: .general)
+    }
     
     
 }

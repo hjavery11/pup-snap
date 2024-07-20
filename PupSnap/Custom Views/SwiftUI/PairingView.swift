@@ -60,6 +60,7 @@ struct PairingView: View {
                         try await viewModel.changeKey()
                         viewModel.isLoading = false
                         LaunchManager.shared.showToast = true
+                        LaunchManager.shared.launchingFromBranchLink = false
                         presentationMode.wrappedValue.dismiss()
                     } catch {
                         viewModel.showingChangeKeyError = true
@@ -73,11 +74,17 @@ struct PairingView: View {
             Text(text)
           
         }
-        .alert("Pairing", isPresented: $viewModel.firstTimeLaunch) {
+        .alert("PupSnap", isPresented: $viewModel.firstTimeLaunch) {
             Button("Ok", role: .none) {
                 Task {
                     do {
+                        viewModel.isLoading = true
                         try await viewModel.subscribeToBranchKey()
+                        viewModel.isLoading = false
+                        LaunchManager.shared.showToast = true
+                        presentationMode.wrappedValue.dismiss()
+                        AppDelegate.setupCompletionSubject.send(())
+                        LaunchManager.shared.cleanup()
                     } catch {
                         viewModel.showingChangeKeyError = true
                     }
@@ -100,7 +107,9 @@ struct PairingView: View {
             Button("Yes", role: .destructive) {
                 Task {
                     do {
+                        viewModel.isLoading = true
                         try await viewModel.changeKey()
+                        viewModel.isLoading = false                        
                     } catch {
                         viewModel.showingChangeKeyError = true
                     }

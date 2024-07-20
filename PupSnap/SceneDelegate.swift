@@ -38,7 +38,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate, UITabBarControllerDeleg
         window = UIWindow(frame: windowScene.coordinateSpace.bounds)
         window?.windowScene = windowScene
         
-        let loadingVC = LoadingVC()
+        let loadingVC = LoadingVC(showText: LaunchManager.shared.firstTimeLaunch)
         window?.rootViewController = loadingVC
         window?.makeKeyAndVisible()
         
@@ -102,7 +102,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate, UITabBarControllerDeleg
     
     private func setupBranchFirstLaunch(_ key: Int) {
         print("attempting to show first time branch install")
-        let hostingController = UIHostingController(rootView: PairingView(viewModel: SettingsViewModel(pairingKey: key)))
+        let hostingController = UIHostingController(rootView: PairingView(viewModel: SettingsViewModel(pairingKey: key, firstTimeLaunch: true)))
         hostingController.modalPresentationStyle = .fullScreen
         window?.rootViewController?.present(hostingController, animated: true)
     }

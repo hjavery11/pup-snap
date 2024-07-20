@@ -10,7 +10,17 @@ import UIKit
 class LoadingVC: UIViewController {
 
     var spinner = UIActivityIndicatorView(style: .large)
-
+    var showText: Bool
+    
+    init(showText: Bool) {
+        self.showText = showText
+        super.init(nibName: nil, bundle: nil)
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -24,13 +34,15 @@ class LoadingVC: UIViewController {
         spinner.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
         spinner.centerYAnchor.constraint(equalTo: view.centerYAnchor).isActive = true
         
+        if showText { configureMessage() }
+        
     }
     
     func configureMessage() {
         let text = UILabel()
         view.addSubview(text)
         
-        text.text = "Please wait while we load the app..."
+        text.text = "Please wait while we setup the app for you..."
         text.font = UIFont.systemFont(ofSize: 25, weight: .semibold)
         text.translatesAutoresizingMaskIntoConstraints = false
         text.textColor = .label
