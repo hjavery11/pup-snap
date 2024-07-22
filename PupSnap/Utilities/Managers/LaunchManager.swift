@@ -35,9 +35,8 @@ class LaunchManager {
     }
     
     func branchFirstTimeLaunch(_ key: Int) {
-        self.firstTimeLaunch = true
         AppDelegate.branchFirstTimeLaunch.send(key)
-    }    
+    }
     
     func cleanup() {
         self.firstTimeLaunch = false
@@ -49,7 +48,7 @@ class LaunchManager {
             AppDelegate.notificationSubject.send(())
         }
     }
-    
+   
     
     
     

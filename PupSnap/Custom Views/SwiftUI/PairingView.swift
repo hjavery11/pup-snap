@@ -63,6 +63,7 @@ struct PairingView: View {
                         LaunchManager.shared.launchingFromBranchLink = false
                         presentationMode.wrappedValue.dismiss()
                     } catch {
+                        viewModel.isLoading = false
                         viewModel.showingChangeKeyError = true
                     }
                     
@@ -86,6 +87,7 @@ struct PairingView: View {
                         AppDelegate.setupCompletionSubject.send(())
                         LaunchManager.shared.cleanup()
                     } catch {
+                        viewModel.isLoading = false
                         viewModel.showingChangeKeyError = true
                     }
                     
@@ -111,6 +113,7 @@ struct PairingView: View {
                         try await viewModel.changeKey()
                         viewModel.isLoading = false                        
                     } catch {
+                        viewModel.isLoading = false
                         viewModel.showingChangeKeyError = true
                     }
                     

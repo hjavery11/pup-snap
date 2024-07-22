@@ -34,6 +34,10 @@ class SettingsVC: UIViewController {
             settingsView.view.trailingAnchor.constraint(equalTo: view.trailingAnchor),
         ])
     }    
+    
+    func tabSelected() {
+        //settings tab selected
+    }
    
 }
 

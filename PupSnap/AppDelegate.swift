@@ -63,6 +63,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, MessagingDelegate {
         return true
     }
     private func runStandardSetup() {
+        print("Running standard setup")
         Task {
             do {
                 try await PersistenceManager.launchSetup()
@@ -112,12 +113,18 @@ class AppDelegate: UIResponder, UIApplicationDelegate, MessagingDelegate {
         // Initialize Branch session
         Branch.getInstance().initSession(launchOptions: launchOptions) { (params, error) in
             if let params = params as? [String: AnyObject], let pairingKeyValue = params["pairingKey"] {
-                if let sharedPairingKey = pairingKeyValue as? Int {
-                    print("handling pairing key branch param as Int: \(sharedPairingKey)")
-                    LaunchManager.shared.branchFirstTimeLaunch(sharedPairingKey)
-                } else if let pairingKeyString = pairingKeyValue as? String, let sharedPairingKey = Int(pairingKeyString) {
-                    print("handling pairing key branch param as String: \(sharedPairingKey)")
-                    LaunchManager.shared.branchFirstTimeLaunch(sharedPairingKey)
+                if params["+referrer"] != nil {
+                    print("Second instance of branch click, dont do anything")
+                } else {
+                    if let sharedPairingKey = pairingKeyValue as? Int {
+                        print("handling pairing key branch param as Int: \(sharedPairingKey)")
+                        LaunchManager.shared.firstTimeLaunch = true
+                        LaunchManager.shared.branchFirstTimeLaunch(sharedPairingKey)
+                    } else if let pairingKeyString = pairingKeyValue as? String, let sharedPairingKey = Int(pairingKeyString) {
+                        print("handling pairing key branch param as String: \(sharedPairingKey)")
+                        LaunchManager.shared.firstTimeLaunch = true
+                        LaunchManager.shared.branchFirstTimeLaunch(sharedPairingKey)
+                    }
                 }
             }
         }

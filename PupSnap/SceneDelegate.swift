@@ -108,7 +108,10 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate, UITabBarControllerDeleg
         print("attempting to show first time branch install")
         let hostingController = UIHostingController(rootView: PairingView(viewModel: SettingsViewModel(pairingKey: key, firstTimeLaunch: true)))
         hostingController.modalPresentationStyle = .fullScreen
-        window?.rootViewController?.present(hostingController, animated: true)
+        window?.rootViewController?.present(hostingController, animated: true) {
+            //code on dismiss of hosting controller
+        }
+        LaunchManager.shared.cleanup()
     }
     
     
