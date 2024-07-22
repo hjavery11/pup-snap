@@ -24,11 +24,15 @@ class FeedVC: UIViewController, FullScreenPhotoVCDelegate {
     var currentImageIndex: Int?
     let emptyView = UITextView()
     
+    var ratingChange: Bool = false
+    
     let spinnerChild = SpinnerVC()
     
     let actionSheet = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
     
     var currentSort: Sort = .date
+    var dateSort = UIAlertAction()
+    var cuteSort = UIAlertAction()
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -49,7 +53,11 @@ class FeedVC: UIViewController, FullScreenPhotoVCDelegate {
     
     override func viewDidAppear(_ animated: Bool) {
         setTitle()
-        applySort()
+        if ratingChange {
+            applySort()
+            ratingChange = false
+        }
+     
     }
     
     func setTitle() {
@@ -80,20 +88,23 @@ class FeedVC: UIViewController, FullScreenPhotoVCDelegate {
     func configureSort() {
         let sortButton = UIBarButtonItem(title: "Sort by", style: .plain, target: self, action: #selector(sortPhotos))
         
-        let dateSort = UIAlertAction(title: "Date added", style: .default) { _ in
+        dateSort = UIAlertAction(title: "Date added (selected)", style: .default) { _ in
             self.currentSort = .date
             self.applySort()
         }
-        let cuteSort = UIAlertAction(title: "Cuteness Rating", style: .default) { _ in
+        
+        dateSort.isEnabled = false // disable on launch since default is by time
+        
+        cuteSort = UIAlertAction(title: "Cuteness Rating", style: .default) { _ in
             self.currentSort = .cuteness
             self.applySort()
         }
-        let cancel = UIAlertAction(title: "Cancel", style: .cancel)
         
+        let cancel = UIAlertAction(title: "Cancel", style: .cancel)
+       
         actionSheet.addAction(dateSort)
         actionSheet.addAction(cuteSort)
         actionSheet.addAction(cancel)
-      
         
         navigationItem.rightBarButtonItem = sortButton
     }
@@ -108,11 +119,25 @@ class FeedVC: UIViewController, FullScreenPhotoVCDelegate {
             photoArray.sort {
                 $0.timestamp > $1.timestamp
             }
+            dateSort.setValue("Date added (selected)", forKey: "title")
+            cuteSort.setValue("Cuteness Rating", forKey: "title")
         case .cuteness:
             photoArray.sort {
                 $0.userRating > $1.userRating
             }          
+            cuteSort.setValue("Cuteness Rating (selected)", forKey: "title")
+            dateSort.setValue("Date added", forKey: "title")
         }
+        
+        switch currentSort {
+        case .date:
+            dateSort.isEnabled = false
+            cuteSort.isEnabled = true
+        case .cuteness:
+            dateSort.isEnabled = true
+            cuteSort.isEnabled = false
+        }
+        
         self.applySnapshot()
     }
     func configureCollectionView() {

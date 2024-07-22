@@ -10,6 +10,8 @@ import UIKit
 protocol FullScreenPhotoVCDelegate: AnyObject {
     func didSwipeImage(in viewController: FullScreenPhotoVC, to direction: UISwipeGestureRecognizer.Direction)
     func deleteImage(at indexPath: IndexPath)
+    
+    var ratingChange: Bool { get set }
 }
 
 class FullScreenPhotoVC: UIViewController, RatingViewControllerDelegate {
@@ -176,6 +178,8 @@ class FullScreenPhotoVC: UIViewController, RatingViewControllerDelegate {
                 button.isUserInteractionEnabled = true
             }
         }
+        
+        delegate?.ratingChange = true
        
     }
     
