@@ -13,6 +13,10 @@ class FeedVC: UIViewController, FullScreenPhotoVCDelegate {
     enum Section {
         case main
     }
+    
+    enum Sort {
+        case date, cuteness
+    }
 
     var photoArray: [Photo] = []
     var collectionView: UICollectionView!
@@ -22,13 +26,21 @@ class FeedVC: UIViewController, FullScreenPhotoVCDelegate {
     
     let spinnerChild = SpinnerVC()
     
+    let actionSheet = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
+    
+    var currentSort: Sort = .date
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .systemGray6
         setTitle()
+      
+        configureCollectionView()
+        configureSort()
         
         configureNavigationBar()
         createLoadingView()
+    
         
         fetchPhotos()
         
@@ -37,6 +49,7 @@ class FeedVC: UIViewController, FullScreenPhotoVCDelegate {
     
     override func viewDidAppear(_ animated: Bool) {
         setTitle()
+        applySort()
     }
     
     func setTitle() {
@@ -63,6 +76,45 @@ class FeedVC: UIViewController, FullScreenPhotoVCDelegate {
         spinnerChild.view.removeFromSuperview()
         spinnerChild.removeFromParent()
     }
+    
+    func configureSort() {
+        let sortButton = UIBarButtonItem(title: "Sort by", style: .plain, target: self, action: #selector(sortPhotos))
+        
+        let dateSort = UIAlertAction(title: "Date added", style: .default) { _ in
+            self.currentSort = .date
+            self.applySort()
+        }
+        let cuteSort = UIAlertAction(title: "Cuteness Rating", style: .default) { _ in
+            self.currentSort = .cuteness
+            self.applySort()
+        }
+        let cancel = UIAlertAction(title: "Cancel", style: .cancel)
+        
+        actionSheet.addAction(dateSort)
+        actionSheet.addAction(cuteSort)
+        actionSheet.addAction(cancel)
+      
+        
+        navigationItem.rightBarButtonItem = sortButton
+    }
+    
+    @objc func sortPhotos() {
+        present(actionSheet, animated: true, completion: nil)
+    }
+    
+    func applySort() {
+        switch currentSort {
+        case .date:
+            photoArray.sort {
+                $0.timestamp > $1.timestamp
+            }
+        case .cuteness:
+            photoArray.sort {
+                $0.userRating > $1.userRating
+            }          
+        }
+        self.applySnapshot()
+    }
     func configureCollectionView() {
         collectionView = UICollectionView(frame: .zero, collectionViewLayout: createThreeColumnFlowLayout())
         view.addSubview(collectionView)
@@ -70,7 +122,7 @@ class FeedVC: UIViewController, FullScreenPhotoVCDelegate {
         collectionView.translatesAutoresizingMaskIntoConstraints = false
         
         NSLayoutConstraint.activate([
-            collectionView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
+            collectionView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 10),
             collectionView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor),
             collectionView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor),
             collectionView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor)
@@ -81,7 +133,6 @@ class FeedVC: UIViewController, FullScreenPhotoVCDelegate {
         Task{
             do {
                 photoArray = try await NetworkManager.shared.fetchCompletePhotos()
-                configureCollectionView()
                 configureDataSource()
                 applySnapshot()
                 dismissLoadingView()

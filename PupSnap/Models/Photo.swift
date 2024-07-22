@@ -63,6 +63,11 @@ extension Photo {
         let totalRatings = ratings.values.reduce(0, +)
         return Int(ratings.isEmpty ? 0.0 : Double(totalRatings) / Double(ratings.count).rounded())
     }
+    var userRating: Int {
+        let user = PersistenceManager.retrieveID()
+        return ratings[user] ?? 0
+    }
+    
 }
 
 extension Photo: Hashable {
