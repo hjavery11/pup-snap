@@ -59,7 +59,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate, UITabBarControllerDeleg
         // Trigger handleNotification only when notificationSubject emits a value
         AppDelegate.notificationSubject
             .sink { [weak self] userInfo in
-                self?.handleNotification(userInfo: userInfo)
+                self?.handleNotification()
             }
             .store(in: &cancellables)
         
@@ -84,10 +84,14 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate, UITabBarControllerDeleg
         //check to see if branch key setup is needed now that scene is ready
         LaunchManager.shared.branchSetup()
         
+        //check to see if push notification setup is needed now that scene is ready
+        LaunchManager.shared.showPushPhoto()
+        
         
     }
     
-    private func handleNotification(userInfo: [AnyHashable: Any]) {
+    private func handleNotification() {
+        let userInfo = LaunchManager.shared.pushUserInfo
         print("Handling notification with userInfo: \(userInfo)")
         presentFullScreenPhotoVC(userInfo: userInfo)
     }

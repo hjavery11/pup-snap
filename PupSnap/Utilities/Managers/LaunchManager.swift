@@ -16,6 +16,8 @@ class LaunchManager {
     var launchingFromBranchLink: Bool = false
     var launchingFromPushNotification: Bool = false
     var firstTimeLaunch: Bool = false
+    var openFromPush: Bool = false
+    var pushUserInfo = [AnyHashable: Any]()
     
     var showToast: Bool = false
     
@@ -41,6 +43,14 @@ class LaunchManager {
         self.firstTimeLaunch = false
         UIPasteboard.remove(withName: .general)
     }
+    
+    func showPushPhoto() {
+        if hasFinishedUserLaunchSetup && hasFinishedSceneLaunchSetup && openFromPush {
+            AppDelegate.notificationSubject.send(())
+        }
+    }
+    
+    
     
     
 }

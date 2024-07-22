@@ -22,7 +22,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, MessagingDelegate {
     var window: UIWindow?
     static let setupCompletionSubject = PassthroughSubject<Void, Never>()
     static let branchLinkSubject = PassthroughSubject<Int, Never>()
-    static let notificationSubject = PassthroughSubject<[AnyHashable: Any], Never>()
+    static let notificationSubject = PassthroughSubject<Void, Never>()
     static let branchFirstTimeLaunch = PassthroughSubject<Int, Never>()
     
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
@@ -219,7 +219,9 @@ extension AppDelegate: UNUserNotificationCenterDelegate {
             // Messaging.messaging().appDidReceiveMessage(userInfo)
        
         // Print full message.
-        print("printing from  last app delegate function : \(userInfo)")
-        AppDelegate.notificationSubject.send(userInfo)
+       // print("printing from  last app delegate function : \(userInfo)")
+        LaunchManager.shared.openFromPush = true
+        LaunchManager.shared.pushUserInfo = userInfo
+        LaunchManager.shared.showPushPhoto()
     }
 }
