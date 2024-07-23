@@ -7,6 +7,7 @@
 
 import UIKit
 import FirebaseAuth
+import BranchSDK
 
 class LaunchManager {
     
@@ -116,6 +117,23 @@ class LaunchManager {
         Task {
             self.dog = try await NetworkManager.shared.fetchDog()
             self.dogChanged = true
+        }
+    }
+    
+    func initializePasteboardBranch() {
+        // Initialize Branch session
+        Branch.getInstance().initSession() { (params, error) in
+            if let params = params as? [String: AnyObject], let pairingKeyValue = params["pairingKey"] {
+               print(params)
+                    if let sharedPairingKey = pairingKeyValue as? Int {
+                        print("handling pairing key branch param as Int: \(sharedPairingKey)")
+                    } else if let pairingKeyString = pairingKeyValue as? String, let sharedPairingKey = Int(pairingKeyString) {
+                        print("handling pairing key branch param as String: \(sharedPairingKey)")
+                        
+                        LaunchManager.shared.firstTimeLaunch = true
+                        LaunchManager.shared.branchFirstTimeLaunch(sharedPairingKey)
+                    }
+            }
         }
     }
 }

@@ -25,6 +25,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, MessagingDelegate {
     static let notificationSubject = PassthroughSubject<Void, Never>()
     static let branchFirstTimeLaunch = PassthroughSubject<Int, Never>()
     static let regularFirstTimeLaunch = PassthroughSubject<Void, Never>()
+    static let branchPasteBoardTesting = PassthroughSubject<Void, Never>()
     
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         
@@ -45,16 +46,19 @@ class AppDelegate: UIResponder, UIApplicationDelegate, MessagingDelegate {
         UNUserNotificationCenter.current().delegate = self
         Messaging.messaging().delegate = self
         application.registerForRemoteNotifications()
-
-        // Check the pasteboard before Branch initialization
-        Branch.getInstance().checkPasteboardOnInstall()
-
-        if Branch.getInstance().willShowPasteboardToast() {
-            initializeBranchFirstLaunch(launchOptions)
+    
+        BNCPasteboard.sharedInstance().checkOnInstall = true
+        if BNCPasteboard.sharedInstance().isUrlOnPasteboard() {
+            print("did BNCPasteboard.isURL on pasteboard")
+            DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
+                AppDelegate.branchPasteBoardTesting.send(())
+            }
             return true
         }
+        print("skipped BNCPasteboard.isurl on pasteboard")
+     
         
-    
+        
         
         initializeBranch(launchOptions)
         
@@ -124,7 +128,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate, MessagingDelegate {
     
     func initializeBranchFirstLaunch(_ launchOptions:[UIApplication.LaunchOptionsKey: Any]? ) {
         // Initialize Branch session
-        print("pasteboard change count: \(UIPasteboard.general.changeCount)")
         Branch.getInstance().initSession(launchOptions: launchOptions) { (params, error) in
             if let params = params as? [String: AnyObject], let pairingKeyValue = params["pairingKey"] {
                 if params["+referrer"] != nil {

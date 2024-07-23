@@ -76,6 +76,20 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate, UITabBarControllerDeleg
             }
             .store(in: &cancellables)
         
+        AppDelegate.branchPasteBoardTesting
+            .sink { [weak self] key in
+                self?.setupBranchPasteboard()
+            }
+            .store(in: &cancellables)
+        
+    }
+    
+    private func setupBranchPasteboard() {
+        print("did setupBranchPasteboard")
+        let pasteVC = PasteModalVC()
+        let navigationController = UINavigationController(rootViewController: pasteVC)
+        navigationController.modalPresentationStyle = .fullScreen
+        window?.rootViewController?.present(navigationController, animated: true, completion: nil)
     }
     
     private func setupScene(connectionOptions: UIScene.ConnectionOptions, scene: UIScene) {
