@@ -14,7 +14,6 @@ class SettingsVC: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        title = "Settings"
         navigationController?.navigationBar.prefersLargeTitles = true
 
         

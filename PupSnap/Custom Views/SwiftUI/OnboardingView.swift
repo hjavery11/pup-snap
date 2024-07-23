@@ -78,7 +78,7 @@ struct OnboardingView: View {
                 .navigationTitle("Welcome to PupSnap")
             }
             .foregroundStyle(Color(.systemPurple))
-            .opacity(viewModel.isLoading ? 0.4:1)
+            .opacity(viewModel.isLoading ? 0.1:1)
             
             if viewModel.isLoading {
                 ProgressView("Setting up...")

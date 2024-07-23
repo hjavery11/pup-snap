@@ -128,8 +128,20 @@ class NetworkManager {
         return try await dbHelper.fetchDogInfo(for: key)
     }
     
+    func fetchDogForKey(_ key: Int) async throws -> Dog {
+        return try await dbHelper.fetchDogInfo(for: key)
+    }
+    
     func setDog(to dog: Dog) async throws {
         try await dbHelper.addDogInfo(dog: dog)
+    }
+    
+    func changeDogName(to name: String) {
+        dbHelper.updateDogName(to: name)
+    }
+    
+    func changeDogPhoto(to photo: String) {
+        dbHelper.updateDogPhoto(to: photo)
     }
    
 

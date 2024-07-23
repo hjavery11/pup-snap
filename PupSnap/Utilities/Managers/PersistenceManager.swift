@@ -68,6 +68,8 @@ enum PersistenceManager {
         try await self.unsubscribeFromPairingKey()
         self.unsetKey()
         
+        try await LaunchManager.shared.refreshToken()
+        
         //now set and subscribe to new key
         try await self.subscribeToPairingKey(pairingKey: key)
         self.setKey(to: key)

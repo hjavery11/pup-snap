@@ -90,7 +90,10 @@ class DatabaseHelper {
         let snapshot = try await dogRef.getData()
         
         guard let value = snapshot.value as? [String: String] else {
-            return Dog(photo: "sophie-iso", name: "Sophie")
+            print("No dog found, returning sophie")
+            let baseDog = Dog(photo: "sophie-iso", name: "Sophie")
+            try await addDogInfo(dog: baseDog)
+            return baseDog
         }
         
         let jsonData = try JSONSerialization.data(withJSONObject: value)
@@ -99,6 +102,18 @@ class DatabaseHelper {
         
         return Dog(photo: dogData.photo, name: dogData.name)
 
+    }
+    
+    func updateDogName(to name: String) {
+        let dogRef = ref.child(String(PersistenceManager.retrieveKey())).child("dog").child("name")
+        
+        dogRef.setValue(name)
+    }
+    
+    func updateDogPhoto(to photo: String) {
+        let dogRef = ref.child(String(PersistenceManager.retrieveKey())).child("dog").child("photo")
+        
+        dogRef.setValue(photo)
     }
     
     func addPhotoToDB(photo: Photo) async throws {

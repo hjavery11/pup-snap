@@ -54,10 +54,11 @@ struct PairingView: View {
         }  
         .alert("Pairing", isPresented: $viewModel.comingFromBranchLink) {
             Button("Ok", role: .none) {
-                Task {
+                Task { @MainActor in
                     do {
                         viewModel.isLoading = true
                         try await viewModel.changeKey()
+                        try await viewModel.updateDog()
                         viewModel.isLoading = false
                         LaunchManager.shared.showToast = true
                         LaunchManager.shared.launchingFromBranchLink = false
@@ -81,6 +82,7 @@ struct PairingView: View {
                     do {
                         viewModel.isLoading = true
                         try await viewModel.subscribeToBranchKey()
+                        try await viewModel.updateDog()
                         viewModel.isLoading = false
                         LaunchManager.shared.showToast = true
                         presentationMode.wrappedValue.dismiss()

@@ -20,7 +20,7 @@ class LaunchManager {
     var openFromPush: Bool = false
     var pushUserInfo = [AnyHashable: Any]()
     
-    var didOnboard: Bool = false
+    var dogChanged: Bool = false
     
     var showToast: Bool = false
     
@@ -86,32 +86,6 @@ class LaunchManager {
         }
         
         AppDelegate.regularFirstTimeLaunch.send(())
-        
-//        
-//        //@TODO: Update this to move the generating of the key to the server and return back the new key to avoid people being able to see all keys
-//        Task {
-//            let allKeys = try await NetworkManager.shared.retrieveAllKeys()
-//            guard !allKeys.isEmpty else {
-//                print("No keys returned from database. Exiting launch")
-//                return
-//            }
-//            //generate new 8-digit int key not in current keys
-//            var newKey: Int
-//            repeat {
-//                newKey = Int.random(in: 10000000...99999999)
-//            } while allKeys.contains(newKey)
-//            //save key to user defaults
-//            PersistenceManager.setKey(to: newKey)
-//            print("New user key set to :\(newKey)")
-//            // initalize the key which is a firebase function that creates an empty object in the datbaase so the user has access to it
-//            try await NetworkManager.shared.initializeKey(pairingKey: newKey)
-//            try await NetworkManager.shared.setClaims(with: newKey)
-//            
-//            let newDog = Dog(photo: "black-lab-1", name: "Lucky")
-//            try await NetworkManager.shared.setDog(to: newDog)
-//            self.dog = newDog
-//            //end of user setup. Should now have claims setup to be able to access database
-//        }
     }
     
     func finishOnboarding(with dog: Dog) async throws {
@@ -139,11 +113,18 @@ class LaunchManager {
         
         DispatchQueue.main.async {
             AppDelegate.setupCompletionSubject.send(())
-            self.didOnboard = true
+            self.dogChanged = true
         }
     }
     
     func refreshToken() async throws {
        try await Auth.auth().currentUser?.getIDTokenResult(forcingRefresh: true)
+    }
+    
+    func setDog() {
+        Task {
+            self.dog = try await NetworkManager.shared.fetchDog()
+            self.dogChanged = true
+        }
     }
 }

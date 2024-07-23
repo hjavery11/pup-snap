@@ -70,15 +70,15 @@ class PhotoVC: UIViewController, UINavigationControllerDelegate, UIImagePickerCo
     }
     
     override func viewWillAppear(_ animated: Bool) {
-        if LaunchManager.shared.didOnboard {
-            setOnboardDog()
-            LaunchManager.shared.didOnboard = false
+        if LaunchManager.shared.dogChanged {
+            setNewDog()
+            LaunchManager.shared.dogChanged = false
         }
     }
     
-    func setOnboardDog() {
+    func setNewDog() {
         guard let currentDog = LaunchManager.shared.dog else {
-            print("no current dog set from onboarding")
+            print("no current dog set")
             return
         }
         
@@ -151,6 +151,8 @@ class PhotoVC: UIViewController, UINavigationControllerDelegate, UIImagePickerCo
         
         hostingController.didMove(toParent: self)
         self.speechBubbleHostingController = hostingController
+        
+     
         
     }
     

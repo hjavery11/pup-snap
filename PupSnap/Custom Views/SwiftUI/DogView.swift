@@ -64,10 +64,10 @@ struct DogView: View {
         } message: {
             Text("Are you sure you want to change the photo for your dog?")
         }
-        .alert("Dog Photo Updated", isPresented: $viewModel.showIconSuccess) {
+        .alert("Dog Photo Updated", isPresented: $viewModel.showPhotoChangeSuccess) {
             Button("Ok") {}
         }
-        .alert("Dog name has been updated to \(viewModel.dogName)", isPresented: $viewModel.dogNameSuccess) {
+        .alert("Dog name has been updated", isPresented: $viewModel.dogNameSuccess) {
             Button("Ok") {}
         }
         .alert("Are you sure?", isPresented: $viewModel.showNameConfirmation) {

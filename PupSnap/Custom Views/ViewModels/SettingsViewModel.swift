@@ -44,7 +44,7 @@ import Foundation
     
     //dog view
     @Published var showIconConfirmation: Bool = false
-    @Published var showIconSuccess: Bool = false
+    @Published var showPhotoChangeSuccess: Bool = false
     @Published var selectedPhoto: String?
     @Published var newPhoto: String = ""
     @Published var dogName: String
@@ -99,7 +99,10 @@ import Foundation
         if allKeys.contains(newKey) {
             self.userKey = newKey
             do {
-                try await PersistenceManager.changeKey(to: newKey)            
+                try await PersistenceManager.changeKey(to: newKey)  
+                let newDog = try await NetworkManager.shared.fetchDogForKey(newKey)
+                LaunchManager.shared.setDog()
+     
             } catch {
                 self.alertMessage = PSError.setClaims(underlyingError: error).localizedDescription
                 throw PSError.setClaims()
@@ -119,28 +122,35 @@ import Foundation
         try await PersistenceManager.branchKeySetup(key: newKey)
     }
     
+    func updateDog() async throws {
+        guard let newKey = Int(self.newKey) else {
+            self.alertMessage = PSError.invalidKey(underlyingError: nil).localizedDescription
+            throw PSError.invalidKey(underlyingError: nil)
+        }
+        
+        do {
+            let newDog = try await NetworkManager.shared.fetchDogForKey(newKey)
+            LaunchManager.shared.setDog()
+        } catch {
+            print("Could not get new dog for pairing key: \(error)")
+        }
+            
+    }
+    
     func updateDogPhoto() {
-//        if self.newPhoto != "" {
-//            PersistenceManager.updateDogPhoto(photo: self.newPhoto)
-//            showIconSuccess = true
-//            self.dogPhotos.removeAll {
-//                $0 == newPhoto
-//            }
-//            if let photo = PersistenceManager.getDogPhoto() {
-//                self.dogPhotos.append(photo)
-//            }
-//            
-//         
-//        }
+        if newPhoto != "" {
+            NetworkManager.shared.changeDogPhoto(to: newPhoto)
+            showPhotoChangeSuccess = true
+            LaunchManager.shared.setDog()
+        }
     }
     
-    func updateDogName() {
-//        if self.newDogName != "" {
-//            PersistenceManager.setDogName(to: self.newDogName)
-//            dogNameSuccess = true
-//            self.dogName = newDogName
-//        }
+    func updateDogName() {        
+        if newDogName != "" {
+            NetworkManager.shared.changeDogName(to: newDogName)
+            dogNameSuccess = true
+            LaunchManager.shared.setDog()
+        }
     }
-    
     
 }

@@ -162,6 +162,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate, UITabBarControllerDeleg
     
     func createSettingsVC() -> UINavigationController {
         let settingsVC = SettingsVC()
+        settingsVC.title = "Settings"
         let navController = UINavigationController(rootViewController: settingsVC)
         settingsVC.tabBarItem = UITabBarItem(title: "Settings", image: UIImage(systemName: "ellipsis.rectangle"), selectedImage: UIImage(systemName: "ellipsis.rectangle.fill"))
         
