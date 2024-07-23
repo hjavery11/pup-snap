@@ -37,6 +37,15 @@ struct SettingsView: View {
                        
                         HStack {
                             Toggle("Push Notifications", isOn: $viewModel.pushNotifs)
+                                .onChange(of:viewModel.pushNotifs) { value in
+                                    if value {
+                                        PersistenceManager.enableNotifications()
+                                        print("enabled notifications")
+                                    } else {
+                                        PersistenceManager.disableNotifications()
+                                        print("disabled notifications")
+                                    }
+                                }
                         }
                     }
                 } header: {

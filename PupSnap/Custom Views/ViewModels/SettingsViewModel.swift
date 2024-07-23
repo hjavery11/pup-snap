@@ -39,7 +39,7 @@ import Foundation
     @Published var showingPairingConfirmation: Bool = false
     @Published var newKeyError: Bool = false
     @Published var showingChangeKeyError: Bool = false
-    @Published var pushNotifs: Bool = true
+    @Published var pushNotifs: Bool
     @Published var isLoading: Bool = false
     
     //dog view
@@ -61,6 +61,7 @@ import Foundation
     
     
     init() {
+        self.pushNotifs = PersistenceManager.notificationStatus()
         self.dog = LaunchManager.shared.dog
         
         self.selectedPhoto = dog?.photo
@@ -69,6 +70,7 @@ import Foundation
     }
     
     init(pairingKey: Int) {
+        self.pushNotifs = PersistenceManager.notificationStatus()
         self.dog = LaunchManager.shared.dog
         
         self.selectedPhoto = dog?.photo
@@ -79,6 +81,7 @@ import Foundation
     }
     
     init(pairingKey: Int, firstTimeLaunch: Bool) {
+        self.pushNotifs = PersistenceManager.notificationStatus()
         self.dog = LaunchManager.shared.dog
         
         self.selectedPhoto = dog?.photo
@@ -100,7 +103,6 @@ import Foundation
             self.userKey = newKey
             do {
                 try await PersistenceManager.changeKey(to: newKey)  
-                let newDog = try await NetworkManager.shared.fetchDogForKey(newKey)
                 LaunchManager.shared.setDog()
      
             } catch {

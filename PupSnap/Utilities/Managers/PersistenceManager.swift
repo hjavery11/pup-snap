@@ -20,6 +20,7 @@ enum PersistenceManager {
         static let key = "key"
         static let dog = "dogPhoto"
         static let dogName = "dog_name"
+        static let notification = "notifications"
     }
     
     static func retrieveID() -> String {
@@ -101,5 +102,19 @@ enum PersistenceManager {
         }
         return user
     }   
+    
+    static func enableNotifications() {
+        defaults.set(true, forKey: Keys.notification)
+        UIApplication.shared.registerForRemoteNotifications()
+    }
+    
+    static func disableNotifications() {
+        defaults.set(false, forKey: Keys.notification)
+        UIApplication.shared.unregisterForRemoteNotifications()
+    }
+    
+    static func notificationStatus() -> Bool {
+        return defaults.bool(forKey: Keys.notification)
+    }
   
 }

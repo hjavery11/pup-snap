@@ -1,7 +1,7 @@
 {
   "images" : [
     {
-      "filename" : "placeholder_image.png",
+      "filename" : "lm-placeholder-text.png",
       "idiom" : "universal",
       "scale" : "1x"
     },
@@ -12,7 +12,7 @@
           "value" : "dark"
         }
       ],
-      "filename" : "placeholder-img-darkmode.png",
+      "filename" : "dm-placeholder-loading.png",
       "idiom" : "universal",
       "scale" : "1x"
     },

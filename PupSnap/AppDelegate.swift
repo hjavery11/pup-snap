@@ -45,16 +45,16 @@ class AppDelegate: UIResponder, UIApplicationDelegate, MessagingDelegate {
         UNUserNotificationCenter.current().delegate = self
         Messaging.messaging().delegate = self
         application.registerForRemoteNotifications()
-       
+        
         // Check the pasteboard before Branch initialization
         Branch.getInstance().checkPasteboardOnInstall()
-       
+        
         if Branch.getInstance().willShowPasteboardToast() {
             initializeBranchFirstLaunch(launchOptions)
             return true
         }
         
-       
+        
         
         initializeBranch(launchOptions)
         
@@ -76,10 +76,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate, MessagingDelegate {
             do {
                 try await LaunchManager.shared.launchSetup()
                 // Request notification permissions
-                requestNotificationPermissions()  
+                requestNotificationPermissions()
                 LaunchManager.shared.hasFinishedUserLaunchSetup = true
                 print("launch setup complete. sending completion from app delegate to scene delegate")
-               
+                
                 AppDelegate.setupCompletionSubject.send(())
                 
             } catch {
@@ -154,9 +154,15 @@ class AppDelegate: UIResponder, UIApplicationDelegate, MessagingDelegate {
             if granted {
                 DispatchQueue.main.async {
                     UIApplication.shared.registerForRemoteNotifications()
+                    if UserDefaults.standard.object(forKey: PersistenceManager.Keys.notification) == nil {
+                        PersistenceManager.enableNotifications()
+                    }
                 }
             } else {
                 print("Notification permissions denied.")
+                if UserDefaults.standard.object(forKey: PersistenceManager.Keys.notification) == nil {
+                    PersistenceManager.disableNotifications()
+                }
             }
         }
     }
@@ -218,8 +224,8 @@ extension AppDelegate: UNUserNotificationCenterDelegate {
         
         // With swizzling disabled you must let Messaging know about the message, for Analytics
         //Messaging.messaging().appDidReceiveMessage(userInfo)
-    
-   
+        
+        
         print("did receieve notification while app launched")
         
         
@@ -236,10 +242,10 @@ extension AppDelegate: UNUserNotificationCenterDelegate {
         // ...
         
         // With swizzling disabled you must let Messaging know about the message, for Analytics
-            // Messaging.messaging().appDidReceiveMessage(userInfo)
-       
+        // Messaging.messaging().appDidReceiveMessage(userInfo)
+        
         // Print full message.
-       // print("printing from  last app delegate function : \(userInfo)")
+        // print("printing from  last app delegate function : \(userInfo)")
         LaunchManager.shared.openFromPush = true
         LaunchManager.shared.pushUserInfo = userInfo
         LaunchManager.shared.showPushPhoto()
