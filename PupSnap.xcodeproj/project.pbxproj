@@ -35,6 +35,7 @@
 		FA80BCD02C4B711000CE7C50 /* Toast.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA80BCCF2C4B711000CE7C50 /* Toast.swift */; };
 		FA80BCD22C4F072E00CE7C50 /* OnboardingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA80BCD12C4F072E00CE7C50 /* OnboardingView.swift */; };
 		FA80BCD42C4F335200CE7C50 /* OnboardingVM.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA80BCD32C4F335200CE7C50 /* OnboardingVM.swift */; };
+		FA80BCD62C50555900CE7C50 /* BranchPasteboardVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA80BCD52C50555900CE7C50 /* BranchPasteboardVC.swift */; };
 		FAD07D3A2C45C9B900A3ECBF /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAD07D392C45C9B900A3ECBF /* SettingsView.swift */; };
 		FAD07D3C2C45C9E300A3ECBF /* SettingsVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAD07D3B2C45C9E300A3ECBF /* SettingsVC.swift */; };
 		FAD07D3E2C45CE9100A3ECBF /* PairingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAD07D3D2C45CE9100A3ECBF /* PairingView.swift */; };
@@ -84,6 +85,7 @@
 		FA80BCCF2C4B711000CE7C50 /* Toast.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Toast.swift; sourceTree = "<group>"; };
 		FA80BCD12C4F072E00CE7C50 /* OnboardingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingView.swift; sourceTree = "<group>"; };
 		FA80BCD32C4F335200CE7C50 /* OnboardingVM.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingVM.swift; sourceTree = "<group>"; };
+		FA80BCD52C50555900CE7C50 /* BranchPasteboardVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BranchPasteboardVC.swift; sourceTree = "<group>"; };
 		FAD07D392C45C9B900A3ECBF /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
 		FAD07D3B2C45C9E300A3ECBF /* SettingsVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsVC.swift; sourceTree = "<group>"; };
 		FAD07D3D2C45CE9100A3ECBF /* PairingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PairingView.swift; sourceTree = "<group>"; };
@@ -174,6 +176,7 @@
 				FA63FFAC2C372D370070165E /* PhotoEditorVC.swift */,
 				FAD07D3B2C45C9E300A3ECBF /* SettingsVC.swift */,
 				FA80BCC92C4ADC9400CE7C50 /* NotificationPhotoVC.swift */,
+				FA80BCD52C50555900CE7C50 /* BranchPasteboardVC.swift */,
 			);
 			path = "\U0010Screens";
 			sourceTree = "<group>";
@@ -416,6 +419,7 @@
 				FA80BCD42C4F335200CE7C50 /* OnboardingVM.swift in Sources */,
 				FAD07D932C48C2EA00A3ECBF /* LoadingVC.swift in Sources */,
 				FA3590762C34D95C00E417B1 /* StorageHelper.swift in Sources */,
+				FA80BCD62C50555900CE7C50 /* BranchPasteboardVC.swift in Sources */,
 				FA63FFAD2C372D370070165E /* PhotoEditorVC.swift in Sources */,
 				FA3590722C34D65C00E417B1 /* NetworkManager.swift in Sources */,
 				FA80BCCC2C4AFA9300CE7C50 /* LaunchManager.swift in Sources */,

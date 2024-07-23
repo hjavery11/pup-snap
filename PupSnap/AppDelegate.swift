@@ -45,16 +45,16 @@ class AppDelegate: UIResponder, UIApplicationDelegate, MessagingDelegate {
         UNUserNotificationCenter.current().delegate = self
         Messaging.messaging().delegate = self
         application.registerForRemoteNotifications()
-        
+
         // Check the pasteboard before Branch initialization
         Branch.getInstance().checkPasteboardOnInstall()
-        
+
         if Branch.getInstance().willShowPasteboardToast() {
             initializeBranchFirstLaunch(launchOptions)
             return true
         }
         
-        
+    
         
         initializeBranch(launchOptions)
         
@@ -124,10 +124,11 @@ class AppDelegate: UIResponder, UIApplicationDelegate, MessagingDelegate {
     
     func initializeBranchFirstLaunch(_ launchOptions:[UIApplication.LaunchOptionsKey: Any]? ) {
         // Initialize Branch session
+        print("pasteboard change count: \(UIPasteboard.general.changeCount)")
         Branch.getInstance().initSession(launchOptions: launchOptions) { (params, error) in
             if let params = params as? [String: AnyObject], let pairingKeyValue = params["pairingKey"] {
                 if params["+referrer"] != nil {
-                    print("Second instance of branch click, dont do anything")
+                    print("Second instance of branch click, dont do anything because referer was \(String(describing: params["+referrer"]))")
                 } else {
                     if let sharedPairingKey = pairingKeyValue as? Int {
                         print("handling pairing key branch param as Int: \(sharedPairingKey)")
