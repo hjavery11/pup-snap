@@ -70,19 +70,10 @@ class LaunchManager {
         }
         //get a key in background
         Task {
-            let allKeys = try await NetworkManager.shared.retrieveAllKeys()
-            guard !allKeys.isEmpty else {
-                print("No keys returned from database. Exiting launch")
-                return
+            let newKey = try await NetworkManager.shared.getNewKey()
+            if newKey != 0 {
+                self.onboardingPairingKey = newKey
             }
-            //generate new 8-digit int key not in current keys
-            var newKey: Int
-            repeat {
-                newKey = Int.random(in: 10000000...99999999)
-            } while allKeys.contains(newKey)
-            
-            self.onboardingPairingKey = newKey
-            
         }
         
         AppDelegate.regularFirstTimeLaunch.send(())

@@ -185,19 +185,6 @@ class DatabaseHelper {
         
     }
     
-    func retrieveAllKeys() async throws -> [Int]{
-        let snapshot = try await ref.child("publicKeys").getData()
-        guard let topLevelData = snapshot.value as? [String: Bool] else {
-            print("No top-level data found")
-            return []
-        }
-        
-        let allKeys = topLevelData.keys.compactMap { key -> Int? in
-            return Int(key)
-        }
-        
-        return allKeys
-    }
 }
 
 extension DatabaseHelper {

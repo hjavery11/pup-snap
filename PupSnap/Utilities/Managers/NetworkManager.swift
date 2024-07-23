@@ -61,19 +61,19 @@ class NetworkManager {
         }
     }   
     
-    func retrieveAllKeys() async throws -> [Int] {
+    func getNewKey() async throws -> Int {
         do {
-            let result = try await functions.httpsCallable("getAllKeys").call()
-            if let data = result.data as? [String: Any],
-               let keys = data["keys"] as? [Int] {
-                return keys
+            let result = try await functions.httpsCallable("generateUniqueKey").call()
+            if let data = result.data as? [String: Any], let newKey = data["newKey"] as? Int {
+             return newKey
             } else {
-                return []
+                return 0
             }
         } catch {
-            throw PSError.retrieveAllKeys(underlyingError: error)
-        }
-        
+            print("Error fethcing unqiue key from serveR: \(error)")
+            return 0
+            
+        }        
     }
     
     func initializeKey(pairingKey: Int) async throws {
@@ -144,6 +144,17 @@ class NetworkManager {
         dbHelper.updateDogPhoto(to: photo)
     }
    
+    func checkIfKeyExists(key: String) async throws -> Bool {
+        let functions = Functions.functions()
+        
+        let result = try await functions.httpsCallable("checkIfKeyExists").call(["key": key])
+        
+        if let data = result.data as? [String: Any], let exists = data["exists"] as? Bool {
+            return exists
+        } else {
+            throw NSError(domain: "InvalidResponse", code: -1, userInfo: [NSLocalizedDescriptionKey: "Invalid response from server"])
+        }
+    }
 
 }
 

@@ -93,27 +93,30 @@ import Foundation
     }
     
     func changeKey() async throws {
-        //TODO: Change this to use a function in the cloud to check the new key so people cant sniff out all keys
-       let allKeys = try await NetworkManager.shared.retrieveAllKeys()
-        guard let newKey = Int(self.newKey) else {            
-            self.alertMessage = PSError.invalidKey(underlyingError: nil).localizedDescription
-            throw PSError.invalidKey(underlyingError: nil)
-        }
-        if allKeys.contains(newKey) {
-            self.userKey = newKey
+        do {
+            let keyExists = try await NetworkManager.shared.checkIfKeyExists(key: newKey)
+            
+            if !keyExists {
+                self.alertMessage = PSError.invalidKey(underlyingError: nil).localizedDescription
+                throw PSError.invalidKey()
+            }
+            
+            guard let newKeyInt = Int(newKey) else { return }
+            
             do {
-                try await PersistenceManager.changeKey(to: newKey)  
+                try await PersistenceManager.changeKey(to: newKeyInt)
+                userKey = newKeyInt
                 LaunchManager.shared.setDog()
-     
             } catch {
                 self.alertMessage = PSError.setClaims(underlyingError: error).localizedDescription
                 throw PSError.setClaims()
             }
-        } else {
-            self.alertMessage = PSError.invalidKey(underlyingError: nil).localizedDescription
-            throw PSError.invalidKey()
+        } catch {
+            print("Something went wrong: \(error)")
+            throw error
         }
     }
+
     
     func subscribeToBranchKey() async throws {
         guard let newKey = Int(self.newKey) else {
@@ -125,18 +128,7 @@ import Foundation
     }
     
     func updateDog() async throws {
-        guard let newKey = Int(self.newKey) else {
-            self.alertMessage = PSError.invalidKey(underlyingError: nil).localizedDescription
-            throw PSError.invalidKey(underlyingError: nil)
-        }
-        
-        do {
-            let newDog = try await NetworkManager.shared.fetchDogForKey(newKey)
-            LaunchManager.shared.setDog()
-        } catch {
-            print("Could not get new dog for pairing key: \(error)")
-        }
-            
+        LaunchManager.shared.setDog()
     }
     
     func updateDogPhoto() {

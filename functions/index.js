@@ -34,23 +34,57 @@ exports.initializeKey = functions.https.onCall(async (data, context) => {
     }
 });
 
-exports.getAllKeys = functions.https.onCall(async (data, context) => {
+exports.checkIfKeyExists = functions.https.onCall(async (data, context) => {
+    // Only allow authenticated users to call this function
+    if (!context.auth) {
+        throw new functions.https.HttpsError('unauthenticated', 'The function must be called while authenticated.');
+    }
+
+    // Validate input
+    const key = data.key;
+    if (typeof key !== 'string' || key.trim() === '') {
+        throw new functions.https.HttpsError('invalid-argument', 'The function must be called with a valid key.');
+    }
+
+    try {
+        // Check if the key exists in the database
+        const snapshot = await admin.database().ref(`/${key}`).once('value');
+        const exists = snapshot.exists();
+
+        return { exists: exists };
+    } catch (error) {
+        console.error('Error checking if key exists:', error);
+        throw new functions.https.HttpsError('unknown', 'Failed to check if key exists', error);
+    }
+});
+
+exports.generateUniqueKey = functions.https.onCall(async (data, context) => {
     // Only allow authenticated users to call this function
     if (!context.auth) {
         throw new functions.https.HttpsError('unauthenticated', 'The function must be called while authenticated.');
     }
 
     try {
+        // Retrieve the current keys from the database
         const snapshot = await admin.database().ref('/').once('value');
         const data = snapshot.val();
 
         // Extract the keys from the top-level objects
         const keys = Object.keys(data).map(key => parseInt(key, 10)).filter(key => !isNaN(key));
 
-        return { keys: keys };
+        // Generate a new 8-digit key that isn't in the current list
+        let newKey;
+        do {
+            newKey = Math.floor(10000000 + Math.random() * 90000000);
+        } while (keys.includes(newKey));
+
+        // Optionally, you can store the new key in the database if needed
+        // await admin.database().ref(`/${newKey}`).set({ someData: 'value' });
+
+        return { newKey: newKey };
     } catch (error) {
-        console.error('Error retrieving keys:', error);
-        throw new functions.https.HttpsError('unknown', 'Failed to retrieve keys', error);
+        console.error('Error generating unique key:', error);
+        throw new functions.https.HttpsError('unknown', 'Failed to generate unique key', error);
     }
 });
 
