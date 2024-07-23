@@ -75,6 +75,32 @@ class DatabaseHelper {
         }
     }
     
+    func addDogInfo(dog: Dog) async throws {
+        let dogRef = ref.child(String(PersistenceManager.retrieveKey())).child("dog")
+        
+        let valueArray = ["name": dog.name,
+                          "photo": dog.photo ] 
+        
+        try await dogRef.updateChildValues(valueArray)
+    }
+    
+    func fetchDogInfo(for key: Int) async throws -> Dog {
+        let dogRef = ref.child(String(key)).child("dog")
+        
+        let snapshot = try await dogRef.getData()
+        
+        guard let value = snapshot.value as? [String: String] else {
+            return Dog(photo: "sophie-iso", name: "Sophie")
+        }
+        
+        let jsonData = try JSONSerialization.data(withJSONObject: value)
+        let decoder = JSONDecoder()
+        let dogData = try decoder.decode(Dog.self, from: jsonData)
+        
+        return Dog(photo: dogData.photo, name: dogData.name)
+
+    }
+    
     func addPhotoToDB(photo: Photo) async throws {
         let userKey = PersistenceManager.retrieveKey()
         let photosRef = ref.child(String(userKey)).child("photos")

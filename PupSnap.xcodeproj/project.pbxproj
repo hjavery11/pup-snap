@@ -33,6 +33,8 @@
 		FA80BCCA2C4ADC9400CE7C50 /* NotificationPhotoVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA80BCC92C4ADC9400CE7C50 /* NotificationPhotoVC.swift */; };
 		FA80BCCC2C4AFA9300CE7C50 /* LaunchManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA80BCCB2C4AFA9300CE7C50 /* LaunchManager.swift */; };
 		FA80BCD02C4B711000CE7C50 /* Toast.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA80BCCF2C4B711000CE7C50 /* Toast.swift */; };
+		FA80BCD22C4F072E00CE7C50 /* OnboardingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA80BCD12C4F072E00CE7C50 /* OnboardingView.swift */; };
+		FA80BCD42C4F335200CE7C50 /* OnboardingVM.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA80BCD32C4F335200CE7C50 /* OnboardingVM.swift */; };
 		FAD07D3A2C45C9B900A3ECBF /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAD07D392C45C9B900A3ECBF /* SettingsView.swift */; };
 		FAD07D3C2C45C9E300A3ECBF /* SettingsVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAD07D3B2C45C9E300A3ECBF /* SettingsVC.swift */; };
 		FAD07D3E2C45CE9100A3ECBF /* PairingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAD07D3D2C45CE9100A3ECBF /* PairingView.swift */; };
@@ -80,6 +82,8 @@
 		FA80BCC92C4ADC9400CE7C50 /* NotificationPhotoVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationPhotoVC.swift; sourceTree = "<group>"; };
 		FA80BCCB2C4AFA9300CE7C50 /* LaunchManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LaunchManager.swift; sourceTree = "<group>"; };
 		FA80BCCF2C4B711000CE7C50 /* Toast.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Toast.swift; sourceTree = "<group>"; };
+		FA80BCD12C4F072E00CE7C50 /* OnboardingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingView.swift; sourceTree = "<group>"; };
+		FA80BCD32C4F335200CE7C50 /* OnboardingVM.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingVM.swift; sourceTree = "<group>"; };
 		FAD07D392C45C9B900A3ECBF /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
 		FAD07D3B2C45C9E300A3ECBF /* SettingsVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsVC.swift; sourceTree = "<group>"; };
 		FAD07D3D2C45CE9100A3ECBF /* PairingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PairingView.swift; sourceTree = "<group>"; };
@@ -227,6 +231,7 @@
 				FAD07D3D2C45CE9100A3ECBF /* PairingView.swift */,
 				FAD07D442C46571400A3ECBF /* DogView.swift */,
 				FA80BCCF2C4B711000CE7C50 /* Toast.swift */,
+				FA80BCD12C4F072E00CE7C50 /* OnboardingView.swift */,
 			);
 			path = SwiftUI;
 			sourceTree = "<group>";
@@ -244,6 +249,7 @@
 			isa = PBXGroup;
 			children = (
 				FAD07D422C46098A00A3ECBF /* SettingsViewModel.swift */,
+				FA80BCD32C4F335200CE7C50 /* OnboardingVM.swift */,
 			);
 			path = ViewModels;
 			sourceTree = "<group>";
@@ -407,6 +413,7 @@
 				FAD07D912C483AD900A3ECBF /* PasteModalVC.swift in Sources */,
 				FA63FFC72C390E9C0070165E /* AppCheckProviderFactory.swift in Sources */,
 				FAD07D742C46EA7D00A3ECBF /* RemoteConfigManager.swift in Sources */,
+				FA80BCD42C4F335200CE7C50 /* OnboardingVM.swift in Sources */,
 				FAD07D932C48C2EA00A3ECBF /* LoadingVC.swift in Sources */,
 				FA3590762C34D95C00E417B1 /* StorageHelper.swift in Sources */,
 				FA63FFAD2C372D370070165E /* PhotoEditorVC.swift in Sources */,
@@ -417,6 +424,7 @@
 				FA63FFB22C3745660070165E /* LineView.swift in Sources */,
 				FA63FFB02C373ED40070165E /* SpeechBubbleView.swift in Sources */,
 				FA63FFB52C37519F0070165E /* UIImageView+Ext.swift in Sources */,
+				FA80BCD22C4F072E00CE7C50 /* OnboardingView.swift in Sources */,
 				FA3590622C33B30000E417B1 /* FeedVC.swift in Sources */,
 				FA35906B2C34A46E00E417B1 /* SophiePhotoCell.swift in Sources */,
 				FAD07D452C46571400A3ECBF /* DogView.swift in Sources */,

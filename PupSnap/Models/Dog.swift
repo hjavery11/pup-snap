@@ -7,8 +7,17 @@
 
 import Foundation
 
-class Dog {
+class Dog: Codable {
+    var photo: String
+    var name: String
     
+    init(photo: String, name: String) {
+        self.photo = photo
+        self.name = name
+    }
     
+    private enum CodingKeys: String, CodingKey {
+        case photo, name
+    }
     
 }

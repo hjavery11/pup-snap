@@ -24,6 +24,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, MessagingDelegate {
     static let branchLinkSubject = PassthroughSubject<Int, Never>()
     static let notificationSubject = PassthroughSubject<Void, Never>()
     static let branchFirstTimeLaunch = PassthroughSubject<Int, Never>()
+    static let regularFirstTimeLaunch = PassthroughSubject<Void, Never>()
     
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         
@@ -57,19 +58,25 @@ class AppDelegate: UIResponder, UIApplicationDelegate, MessagingDelegate {
         
         initializeBranch(launchOptions)
         
-        runStandardSetup()
+        let userKey = PersistenceManager.retrieveKey()
+        
+        if userKey == 0 {
+            runOnboardingSetup()
+        } else {
+            runStandardSetup()
+        }
         
         print("delegatetest end of did finish launching with options")
         return true
     }
+    
     private func runStandardSetup() {
         print("Running standard setup")
         Task {
             do {
-                try await PersistenceManager.launchSetup()
+                try await LaunchManager.shared.launchSetup()
                 // Request notification permissions
-                requestNotificationPermissions()
-                
+                requestNotificationPermissions()  
                 LaunchManager.shared.hasFinishedUserLaunchSetup = true
                 print("launch setup complete. sending completion from app delegate to scene delegate")
                
@@ -87,6 +94,12 @@ class AppDelegate: UIResponder, UIApplicationDelegate, MessagingDelegate {
             } catch {
                 print("Error on remote config setup: \(error)")
             }
+        }
+    }
+    
+    private func runOnboardingSetup() {
+        Task {
+            LaunchManager.shared.launchOnboarding()
         }
     }
     

@@ -11,7 +11,7 @@ import FirebaseStorage
 class PhotoVC: UIViewController, UINavigationControllerDelegate, UIImagePickerControllerDelegate, PhotoEditorVCDelegate, ObservableObject {
     
     let hintText = UILabel()
-    let dog = UIImageView()
+    let dogImage = UIImageView()
     @Published var speechBubbleText = "Initial text"
     let bubbleConnect = UIImageView(image: UIImage(named: "bubble-connector"))
     let emulatorPhoto = UIImage(named: "emulator-photo")
@@ -42,50 +42,64 @@ class PhotoVC: UIViewController, UINavigationControllerDelegate, UIImagePickerCo
     //success toast
     private let successToastVC = UIHostingController(rootView: SuccessToast())
     private var topConstant: NSLayoutConstraint?
-   
-    
     
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .systemGray6
         
-        setDogInfo()
-        
         // set font size depending on screen width to fit title and hint text
-        setFontSize()
-        setNavigationBarTitle()
-        // views
-        setupCameraView()
-        setupDogPhoto()
-        setupSpeechBubble()
-        
-        configureSuccessToast()
-
-    }
+            setDogInfo()
+            setupDogPhoto()
+            
+            setFontSize()
+            setNavigationBarTitle()
+            
+            // views
+            setupCameraView()
+            setupSpeechBubble()
+            
+            configureSuccessToast()
+        }
+  
     
     override func viewDidAppear(_ animated: Bool) {
-        setDogInfo()
-        
         if LaunchManager.shared.showToast {
             showSwiftUIToast()
             LaunchManager.shared.showToast = false
         }
     }
-  
     
-    func setDogInfo() {
-        let dogName = PersistenceManager.getDogName() ?? "Sophie"
-        let icon = PersistenceManager.getDogPhoto() ?? "sophie-iso"
-        let text = "Hi, I'm \(dogName).\nTap on me to add a photo!"
+    override func viewWillAppear(_ animated: Bool) {
+        if LaunchManager.shared.didOnboard {
+            setOnboardDog()
+            LaunchManager.shared.didOnboard = false
+        }
+    }
+    
+    func setOnboardDog() {
+        guard let currentDog = LaunchManager.shared.dog else {
+            print("no current dog set from onboarding")
+            return
+        }
         
-        dog.image = UIImage(named: icon)
+        updateSpeechBubbleText("Hi, I'm \(currentDog.name).\nTap on me to add a photo!")
+        dogImage.image = UIImage(named: currentDog.photo)
+    }
+    func setDogInfo() {
+        guard let currentDog = LaunchManager.shared.dog else {
+            print("Could not find current dog in launch manager")
+            return
+        }
+        let text = "Hi, I'm \(currentDog.name).\nTap on me to add a photo!"
+        
+        dogImage.image = UIImage(named: currentDog.photo)
         self.speechBubbleText = text
         updateSpeechBubbleText(text)
     }
     
     func updateSpeechBubbleText(_ text: String) {
-           speechBubbleText = text
-       }
+        speechBubbleText = text
+    }
     
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
@@ -93,31 +107,31 @@ class PhotoVC: UIViewController, UINavigationControllerDelegate, UIImagePickerCo
     }
     
     func setupDogPhoto() {
-        view.addSubview(dog)
-        dog.translatesAutoresizingMaskIntoConstraints = false
+        view.addSubview(dogImage)
+        dogImage.translatesAutoresizingMaskIntoConstraints = false
         
         // Assuming the original image size is available, use its aspect ratio.
-        if let image = dog.image {
+        if let image = dogImage.image {
             let aspectRatio = image.size.width / image.size.height
             NSLayoutConstraint.activate([
-                dog.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor),
-                dog.centerYAnchor.constraint(equalTo: view.safeAreaLayoutGuide.centerYAnchor),
-                dog.widthAnchor.constraint(equalToConstant: 300),
-                dog.heightAnchor.constraint(equalTo: dog.widthAnchor, multiplier: 1/aspectRatio) // Maintain aspect ratio
+                dogImage.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor),
+                dogImage.centerYAnchor.constraint(equalTo: view.safeAreaLayoutGuide.centerYAnchor),
+                dogImage.widthAnchor.constraint(equalToConstant: 300),
+                dogImage.heightAnchor.constraint(equalTo: dogImage.widthAnchor, multiplier: 1/aspectRatio) // Maintain aspect ratio
             ])
         }
         
-        dog.contentMode = .scaleAspectFit
-        dog.clipsToBounds = true
+        dogImage.contentMode = .scaleAspectFit
+        dogImage.clipsToBounds = true
         
         // load full screen photo view when image is tapped
         let gesture = UITapGestureRecognizer(target: self, action: #selector(dogClicked))
-        dog.isUserInteractionEnabled = true
-        dog.addGestureRecognizer(gesture)
+        dogImage.isUserInteractionEnabled = true
+        dogImage.addGestureRecognizer(gesture)
     }
     
     func updateDogPhoto(newDog: UIImage) {
-        dog.image = newDog
+        dogImage.image = newDog
         
     }
     
@@ -132,7 +146,7 @@ class PhotoVC: UIViewController, UINavigationControllerDelegate, UIImagePickerCo
         
         NSLayoutConstraint.activate([
             hostingController.view.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -padding),
-            hostingController.view.bottomAnchor.constraint(equalTo: dog.topAnchor, constant: -padding)
+            hostingController.view.bottomAnchor.constraint(equalTo: dogImage.topAnchor, constant: -padding)
         ])
         
         hostingController.didMove(toParent: self)
@@ -245,7 +259,7 @@ class PhotoVC: UIViewController, UINavigationControllerDelegate, UIImagePickerCo
             present(alert, animated: true, completion: nil)
         }
     }
-
+    
     func photoEditorDidUpload(_ editor: PhotoEditorVC) {
         showSpinner()
         
@@ -309,7 +323,7 @@ class PhotoVC: UIViewController, UINavigationControllerDelegate, UIImagePickerCo
                     alert.addAction(UIAlertAction(title: "OK", style: .default, handler: nil))
                     self.present(alert, animated: true, completion: nil)
                 }
-            }       
+            }
         }
     }
     

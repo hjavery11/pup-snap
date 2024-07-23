@@ -122,6 +122,15 @@ class NetworkManager {
             throw PSError.setClaims(underlyingError: error)
         }
     }
+    
+    func fetchDog() async throws -> Dog {
+        let key = PersistenceManager.retrieveKey()
+        return try await dbHelper.fetchDogInfo(for: key)
+    }
+    
+    func setDog(to dog: Dog) async throws {
+        try await dbHelper.addDogInfo(dog: dog)
+    }
    
 
 }

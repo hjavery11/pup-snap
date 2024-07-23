@@ -70,6 +70,12 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate, UITabBarControllerDeleg
             }
             .store(in: &cancellables)
         
+        AppDelegate.regularFirstTimeLaunch
+            .sink { [weak self] key in
+                self?.setupFirstTimeLaunch()
+            }
+            .store(in: &cancellables)
+        
     }
     
     private func setupScene(connectionOptions: UIScene.ConnectionOptions, scene: UIScene) {
@@ -112,6 +118,13 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate, UITabBarControllerDeleg
             //code on dismiss of hosting controller
         }
         LaunchManager.shared.cleanup()
+    }
+    
+    private func setupFirstTimeLaunch() {
+        print("attempting to show first time normal install")
+        let hostingController = UIHostingController(rootView: OnboardingView())
+        hostingController.modalPresentationStyle = .fullScreen
+        window?.rootViewController?.present(hostingController, animated: true)
     }
     
     

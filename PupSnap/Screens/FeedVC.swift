@@ -61,7 +61,7 @@ class FeedVC: UIViewController, FullScreenPhotoVCDelegate {
     }
     
     func setTitle() {
-        let name = PersistenceManager.getDogName() ?? "Dog"
+        let name = LaunchManager.shared.dog?.name ?? "Dog"
         self.navigationItem.title = "🐶 \(name) Photos"
         
     }

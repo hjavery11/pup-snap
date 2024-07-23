@@ -56,25 +56,33 @@ import Foundation
     var comingFromBranchLink: Bool = false
     var firstTimeLaunch: Bool = false
     
+    var dog: Dog?
+    
     
     
     init() {
-        self.selectedPhoto = PersistenceManager.getDogPhoto() ?? "sophie-iso"
-        self.dogName = PersistenceManager.getDogName() ?? ""
+        self.dog = LaunchManager.shared.dog
+        
+        self.selectedPhoto = dog?.photo
+        self.dogName = dog?.name ?? "Default"
         self.newDogName = dogName
     }
     
     init(pairingKey: Int) {
-        self.selectedPhoto = PersistenceManager.getDogPhoto() ?? "sophie-iso"
-        self.dogName = PersistenceManager.getDogName() ?? ""
+        self.dog = LaunchManager.shared.dog
+        
+        self.selectedPhoto = dog?.photo
+        self.dogName = dog?.name ?? "Default"
         self.newDogName = dogName
         self.newKey = String(pairingKey)
         self.comingFromBranchLink = true
     }
     
     init(pairingKey: Int, firstTimeLaunch: Bool) {
-        self.selectedPhoto = PersistenceManager.getDogPhoto() ?? "sophie-iso"
-        self.dogName = PersistenceManager.getDogName() ?? ""
+        self.dog = LaunchManager.shared.dog
+        
+        self.selectedPhoto = dog?.photo
+        self.dogName = dog?.name ?? "Default"
         self.newDogName = dogName
         
         self.newKey = String(pairingKey)
@@ -112,26 +120,26 @@ import Foundation
     }
     
     func updateDogPhoto() {
-        if self.newPhoto != "" {
-            PersistenceManager.updateDogPhoto(photo: self.newPhoto)
-            showIconSuccess = true
-            self.dogPhotos.removeAll {
-                $0 == newPhoto
-            }
-            if let photo = PersistenceManager.getDogPhoto() {
-                self.dogPhotos.append(photo)
-            }
-            
-         
-        }
+//        if self.newPhoto != "" {
+//            PersistenceManager.updateDogPhoto(photo: self.newPhoto)
+//            showIconSuccess = true
+//            self.dogPhotos.removeAll {
+//                $0 == newPhoto
+//            }
+//            if let photo = PersistenceManager.getDogPhoto() {
+//                self.dogPhotos.append(photo)
+//            }
+//            
+//         
+//        }
     }
     
     func updateDogName() {
-        if self.newDogName != "" {
-            PersistenceManager.setDogName(to: self.newDogName)
-            dogNameSuccess = true
-            self.dogName = newDogName
-        }
+//        if self.newDogName != "" {
+//            PersistenceManager.setDogName(to: self.newDogName)
+//            dogNameSuccess = true
+//            self.dogName = newDogName
+//        }
     }
     
     
