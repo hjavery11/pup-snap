@@ -28,6 +28,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate, MessagingDelegate {
     static let branchPasteBoardTesting = PassthroughSubject<Void, Never>()
     
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
+        print("first launch-didFinishLaunching - 1st")
+        print("returning-didFinishLaunching  - 1st")
         //set default font for app
 //        for family in UIFont.familyNames.sorted() {
 //            let names = UIFont.fontNames(forFamilyName: family)
@@ -44,6 +46,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, MessagingDelegate {
         
         FirebaseApp.configure()
         
+        //FCM and APNS Messaging config
         UNUserNotificationCenter.current().delegate = self
         Messaging.messaging().delegate = self
         application.registerForRemoteNotifications()
@@ -51,47 +54,56 @@ class AppDelegate: UIResponder, UIApplicationDelegate, MessagingDelegate {
         let setupDone = UserDefaults.standard.bool(forKey: PersistenceManager.Keys.setupComplete)
         
         if !setupDone {
+            print("first launch-!setupDone - 2nd")
             BNCPasteboard.sharedInstance().checkOnInstall = true
             if BNCPasteboard.sharedInstance().isUrlOnPasteboard() {
                 DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
                     AppDelegate.branchPasteBoardTesting.send(())
                 }
+                runOnboardingSetup()
                 return true
             }
-        }
-        
-        initializeBranch(launchOptions)
-        
-        let userKey = PersistenceManager.retrieveKey()
-        
-        if userKey == 0 {
-            runOnboardingSetup()
         } else {
             runStandardSetup()
         }
         
+        // This version of `initSession` includes the source UIScene in the callback
+            BranchScene.shared().initSession(launchOptions: launchOptions, registerDeepLinkHandler: { (params, error, scene) in
+                LaunchManager.shared.checkBranchParams(params)                
+            })
+
+        
+     
         return true
     }
     
     private func runStandardSetup() {
+        print("returning-runStandardsetup - 2nd")
         Task {
             do {
-                try await LaunchManager.shared.launchSetup()
+                try await LaunchManager.shared.returningLaunchSetup()               
+              
                 // Request notification permissions
                 requestNotificationPermissions()
                 LaunchManager.shared.hasFinishedUserLaunchSetup = true
-                
+                print("launchSetup done, sending to scene setup")
                 AppDelegate.setupCompletionSubject.send(())
                 
-            } catch {
-                print("Error requesting authorization to UNUserNotiacationCenter with error: \(error)")
+            } catch PSError.authError(let error){
+                print("Auth error")
+                print(error?.localizedDescription ?? "no localized description for auth error")
+            } catch PSError.fetchDogError(let error){
+                print("fetch dog error")
+                print(error?.localizedDescription ?? "no localized description for fetch dog error")
             }
         }
         
         // Remote config setup
         Task {
+            print("returning-remote config-3rd")
             do {
                 try await RemoteConfigManager.shared.fetchAndActivate()
+                print("remote config done")
             } catch {
                 print("Error on remote config setup: \(error)")
             }
@@ -104,22 +116,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, MessagingDelegate {
         }
     }
     
-    func initializeBranch(_ launchOptions:[UIApplication.LaunchOptionsKey: Any]? ) {
-        // Initialize Branch session
-        Branch.getInstance().initSession(launchOptions: launchOptions) { (params, error) in
-            if let params = params as? [String: AnyObject], let pairingKeyValue = params["pairingKey"] {
-                if let sharedPairingKey = pairingKeyValue as? Int {
-                    LaunchManager.shared.launchingFromBranchLink = true
-                    LaunchManager.shared.sharedPairingKey = sharedPairingKey
-                    LaunchManager.shared.branchSetup()
-                } else if let pairingKeyString = pairingKeyValue as? String, let sharedPairingKey = Int(pairingKeyString) {
-                    LaunchManager.shared.launchingFromBranchLink = true
-                    LaunchManager.shared.sharedPairingKey = sharedPairingKey
-                    LaunchManager.shared.branchSetup()
-                }
-            }
-        }
-    }     
+   
     
     func requestNotificationPermissions() {
         let center = UNUserNotificationCenter.current()
@@ -159,8 +156,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate, MessagingDelegate {
         Messaging.messaging().token { token, error in
           if let error = error {
             print("Error fetching FCM registration token: \(error)")
-          } else if let token = token {
-            print("FCM registration token: \(token)")
+          } else if let _ = token {
+            //print("FCM registration token: \(token)")
           }
         }
     }

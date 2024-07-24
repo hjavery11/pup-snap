@@ -25,7 +25,6 @@ struct PairingView: View {
                             Text(String(viewModel.userKey))
                                 .font(.title3)
                         }
-                        
                         HStack {
                             Spacer()
                             Text("Change Key")
@@ -33,9 +32,11 @@ struct PairingView: View {
                                 .onTapGesture {
                                     viewModel.showingChangeKey = true
                                 }
+                                .opacity(LaunchManager.shared.launchingFromBranchLink ? 0:1)
                         }
                         
                         ShareLink(item: URL(string: LaunchManager.shared.shareURL ?? "https://pupsnapapp.com")!, subject: Text("Join me on PupSnap!"))
+                            .opacity(LaunchManager.shared.launchingFromBranchLink ? 0:1)
                         
                     } header: {
                         Text("Pairing")
@@ -59,13 +60,10 @@ struct PairingView: View {
                 Task { @MainActor in
                     do {
                         viewModel.isLoading = true
-                        try await viewModel.changeKey()
-                        try await viewModel.updateDog()
+                        try await viewModel.updateAppForNewKey()
                         viewModel.isLoading = false
-                        LaunchManager.shared.showToast = true
-                        LaunchManager.shared.launchingFromBranchLink = false
-                        presentationMode.wrappedValue.dismiss()
-                        viewModel.comingFromBranchLink = false
+                        presentationMode.wrappedValue.dismiss()                     
+                      
                     } catch {
                         viewModel.isLoading = false
                         viewModel.showingChangeKeyError = true
@@ -85,14 +83,8 @@ struct PairingView: View {
                     do {
                         viewModel.isLoading = true
                         try await viewModel.subscribeToBranchKey()
-                        try await LaunchManager.shared.refreshToken()
-                        try await viewModel.updateDog()
                         viewModel.isLoading = false
-                        LaunchManager.shared.showToast = true
-                        presentationMode.wrappedValue.dismiss()                     
-                        AppDelegate.setupCompletionSubject.send(())                     
-                        PersistenceManager.setupDone()
-                        viewModel.firstTimeLaunch = false
+                        presentationMode.wrappedValue.dismiss()
                     } catch {
                         viewModel.isLoading = false
                         viewModel.showingChangeKeyError = true
@@ -117,8 +109,9 @@ struct PairingView: View {
                 Task {
                     do {
                         viewModel.isLoading = true
-                        try await viewModel.changeKey()
-                        viewModel.isLoading = false                        
+                        try await viewModel.updateAppForNewKey()
+                        viewModel.isLoading = false
+                        presentationMode.wrappedValue.dismiss()
                     } catch {
                         viewModel.isLoading = false
                         viewModel.showingChangeKeyError = true

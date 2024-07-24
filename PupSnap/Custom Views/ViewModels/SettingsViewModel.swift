@@ -106,7 +106,6 @@ import Foundation
             do {
                 try await PersistenceManager.changeKey(to: newKeyInt)
                 userKey = newKeyInt
-                await LaunchManager.shared.setDog()
             } catch {
                 self.alertMessage = PSError.setClaims(underlyingError: error).localizedDescription
                 throw PSError.setClaims()
@@ -126,6 +125,12 @@ import Foundation
         
         try await PersistenceManager.branchKeySetup(key: newKey)
         userKey = newKey
+        try await LaunchManager.shared.refreshToken()
+        try await updateDog()
+        LaunchManager.shared.showToast = true
+        PersistenceManager.setupDone()
+        firstTimeLaunch = false
+        AppDelegate.setupCompletionSubject.send(())
     }
     
     func updateDog() async throws {
@@ -146,6 +151,13 @@ import Foundation
             dogNameSuccess = true
             await LaunchManager.shared.setDog()
         }
+    }
+    
+    func updateAppForNewKey() async throws {
+        try await changeKey()
+        try await updateDog()
+        LaunchManager.shared.showToast = true
+        LaunchManager.shared.launchingFromBranchLink = false        
     }
     
    

@@ -125,6 +125,7 @@ class NetworkManager {
     
     func fetchDog() async throws -> Dog {
         let key = PersistenceManager.retrieveKey()
+        print("attempting fetch dog for key \(key)")
         return try await dbHelper.fetchDogInfo(for: key)
     }
     

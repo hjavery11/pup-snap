@@ -13,6 +13,8 @@ class LaunchManager {
     
     static let shared = LaunchManager()
     
+    let imageURL = "https://pupsnapapp.com/pupsnap-icon.png"
+    
     var hasFinishedUserLaunchSetup: Bool = false
     var hasFinishedSceneLaunchSetup: Bool = false
     var launchingFromBranchLink: Bool = false
@@ -54,13 +56,22 @@ class LaunchManager {
         }
     }
     
-    func launchSetup() async throws {
+    func returningLaunchSetup() async throws {
         // do things here for returning users
-        let authResult = try await Auth.auth().signInAnonymously()
-        let user = authResult.user
-        try await user.getIDTokenResult(forcingRefresh: true)
-        self.dog = try await NetworkManager.shared.fetchDog()
+        do {
+            try await Auth.auth().signInAnonymously()
+            //potentially might need to call refreshToken() everytime, but for now hoping it is handled elsewhere to not make startup longer
+        } catch {
+            throw PSError.authError(underlyingError: error)
+        }
+        
+        do {
+            self.dog = try await NetworkManager.shared.fetchDog()
+        } catch {
+            throw PSError.fetchDogError(underlyingError: error)
+        }
     }
+    
     
     func launchOnboarding() {
         Task {
@@ -141,10 +152,26 @@ class LaunchManager {
         let key = PersistenceManager.retrieveKey()
         let buo = BranchUniversalObject(canonicalIdentifier: "pairing/\(key)")
         buo.title = "Join me on PupSnap!"
+        buo.imageUrl = self.imageURL
         buo.contentMetadata.customMetadata["pairingKey"] = "\(key)"
         
         let lp = BranchLinkProperties()
       
         self.shareURL = buo.getShortUrl(with: lp)
+    }
+    
+    func checkBranchParams(_ params: [AnyHashable: Any]?) {
+        guard let params = params else { return }
+        if let pairingKey = params["pairingKey"] {
+            print("Found pairing key from branch: \(pairingKey)")
+            print(params)
+            if let pairingKeyInt = pairingKey as? Int {
+                self.sharedPairingKey = pairingKeyInt
+            } else if let pairingKeyString = pairingKey as? String {
+                self.sharedPairingKey = Int(pairingKeyString)
+            }
+            self.launchingFromBranchLink = true
+            branchSetup()
+        }
     }
 }

@@ -21,6 +21,7 @@ enum PSError: Error {
     case authError(underlyingError: Error? = nil)
     case unsubscribeError(underlyingError: Error? = nil)
     case remoteConfigError(underlyingError: Error? = nil)
+    case fetchDogError(underlyingError: Error? = nil )
     
     var localizedDescription: String {
         switch self {
@@ -50,6 +51,8 @@ enum PSError: Error {
             return "Error unsubscribing from pairing key. \(underlyingError?.localizedDescription ?? "")"
         case .remoteConfigError(let underlyingError):
             return "Error setting up remote config: \(underlyingError?.localizedDescription ?? "")"
+        case .fetchDogError(underlyingError: let underlyingError):
+            return "Error fetching user's dog: \(underlyingError?.localizedDescription ?? "")"
         }
     }
 }

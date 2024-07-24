@@ -20,6 +20,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate, UITabBarControllerDeleg
     var notificationResponse = false
     
     func scene(_ scene: UIScene, willConnectTo session: UISceneSession, options connectionOptions: UIScene.ConnectionOptions) {
+        print("returning-scene first call-4th")
         
         guard let windowScene = (scene as? UIWindowScene) else { return }
         
@@ -27,9 +28,6 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate, UITabBarControllerDeleg
         if let userActivity = connectionOptions.userActivities.first {
             self.scene(scene, continue: userActivity)          
         }
-
-        
-        
         
         window = UIWindow(frame: windowScene.coordinateSpace.bounds)
         window?.windowScene = windowScene
@@ -88,21 +86,21 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate, UITabBarControllerDeleg
     }
     
     private func setupScene(connectionOptions: UIScene.ConnectionOptions, scene: UIScene) {
-        
+        print("returning-setupScene-5th")
         tabBarController = createTabbar()
         tabBarController?.delegate = self
         window?.rootViewController = tabBarController
         
         LaunchManager.shared.hasFinishedSceneLaunchSetup = true
         
-        //check to see if branch key setup is needed now that scene is ready
+//        //check to see if branch key setup is needed now that scene is ready
         LaunchManager.shared.branchSetup()
-        
-        //check to see if push notification setup is needed now that scene is ready
-        LaunchManager.shared.showPushPhoto()
-        
-        //create share link so its ready
-        LaunchManager.shared.createBranchLink()
+//        
+//        //check to see if push notification setup is needed now that scene is ready
+//        LaunchManager.shared.showPushPhoto()
+//        
+//        //create share link so its ready
+//        LaunchManager.shared.createBranchLink()
         
         
     }

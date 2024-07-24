@@ -17,6 +17,7 @@ class DatabaseHelper {
     init() {
         ref = Database.database().reference()
     }
+    
     func fetchPhotos(for userKey: Int) async throws -> [Photo]{
         let photosRef = ref.child(String(userKey)).child("photos")
         do{
@@ -84,24 +85,47 @@ class DatabaseHelper {
         try await dogRef.updateChildValues(valueArray)
     }
     
-    func fetchDogInfo(for key: Int) async throws -> Dog {
+    func fetchDogInfo(for key: Int, retryCount: Int = 0) async throws -> Dog {
         let dogRef = ref.child(String(key)).child("dog")
+        let maxRetries = 5  // Define the maximum number of retries
+        let retryDelay: TimeInterval = 3  // Define the delay between retries in seconds
         
-        let snapshot = try await dogRef.getData()
+        print("About to get snapshot")
         
-        guard let value = snapshot.value as? [String: String] else {
-            print("No dog found, returning sophie")
-            let baseDog = Dog(photo: "sophie-iso", name: "Sophie")
-            try await addDogInfo(dog: baseDog)
-            return baseDog
+        do {
+            let snapshot = try await dogRef.getData()
+            print("Snapshot successful")
+            guard let value = snapshot.value as? [String: String] else {
+                print("No dog found, returning Sophie")
+                let baseDog = Dog(photo: "sophie-iso", name: "Sophie")
+                try await addDogInfo(dog: baseDog)
+                return baseDog
+            }
+            
+            let jsonData = try JSONSerialization.data(withJSONObject: value)
+            let decoder = JSONDecoder()
+            let dogData = try decoder.decode(Dog.self, from: jsonData)
+            
+            return Dog(photo: dogData.photo, name: dogData.name)
+        } catch let error as NSError {
+            if error.domain == "com.firebase.core" && error.code == 1 {
+                print("Client is offline")
+                if retryCount < maxRetries {
+                    print("Retrying in \(retryDelay) seconds...")
+                    try await Task.sleep(nanoseconds: UInt64(retryDelay * 1_000_000_000))  // Sleep for retryDelay seconds
+                    return try await fetchDogInfo(for: key, retryCount: retryCount + 1)
+                } else {
+                    print("Max retries reached. Throwing error.")
+                    throw PSError.fetchDogError(underlyingError: error)
+                }
+            } else {
+                print(error)
+                throw PSError.fetchDogError(underlyingError: error)
+            }
+        } catch {
+            print(error)
+            throw PSError.fetchDogError(underlyingError: error)
         }
-        
-        let jsonData = try JSONSerialization.data(withJSONObject: value)
-        let decoder = JSONDecoder()
-        let dogData = try decoder.decode(Dog.self, from: jsonData)
-        
-        return Dog(photo: dogData.photo, name: dogData.name)
-
     }
     
     func updateDogName(to name: String) {

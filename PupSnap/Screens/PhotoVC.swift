@@ -116,11 +116,20 @@ class PhotoVC: UIViewController, UINavigationControllerDelegate, UIImagePickerCo
         // Assuming the original image size is available, use its aspect ratio.
         if let image = dogImage.image {
             let aspectRatio = image.size.width / image.size.height
+            var targetWidth: CGFloat = 300
+            var targetHeight = targetWidth / aspectRatio
+
+            // Check if the calculated height exceeds 400
+            if targetHeight > 350 {
+                targetHeight = 350
+                targetWidth = targetHeight * aspectRatio
+            }
+            print("width:\(targetWidth), height: \(targetHeight)")
             NSLayoutConstraint.activate([
                 dogImage.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor),
                 dogImage.centerYAnchor.constraint(equalTo: view.safeAreaLayoutGuide.centerYAnchor),
-                dogImage.widthAnchor.constraint(equalToConstant: 300),
-                dogImage.heightAnchor.constraint(equalTo: dogImage.widthAnchor, multiplier: 1/aspectRatio) // Maintain aspect ratio
+                dogImage.widthAnchor.constraint(equalToConstant: targetWidth),
+                dogImage.heightAnchor.constraint(equalToConstant: targetHeight)
             ])
         }
         
