@@ -35,8 +35,7 @@ struct PairingView: View {
                                 }
                         }
                         
-                        // ShareLink("Share My Key",item: URL(string: "https://pupsnapapp.com/pair/\(viewModel.userKey)")!, subject: Text("Join me on PupSnap to see all my photos!"))
-                        ShareLink("Share My Key",item: URL(string: "https://pupsnapapp.com/pair/56706732")!, subject: Text("Join me on PupSnap to see all my photos!"))
+                        ShareLink(item: URL(string: LaunchManager.shared.shareURL ?? "https://pupsnapapp.com")!, subject: Text("Join me on PupSnap!"))
                         
                     } header: {
                         Text("Pairing")
@@ -51,7 +50,10 @@ struct PairingView: View {
                 ProgressView("Applying...")                
                     .tint(Color(.systemPurple))
             }
-        }  
+        }
+        .onAppear {
+            viewModel.userKey = PersistenceManager.retrieveKey()
+        }
         .alert("Pairing", isPresented: $viewModel.comingFromBranchLink) {
             Button("Ok", role: .none) {
                 Task { @MainActor in
@@ -63,6 +65,7 @@ struct PairingView: View {
                         LaunchManager.shared.showToast = true
                         LaunchManager.shared.launchingFromBranchLink = false
                         presentationMode.wrappedValue.dismiss()
+                        viewModel.comingFromBranchLink = false
                     } catch {
                         viewModel.isLoading = false
                         viewModel.showingChangeKeyError = true
@@ -86,8 +89,10 @@ struct PairingView: View {
                         viewModel.isLoading = false
                         LaunchManager.shared.showToast = true
                         presentationMode.wrappedValue.dismiss()
-                        AppDelegate.setupCompletionSubject.send(())
-                        LaunchManager.shared.cleanup()
+                        try await LaunchManager.shared.refreshToken()
+                        AppDelegate.setupCompletionSubject.send(())                     
+                        PersistenceManager.setupDone()
+                        viewModel.firstTimeLaunch = false
                     } catch {
                         viewModel.isLoading = false
                         viewModel.showingChangeKeyError = true
@@ -163,6 +168,7 @@ struct PairingView: View {
             .presentationDetents([.height(150)])
             .presentationDragIndicator(.visible)
         }
+    
     
     }
   

@@ -28,7 +28,11 @@ class AppDelegate: UIResponder, UIApplicationDelegate, MessagingDelegate {
     static let branchPasteBoardTesting = PassthroughSubject<Void, Never>()
     
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
-        
+        //set default font for app
+        for family in UIFont.familyNames.sorted() {
+            let names = UIFont.fontNames(forFamilyName: family)
+            print("Family: \(family) Font names: \(names)")
+        }
         
         // Override point for customization after application launch.
 #if DEBUG
@@ -46,19 +50,18 @@ class AppDelegate: UIResponder, UIApplicationDelegate, MessagingDelegate {
         UNUserNotificationCenter.current().delegate = self
         Messaging.messaging().delegate = self
         application.registerForRemoteNotifications()
-    
-        BNCPasteboard.sharedInstance().checkOnInstall = true
-        if BNCPasteboard.sharedInstance().isUrlOnPasteboard() {
-            print("did BNCPasteboard.isURL on pasteboard")
-            DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
-                AppDelegate.branchPasteBoardTesting.send(())
+        
+        let setupDone = UserDefaults.standard.bool(forKey: PersistenceManager.Keys.setupComplete)
+        
+        if !setupDone {
+            BNCPasteboard.sharedInstance().checkOnInstall = true
+            if BNCPasteboard.sharedInstance().isUrlOnPasteboard() {
+                DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
+                    AppDelegate.branchPasteBoardTesting.send(())
+                }
+                return true
             }
-            return true
         }
-        print("skipped BNCPasteboard.isurl on pasteboard")
-     
-        
-        
         
         initializeBranch(launchOptions)
         
@@ -124,28 +127,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, MessagingDelegate {
                 }
             }
         }
-    }
-    
-    func initializeBranchFirstLaunch(_ launchOptions:[UIApplication.LaunchOptionsKey: Any]? ) {
-        // Initialize Branch session
-        Branch.getInstance().initSession(launchOptions: launchOptions) { (params, error) in
-            if let params = params as? [String: AnyObject], let pairingKeyValue = params["pairingKey"] {
-                if params["+referrer"] != nil {
-                    print("Second instance of branch click, dont do anything because referer was \(String(describing: params["+referrer"]))")
-                } else {
-                    if let sharedPairingKey = pairingKeyValue as? Int {
-                        print("handling pairing key branch param as Int: \(sharedPairingKey)")
-                        LaunchManager.shared.firstTimeLaunch = true
-                        LaunchManager.shared.branchFirstTimeLaunch(sharedPairingKey)
-                    } else if let pairingKeyString = pairingKeyValue as? String, let sharedPairingKey = Int(pairingKeyString) {
-                        print("handling pairing key branch param as String: \(sharedPairingKey)")
-                        LaunchManager.shared.firstTimeLaunch = true
-                        LaunchManager.shared.branchFirstTimeLaunch(sharedPairingKey)
-                    }
-                }
-            }
-        }
-    }
+    }     
     
     func requestNotificationPermissions() {
         let center = UNUserNotificationCenter.current()

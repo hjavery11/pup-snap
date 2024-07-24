@@ -60,7 +60,11 @@ struct DogView: View {
     }
         .alert("Are you sure?", isPresented: $viewModel.showIconConfirmation) {
             Button("Cancel", role: .cancel) { viewModel.newPhoto = "" }
-            Button("Yes") { viewModel.updateDogPhoto() }
+            Button("Yes") { 
+                Task {
+                    await viewModel.updateDogPhoto()
+                }
+            }
         } message: {
             Text("Are you sure you want to change the photo for your dog?")
         }
@@ -72,7 +76,11 @@ struct DogView: View {
         }
         .alert("Are you sure?", isPresented: $viewModel.showNameConfirmation) {
             Button("Cancel", role: .cancel) { viewModel.newDogName = "" }
-            Button("Yes") { viewModel.updateDogName() }
+            Button("Yes") {
+                Task {
+                    await viewModel.updateDogName()
+                }
+            }
         } message: {
             Text("Are you sure you want to change the name of your dog to \(viewModel.newDogName)?")
         }

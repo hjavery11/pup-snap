@@ -21,6 +21,7 @@ enum PersistenceManager {
         static let dog = "dogPhoto"
         static let dogName = "dog_name"
         static let notification = "notifications"
+        static let setupComplete = "setup_complete"
     }
     
     static func retrieveID() -> String {
@@ -115,6 +116,10 @@ enum PersistenceManager {
     
     static func notificationStatus() -> Bool {
         return defaults.bool(forKey: Keys.notification)
+    }
+    
+    static func setupDone() {
+        defaults.set(true, forKey: Keys.setupComplete)
     }
   
 }

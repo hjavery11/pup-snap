@@ -106,7 +106,7 @@ import Foundation
             do {
                 try await PersistenceManager.changeKey(to: newKeyInt)
                 userKey = newKeyInt
-                LaunchManager.shared.setDog()
+                await LaunchManager.shared.setDog()
             } catch {
                 self.alertMessage = PSError.setClaims(underlyingError: error).localizedDescription
                 throw PSError.setClaims()
@@ -125,26 +125,28 @@ import Foundation
         }
         
         try await PersistenceManager.branchKeySetup(key: newKey)
+        userKey = newKey
     }
     
     func updateDog() async throws {
-        LaunchManager.shared.setDog()
+        await LaunchManager.shared.setDog()
     }
     
-    func updateDogPhoto() {
+    func updateDogPhoto() async {
         if newPhoto != "" {
             NetworkManager.shared.changeDogPhoto(to: newPhoto)
             showPhotoChangeSuccess = true
-            LaunchManager.shared.setDog()
+            await LaunchManager.shared.setDog()
         }
     }
     
-    func updateDogName() {        
+    func updateDogName() async {
         if newDogName != "" {
             NetworkManager.shared.changeDogName(to: newDogName)
             dogNameSuccess = true
-            LaunchManager.shared.setDog()
+            await LaunchManager.shared.setDog()
         }
     }
     
+   
 }

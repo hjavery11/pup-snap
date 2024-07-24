@@ -28,6 +28,8 @@ class PhotoVC: UIViewController, UINavigationControllerDelegate, UIImagePickerCo
     let largeConfig = UIImage.SymbolConfiguration(pointSize: 44, weight: .bold, scale: .default)
     
     var fontType: UIFont?
+    
+    var myFont = UIFont(name: MyFonts.base.rawValue, size: 32)
     var largeTitleFontSize: CGFloat?
     let deviceWidth = UIScreen.main.bounds.width
     
@@ -47,6 +49,8 @@ class PhotoVC: UIViewController, UINavigationControllerDelegate, UIImagePickerCo
         super.viewDidLoad()
         view.backgroundColor = .systemGray6
         
+      
+
         // set font size depending on screen width to fit title and hint text
             setDogInfo()
             setupDogPhoto()
@@ -159,7 +163,7 @@ class PhotoVC: UIViewController, UINavigationControllerDelegate, UIImagePickerCo
     func setNavigationBarTitle() {
         navigationController?.navigationBar.prefersLargeTitles = true
         navigationController?.navigationBar.largeTitleTextAttributes = [
-            NSAttributedString.Key.font: UIFont.systemFont(ofSize: largeTitleFontSize ?? 12, weight: .bold),
+            NSAttributedString.Key.font: myFont!,
             NSAttributedString.Key.foregroundColor: UIColor.systemPurple
         ]
     }

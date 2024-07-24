@@ -59,6 +59,7 @@ struct OnboardingView: View {
                             Task {
                                 viewModel.isLoading = true
                                 try await viewModel.finishOnboarding()
+                                PersistenceManager.setupDone()
                                 viewModel.isLoading = false
                                 presentationMode.wrappedValue.dismiss()
                             }

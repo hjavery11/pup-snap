@@ -89,7 +89,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate, UITabBarControllerDeleg
         let pasteVC = PasteModalVC()
         let navigationController = UINavigationController(rootViewController: pasteVC)
         navigationController.modalPresentationStyle = .fullScreen
-        window?.rootViewController?.present(navigationController, animated: true, completion: nil)
+        window?.rootViewController?.present(navigationController, animated: false, completion: nil)
     }
     
     private func setupScene(connectionOptions: UIScene.ConnectionOptions, scene: UIScene) {
@@ -106,6 +106,9 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate, UITabBarControllerDeleg
         
         //check to see if push notification setup is needed now that scene is ready
         LaunchManager.shared.showPushPhoto()
+        
+        //create share link so its ready
+        LaunchManager.shared.createBranchLink()
         
         
     }
@@ -129,9 +132,8 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate, UITabBarControllerDeleg
         let hostingController = UIHostingController(rootView: PairingView(viewModel: SettingsViewModel(pairingKey: key, firstTimeLaunch: true)))
         hostingController.modalPresentationStyle = .fullScreen
         window?.rootViewController?.present(hostingController, animated: true) {
-            //code on dismiss of hosting controller
+          
         }
-        LaunchManager.shared.cleanup()
     }
     
     private func setupFirstTimeLaunch() {

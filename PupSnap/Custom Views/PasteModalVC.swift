@@ -15,9 +15,7 @@ class PasteModalVC: UIViewController {
         
         configurePasteControl()
         configureText()
-
-
-            
+        
     }
     
     func configureText() {

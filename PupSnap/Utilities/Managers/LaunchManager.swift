@@ -30,6 +30,8 @@ class LaunchManager {
     
     var dog: Dog?
     
+    var shareURL: String?
+    
     private init() {}
     
     func branchSetup() {
@@ -39,10 +41,6 @@ class LaunchManager {
                 AppDelegate.branchLinkSubject.send(sharedPairingKey)
             }
         }
-    }
-    
-    func branchFirstTimeLaunch(_ key: Int) {
-        AppDelegate.branchFirstTimeLaunch.send(key)
     }
     
     func cleanup() {
@@ -113,11 +111,14 @@ class LaunchManager {
        try await Auth.auth().currentUser?.getIDTokenResult(forcingRefresh: true)
     }
     
-    func setDog() {
-        Task {
-            self.dog = try await NetworkManager.shared.fetchDog()
-            self.dogChanged = true
-        }
+    func setDog() async {
+            do {
+                self.dog = try await NetworkManager.shared.fetchDog()
+                self.dogChanged = true
+                
+            } catch {
+                print("Error fetching and setting dog in launch manager: \(error)")
+            }
     }
     
     func initializePasteboardBranch() {
@@ -129,11 +130,21 @@ class LaunchManager {
                         print("handling pairing key branch param as Int: \(sharedPairingKey)")
                     } else if let pairingKeyString = pairingKeyValue as? String, let sharedPairingKey = Int(pairingKeyString) {
                         print("handling pairing key branch param as String: \(sharedPairingKey)")
-                        
                         LaunchManager.shared.firstTimeLaunch = true
-                        LaunchManager.shared.branchFirstTimeLaunch(sharedPairingKey)
+                        AppDelegate.branchFirstTimeLaunch.send(sharedPairingKey)
                     }
             }
         }
+    }
+    
+    func createBranchLink() {
+        let key = PersistenceManager.retrieveKey()
+        let buo = BranchUniversalObject(canonicalIdentifier: "pairing/\(key)")
+        buo.title = "Join me on PupSnap!"
+        buo.contentMetadata.customMetadata["pairingKey"] = "\(key)"
+        
+        let lp = BranchLinkProperties()
+      
+        self.shareURL = buo.getShortUrl(with: lp)
     }
 }

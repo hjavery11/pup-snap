@@ -23,6 +23,10 @@ class SettingsVC: UIViewController {
         setupConstraints()
     }
     
+    override func viewWillAppear(_ animated: Bool) {
+        LaunchManager.shared.createBranchLink()
+    }
+    
     func setupConstraints() {
         settingsView.view.translatesAutoresizingMaskIntoConstraints = false
         
