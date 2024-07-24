@@ -37,16 +37,13 @@ class AppDelegate: UIResponder, UIApplicationDelegate, MessagingDelegate {
         // Override point for customization after application launch.
 #if DEBUG
         let providerFactory = AppCheckDebugProviderFactory()
-        print("is debug")
 #else
         let providerFactory = YourSimpleAppCheckProviderFactory()
-        print("is not debug")
 #endif
         AppCheck.setAppCheckProviderFactory(providerFactory)
         
         FirebaseApp.configure()
         
-        print("delegatetest appdelegate didfinishlaunchingwithoptions with launch options: \(String(describing: launchOptions))")
         UNUserNotificationCenter.current().delegate = self
         Messaging.messaging().delegate = self
         application.registerForRemoteNotifications()
@@ -73,19 +70,16 @@ class AppDelegate: UIResponder, UIApplicationDelegate, MessagingDelegate {
             runStandardSetup()
         }
         
-        print("delegatetest end of did finish launching with options")
         return true
     }
     
     private func runStandardSetup() {
-        print("Running standard setup")
         Task {
             do {
                 try await LaunchManager.shared.launchSetup()
                 // Request notification permissions
                 requestNotificationPermissions()
                 LaunchManager.shared.hasFinishedUserLaunchSetup = true
-                print("launch setup complete. sending completion from app delegate to scene delegate")
                 
                 AppDelegate.setupCompletionSubject.send(())
                 
@@ -115,12 +109,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate, MessagingDelegate {
         Branch.getInstance().initSession(launchOptions: launchOptions) { (params, error) in
             if let params = params as? [String: AnyObject], let pairingKeyValue = params["pairingKey"] {
                 if let sharedPairingKey = pairingKeyValue as? Int {
-                    print("handling pairing key branch param as Int: \(sharedPairingKey)")
                     LaunchManager.shared.launchingFromBranchLink = true
                     LaunchManager.shared.sharedPairingKey = sharedPairingKey
                     LaunchManager.shared.branchSetup()
                 } else if let pairingKeyString = pairingKeyValue as? String, let sharedPairingKey = Int(pairingKeyString) {
-                    print("handling pairing key branch param as String: \(sharedPairingKey)")
                     LaunchManager.shared.launchingFromBranchLink = true
                     LaunchManager.shared.sharedPairingKey = sharedPairingKey
                     LaunchManager.shared.branchSetup()
@@ -153,12 +145,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate, MessagingDelegate {
         }
     }
     
-    func application(_ application: UIApplication, didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data) {
-        //messaging setup
-        Messaging.messaging().apnsToken = deviceToken
-        print("Set apns token to fcm token in applicationdelegate didRegisterForRemoteNotificationsWithDeviceToken")
-    }
-    
     func application(_ app: UIApplication, open url: URL, options: [UIApplication.OpenURLOptionsKey : Any] = [:]) -> Bool {
         Branch.getInstance().application(app, open: url, options: options)
         return true
@@ -170,16 +156,12 @@ class AppDelegate: UIResponder, UIApplicationDelegate, MessagingDelegate {
     }
     
     func messaging(_ messaging: Messaging, didReceiveRegistrationToken fcmToken: String?) {
-        guard let _ = fcmToken else {
-            return
-        }
-        Task {
-            do {
-                let token = try await Messaging.messaging().token()
-                print("FCM registration token: \(token)")
-            } catch {
-                print("Error fetching FCM registration token: \(error)")
-            }
+        Messaging.messaging().token { token, error in
+          if let error = error {
+            print("Error fetching FCM registration token: \(error)")
+          } else if let token = token {
+            print("FCM registration token: \(token)")
+          }
         }
     }
     
@@ -189,7 +171,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate, MessagingDelegate {
     func application(_ application: UIApplication, configurationForConnecting connectingSceneSession: UISceneSession, options: UIScene.ConnectionOptions) -> UISceneConfiguration {
         // Called when a new scene session is being created.
         // Use this method to select a configuration to create the new scene with.
-        print("delegatetest app delegate new scene being created")
         return UISceneConfiguration(name: "Default Configuration", sessionRole: connectingSceneSession.role)
     }
     

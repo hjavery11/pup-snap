@@ -20,12 +20,8 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate, UITabBarControllerDeleg
     var notificationResponse = false
     
     func scene(_ scene: UIScene, willConnectTo session: UISceneSession, options connectionOptions: UIScene.ConnectionOptions) {
-        print("delegatetest scenedelegate first scene function")
         
         guard let windowScene = (scene as? UIWindowScene) else { return }
-        print(connectionOptions.userActivities)
-        print(connectionOptions.notificationResponse as Any)
- 
         
         //  Workaround for SceneDelegate `continueUserActivity` not getting called on cold start:
         if let userActivity = connectionOptions.userActivities.first {
@@ -85,7 +81,6 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate, UITabBarControllerDeleg
     }
     
     private func setupBranchPasteboard() {
-        print("did setupBranchPasteboard")
         let pasteVC = PasteModalVC()
         let navigationController = UINavigationController(rootViewController: pasteVC)
         navigationController.modalPresentationStyle = .fullScreen
@@ -93,7 +88,6 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate, UITabBarControllerDeleg
     }
     
     private func setupScene(connectionOptions: UIScene.ConnectionOptions, scene: UIScene) {
-        print("scene delegate is setting up scene from combine")
         
         tabBarController = createTabbar()
         tabBarController?.delegate = self
@@ -115,12 +109,10 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate, UITabBarControllerDeleg
     
     private func handleNotification() {
         let userInfo = LaunchManager.shared.pushUserInfo
-        print("Handling notification with userInfo: \(userInfo)")
         presentFullScreenPhotoVC(userInfo: userInfo)
     }
     
     private func setupBranchLink(key: Int) {
-        print("Attempting to show PairingView with detected pairing key from branch")
         let hostingController = UIHostingController(rootView: PairingView(viewModel: SettingsViewModel(pairingKey: key)))
         hostingController.modalPresentationStyle = .fullScreen
         window?.rootViewController?.present(hostingController, animated: true)
@@ -128,7 +120,6 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate, UITabBarControllerDeleg
     }
     
     private func setupBranchFirstLaunch(_ key: Int) {
-        print("attempting to show first time branch install")
         let hostingController = UIHostingController(rootView: PairingView(viewModel: SettingsViewModel(pairingKey: key, firstTimeLaunch: true)))
         hostingController.modalPresentationStyle = .fullScreen
         window?.rootViewController?.present(hostingController, animated: true) {
@@ -137,7 +128,6 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate, UITabBarControllerDeleg
     }
     
     private func setupFirstTimeLaunch() {
-        print("attempting to show first time normal install")
         let hostingController = UIHostingController(rootView: OnboardingView())
         hostingController.modalPresentationStyle = .fullScreen
         
@@ -158,14 +148,12 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate, UITabBarControllerDeleg
     
     
     func scene(_ scene: UIScene, openURLContexts URLContexts: Set<UIOpenURLContext>) {
-        print("delegatetest scene delegate openURLContexts")
         if let url = URLContexts.first?.url {
             Branch.getInstance().handleDeepLink(url)
         }
     }
     
     func scene(_ scene: UIScene, continue userActivity: NSUserActivity) {
-        print("delegatetest scene delegate NSUserAcitvity")
         Branch.getInstance().continue(userActivity)
     }
     
@@ -233,7 +221,6 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate, UITabBarControllerDeleg
         let newImageView = UIImageView()
         
         newImageView.sd_setImage(with: reference, placeholderImage: UIImage(named: "placeholder_image"))
-        print("Attempting to send notification to view with image info \(reference.fullPath)")
         let newImageVC = NotificationPhotoVC(imageView: newImageView, caption: caption)
         let navigationController = UINavigationController(rootViewController: newImageVC)
         window?.rootViewController?.present(navigationController, animated: true, completion: nil)
@@ -249,7 +236,6 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate, UITabBarControllerDeleg
     func sceneDidBecomeActive(_ scene: UIScene) {
         // Called when the scene has moved from an inactive state to an active state.
         // Use this method to restart any tasks that were paused (or not yet started) when the scene was inactive.
-        print("delegatetest scene delegate did become active")
         // Access the stored Branch link data
         //Enable tab bar
         
@@ -272,7 +258,6 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate, UITabBarControllerDeleg
     }
     
     func scene(_ scene: UIScene, willContinueUserActivityWithType userActivityType: String) {
-        print("delegatetest scene delgate willcontiunueuseractivitywithtype")
         scene.userActivity = NSUserActivity(activityType: userActivityType)
         scene.delegate = self
     }
