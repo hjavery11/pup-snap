@@ -29,7 +29,6 @@ class PhotoVC: UIViewController, UINavigationControllerDelegate, UIImagePickerCo
     
     var fontType: UIFont?
     
-    var myFont = UIFont(name: MyFonts.base.rawValue, size: 32)
     var largeTitleFontSize: CGFloat?
     let deviceWidth = UIScreen.main.bounds.width
     
@@ -163,9 +162,10 @@ class PhotoVC: UIViewController, UINavigationControllerDelegate, UIImagePickerCo
     func setNavigationBarTitle() {
         navigationController?.navigationBar.prefersLargeTitles = true
         navigationController?.navigationBar.largeTitleTextAttributes = [
-            NSAttributedString.Key.font: myFont!,
+            NSAttributedString.Key.font: UIFont(name: MyFonts.bold.rawValue, size: largeTitleFontSize ?? 12)!,
             NSAttributedString.Key.foregroundColor: UIColor.systemPurple
         ]
+     
     }
     
     func setupConnector() {

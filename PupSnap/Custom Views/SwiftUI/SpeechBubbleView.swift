@@ -15,6 +15,7 @@ struct SpeechBubbleView: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
             Text(vm.speechBubbleText)
+                .font(.custom(MyFonts.base.rawValue, size: 16))
                 .padding()
                 .background(Color.white)
                 .foregroundStyle(.black)

@@ -62,13 +62,19 @@ class FeedVC: UIViewController, FullScreenPhotoVCDelegate {
     
     func setTitle() {
         let name = LaunchManager.shared.dog?.name ?? "Dog"
-        self.navigationItem.title = "🐶 \(name) Photos"
+        self.navigationItem.title = "🐶 \(name)'s Photos"
         
     }
 
     
     func configureNavigationBar() {
         navigationController?.navigationBar.tintColor = .systemPurple
+            navigationController?.navigationBar.titleTextAttributes = [
+                NSAttributedString.Key.font: UIFont(name: MyFonts.base.rawValue, size: 20)!,
+                NSAttributedString.Key.foregroundColor: UIColor.systemPurple
+            ]
+         
+        
     }
     
     func createLoadingView() {

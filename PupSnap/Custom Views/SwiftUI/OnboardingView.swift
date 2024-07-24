@@ -17,8 +17,7 @@ struct OnboardingView: View {
                 VStack {
                     HStack{
                         Text("Enter your dog's name:")
-                            .font(.title2)
-                            .bold()
+                            .font(.custom(MyFonts.base.rawValue, size: 22))
                         Spacer()
                     }
                     .padding()
@@ -32,9 +31,9 @@ struct OnboardingView: View {
                         Spacer()
                     }
                     HStack{
-                        Text("Then Choose Your Dog!")
-                            .font(.title2)
-                            .bold()
+                        Text("Then choose your dog!")
+                        .font(.custom(MyFonts.base.rawValue, size: 22))
+                         
                         Spacer()
                     }
                     .padding()
@@ -76,7 +75,7 @@ struct OnboardingView: View {
                         .disabled(viewModel.dogName.isEmpty || viewModel.selectedDog == "")
                     }
                 }
-                .navigationTitle("Welcome to PupSnap")
+                .navigationTitle("Welcome to PupSnap")      
             }
             .foregroundStyle(Color(.systemPurple))
             .opacity(viewModel.isLoading ? 0.1:1)

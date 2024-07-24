@@ -22,7 +22,7 @@ struct SettingsView: View {
                             }
                             
                         }
-                       
+                        
                         HStack {
                             NavigationLink("Customize Dog") {
                                 DogView(viewModel: viewModel)
@@ -34,7 +34,7 @@ struct SettingsView: View {
                                 Text("About")
                             }
                         }
-                       
+                        
                         HStack {
                             Toggle("Push Notifications", isOn: $viewModel.pushNotifs)
                                 .onChange(of:viewModel.pushNotifs) { value in
@@ -53,9 +53,9 @@ struct SettingsView: View {
                 } footer: {
                     Text("To share photos with another user, go to Pairing -> Share My Key")
                 }
-               
+                
             }
-        }        
+            }
     }
 }
 

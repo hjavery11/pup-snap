@@ -19,6 +19,7 @@
 	<false/>
 	<key>UIAppFonts</key>
 	<array>
+		<string>Handlee-Regular.ttf</string>
 		<string>ShadowsIntoLight-Regular.ttf</string>
 		<string>Roboto-Black.ttf</string>
 		<string>Roboto-BlackItalic.ttf</string>

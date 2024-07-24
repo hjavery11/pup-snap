@@ -7,12 +7,8 @@
 
 import UIKit
 
-struct AppFontName {
-    static let regular = "Roboto"
-    static let bold = "Roboto-Bold"
-    static let italic = "Roboto-Italic"
-}
 
 enum MyFonts: String {
     case base = "Roboto"
+    case bold = "Roboto-Bold"
 }

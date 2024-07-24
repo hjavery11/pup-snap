@@ -85,11 +85,11 @@ struct PairingView: View {
                     do {
                         viewModel.isLoading = true
                         try await viewModel.subscribeToBranchKey()
+                        try await LaunchManager.shared.refreshToken()
                         try await viewModel.updateDog()
                         viewModel.isLoading = false
                         LaunchManager.shared.showToast = true
-                        presentationMode.wrappedValue.dismiss()
-                        try await LaunchManager.shared.refreshToken()
+                        presentationMode.wrappedValue.dismiss()                     
                         AppDelegate.setupCompletionSubject.send(())                     
                         PersistenceManager.setupDone()
                         viewModel.firstTimeLaunch = false

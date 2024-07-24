@@ -140,6 +140,19 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate, UITabBarControllerDeleg
         print("attempting to show first time normal install")
         let hostingController = UIHostingController(rootView: OnboardingView())
         hostingController.modalPresentationStyle = .fullScreen
+        
+        let appear = UINavigationBarAppearance()
+
+            let atters: [NSAttributedString.Key: Any] = [
+                .font: UIFont(name: MyFonts.bold.rawValue, size: 28) ?? UIFont.systemFont(ofSize: 28),
+                .foregroundColor: UIColor.systemPurple
+            ]
+
+            appear.largeTitleTextAttributes = atters
+            appear.titleTextAttributes = atters
+        
+        UINavigationBar.appearance().standardAppearance = appear
+        
         window?.rootViewController?.present(hostingController, animated: true)
     }
     
