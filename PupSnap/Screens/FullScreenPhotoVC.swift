@@ -24,6 +24,9 @@ class FullScreenPhotoVC: UIViewController, RatingViewControllerDelegate {
     var ratingView = RatingViewController()
     var imageView = UIImageView()
     
+    private var didLayoutCaption: Bool = false
+    private var imageLayoutDone: Bool = false
+    
     var photo: Photo
     var indexPath: IndexPath?
     
@@ -55,24 +58,37 @@ class FullScreenPhotoVC: UIViewController, RatingViewControllerDelegate {
         }
         setupLoading()
         addGestures()
-        
     }
+    
+    override func viewSafeAreaInsetsDidChange() {
+        layoutRatingView()
+    }
+
     
     func configureImageView() {
         imageView.translatesAutoresizingMaskIntoConstraints = false
-        imageView.contentMode = .scaleAspectFit
+        //imageView.contentMode = .scaleAspectFit
         
         view.addSubview(imageView)
         
+        let aspectRatio = 0.75 //standard iphone vertical image
+        let imageWidth = view.bounds.width
+        let imageHeight = imageWidth / aspectRatio
+        
+        
         NSLayoutConstraint.activate([
-            imageView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            imageView.widthAnchor.constraint(equalToConstant: imageWidth),
+            imageView.heightAnchor.constraint(equalToConstant: imageHeight),
             imageView.centerYAnchor.constraint(equalTo: view.centerYAnchor),
-            imageView.widthAnchor.constraint(equalTo: view.widthAnchor),
-            imageView.heightAnchor.constraint(equalTo: view.heightAnchor)
+            imageView.leadingAnchor.constraint(equalTo: view.leadingAnchor)
         ])
+        
+        print("view did configureImageView")
     }
     
     func configureCaptionView() {
+        view.layoutIfNeeded()
+        
         view.addSubview(captionView)
         captionView.translatesAutoresizingMaskIntoConstraints = false
         captionView.text = photo.caption
@@ -81,22 +97,10 @@ class FullScreenPhotoVC: UIViewController, RatingViewControllerDelegate {
         
         
         NSLayoutConstraint.activate([
-            captionView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 10),
+            captionView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
             captionView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 10),
-        ])
-    }
-    
-    func configureTotalRatingView() {
-        view.addSubview(totalRatingView)
-        totalRatingView.text = "Cute Rating: \(photo.averageRating)/5"
-        totalRatingView.translatesAutoresizingMaskIntoConstraints = false
-        
-        let width = (view.frame.width - 20) / 2
-        
-        NSLayoutConstraint.activate([
-            totalRatingView.topAnchor.constraint(equalTo: captionView.topAnchor),
-            totalRatingView.leadingAnchor.constraint(equalTo: captionView.trailingAnchor, constant: 10),
-            totalRatingView.widthAnchor.constraint(equalToConstant: width)
+            captionView.bottomAnchor.constraint(equalTo: imageView.topAnchor),
+            captionView.widthAnchor.constraint(equalTo: view.widthAnchor)
         ])
     }
     
@@ -160,7 +164,6 @@ class FullScreenPhotoVC: UIViewController, RatingViewControllerDelegate {
         ratingView.didMove(toParent: self)
         
         setUserRating()
-        layoutRatingView()
         
     }
     
@@ -187,11 +190,12 @@ class FullScreenPhotoVC: UIViewController, RatingViewControllerDelegate {
     func layoutRatingView() {
         view.layoutIfNeeded()
         
+        let heightAvail = view.safeAreaLayoutGuide.layoutFrame.maxY - imageView.frame.maxY
+        
         NSLayoutConstraint.activate([
-            ratingView.view.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-            ratingView.view.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            ratingView.view.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -20),
-            ratingView.view.widthAnchor.constraint(equalTo: view.widthAnchor)
+            ratingView.view.centerYAnchor.constraint(equalTo: imageView.bottomAnchor, constant: heightAvail / 2),
+            ratingView.view.widthAnchor.constraint(equalTo: view.widthAnchor, multiplier: 0.75),
+            ratingView.view.centerXAnchor.constraint(equalTo: view.centerXAnchor)
         ])
     }
     

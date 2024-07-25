@@ -16,30 +16,33 @@ class RatingViewController: UIViewController {
     weak var lastClickedButton: UIButton?
     var enabled: Bool = true
     var delegate: RatingViewControllerDelegate?
-  
+    
     let starButtons: [UIButton] = {
         var button1: UIImage?
         var button2: UIImage?
         
-        if #available(iOS 17.0, *) {
-            button1 = UIImage(systemName: "dog", withConfiguration: UIImage.SymbolConfiguration(pointSize: 32, weight: .light))
-            button2 = UIImage(systemName: "dog.fill", withConfiguration: UIImage.SymbolConfiguration(pointSize: 32, weight: .light))
-                                
-        } else if #available(iOS 15.0, *) {
-            button1 = UIImage(systemName: "heart", withConfiguration: UIImage.SymbolConfiguration(pointSize: 32, weight: .light))
-            button2 = UIImage(systemName: "heart.fill", withConfiguration: UIImage.SymbolConfiguration(pointSize: 32, weight: .light))
-        } else {
-            button1 = UIImage(systemName: "circle", withConfiguration: UIImage.SymbolConfiguration(pointSize: 32, weight: .light))
-            button2 = UIImage(systemName: "circle.fill", withConfiguration: UIImage.SymbolConfiguration(pointSize: 32, weight: .light))
-        }
+        //        if #available(iOS 17.0, *) {
+        //            button1 = UIImage(systemName: "dog", withConfiguration: UIImage.SymbolConfiguration(pointSize: 32, weight: .light))
+        //            button2 = UIImage(systemName: "dog.fill", withConfiguration: UIImage.SymbolConfiguration(pointSize: 32, weight: .light))
+        //
+        //        } else if #available(iOS 15.0, *) {
+        //            button1 = UIImage(systemName: "heart", withConfiguration: UIImage.SymbolConfiguration(pointSize: 32, weight: .light))
+        //            button2 = UIImage(systemName: "heart.fill", withConfiguration: UIImage.SymbolConfiguration(pointSize: 32, weight: .light))
+        //        } else {
+        //            button1 = UIImage(systemName: "circle", withConfiguration: UIImage.SymbolConfiguration(pointSize: 32, weight: .light))
+        //            button2 = UIImage(systemName: "circle.fill", withConfiguration: UIImage.SymbolConfiguration(pointSize: 32, weight: .light))
+        //        }
+        button1 = UIImage(named: "pawprint")
+        button2 = UIImage(named: "pawprint-fill")
+        
         
         var buttons = [UIButton]()
         for _ in 1...5 {
-           // var configuration = UIButton.Configuration.plain()
+            // var configuration = UIButton.Configuration.plain()
             let button = UIButton()
             button.setImage(button1, for: .normal)
             button.setImage(button2, for: .selected)
-            button.tintColor = .systemPurple
+            
             buttons.append(button)
         }
         return buttons
@@ -50,36 +53,50 @@ class RatingViewController: UIViewController {
             updateStarSelectionStates()
         }
     }
-
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .clear
         
         setupStarButtons()
     }
-
+    
     
     
     func setupStarButtons() {
         let stackView = UIStackView(arrangedSubviews: starButtons)
         stackView.axis = .horizontal
         stackView.distribution = .fillEqually
-        stackView.spacing = 10
+        stackView.spacing = 15
         stackView.translatesAutoresizingMaskIntoConstraints = false
         
         view.addSubview(stackView)
         
+        // Calculate the width for each button
+        let totalWidth = view.bounds.width
+        let spacing: CGFloat = 15.0
+        let numberOfButtons: CGFloat = 5
+        let buttonWidth = (totalWidth - (spacing * (numberOfButtons - 1))) / numberOfButtons
+        
         for (index, button) in starButtons.enumerated() {
             button.tag = index + 1
             button.addTarget(self, action: #selector(starButtonTapped(_:)), for: .touchUpInside)
+            
+            // Add height and width constraints to each button
+            button.translatesAutoresizingMaskIntoConstraints = false
+            let aspectRatio: CGFloat = 475/430 // Assuming the images are square
+            NSLayoutConstraint.activate([
+                button.heightAnchor.constraint(equalTo: button.widthAnchor, multiplier: aspectRatio)
+            ])
+            
         }
-      
+        
         NSLayoutConstraint.activate([
-                   stackView.topAnchor.constraint(equalTo: view.topAnchor),
-                   stackView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
-                   stackView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-                   stackView.trailingAnchor.constraint(equalTo: view.trailingAnchor)
-               ])
+            stackView.topAnchor.constraint(equalTo: view.topAnchor),
+            stackView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
+            stackView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            stackView.trailingAnchor.constraint(equalTo: view.trailingAnchor)
+        ])
         
         updateStarSelectionStates()
     }
@@ -94,12 +111,12 @@ class RatingViewController: UIViewController {
         }
         
         if let viewControllers = navigationController?.viewControllers {
-                    for viewController in viewControllers {
-                        if viewController.isKind(of: FullScreenPhotoVC.self) {
-                            delegate?.updateRating(rating: rating)
-                        }
-                    }
+            for viewController in viewControllers {
+                if viewController.isKind(of: FullScreenPhotoVC.self) {
+                    delegate?.updateRating(rating: rating)
                 }
+            }
+        }
     }
     
     func updateStarSelectionStates() {

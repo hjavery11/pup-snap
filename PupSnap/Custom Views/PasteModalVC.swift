@@ -13,33 +13,72 @@ class PasteModalVC: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        
+        configureTitle()
         configurePasteControl()
         configureText()
         
+        setupSophie()
+        
+    }
+    
+    func setupSophie() {
+        let sophie = UIImageView(image: UIImage(named: "sophie-iso"))
+        sophie.translatesAutoresizingMaskIntoConstraints = false
+        view.addSubview(sophie)
+        
+        NSLayoutConstraint.activate([
+            sophie.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            sophie.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -100),
+            sophie.widthAnchor.constraint(equalToConstant: 300),
+            sophie.heightAnchor.constraint(equalToConstant: 300)
+        ])
+    }
+    
+    func configureTitle() {
+        title = "Welcome to PupSnap"
+        navigationController?.navigationBar.prefersLargeTitles = true
+        navigationController?.navigationBar.largeTitleTextAttributes = [NSAttributedString.Key.foregroundColor:UIColor.systemPurple]
     }
     
     func configureText() {
+        let helper = UILabel()
+        helper.text = "You are joining a feed that was shared with you."
+        helper.translatesAutoresizingMaskIntoConstraints = false
+        helper.textColor = .label
+        helper.font = UIFont(name: MyFonts.base.rawValue, size: 20)
+        helper.numberOfLines = 2
+        view.addSubview(helper)
+        
+        
         let instructions = UILabel()
-        instructions.text = "Press here to use app"
+        instructions.text = "Click the button to get started!"
+        instructions.font = UIFont(name: MyFonts.base.rawValue, size: 20)
         instructions.translatesAutoresizingMaskIntoConstraints = false
+        instructions.textColor = .label
         view.addSubview(instructions)
         
+        
+        
         NSLayoutConstraint.activate([
-            instructions.centerXAnchor.constraint(equalTo: view.centerXAnchor, constant: 30),
-            instructions.centerYAnchor.constraint(equalTo: view.centerYAnchor, constant: 30)
+            helper.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 15),
+            helper.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 30),
+            helper.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -15),
+            instructions.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 15),
+            instructions.topAnchor.constraint(equalTo: helper.bottomAnchor, constant: 25)
         ])
     }
     
     func configurePasteControl() {
         let pasteControl: UIPasteControl = {
                 let pcConfig = UIPasteControl.Configuration()
-                pcConfig.baseBackgroundColor = UIColor(red: 55/255, green: 153/255, blue: 211/255, alpha: 1)
+                pcConfig.baseBackgroundColor = .systemPurple
                 pcConfig.baseForegroundColor = .white
                 pcConfig.cornerStyle = .capsule
             
                 // Three options: icon only, label only, or icon and label
             pcConfig.displayMode = .iconOnly
-                let frame = CGRect(x: 20 , y: 60, width: 40, height: 40)
+                let frame = CGRect(x: (view.bounds.width/2.0 - 50), y: (view.bounds.height/2.0 - 100), width: 100, height: 50)
                 let pc = UIPasteControl(configuration: pcConfig)
                 pc.frame = frame
 
@@ -49,13 +88,10 @@ class PasteModalVC: UIViewController {
                 pc.target = self
                 return pc;
             }()
-        pasteControl.translatesAutoresizingMaskIntoConstraints = false
-        view.addSubview(pasteControl)
         
-        NSLayoutConstraint.activate([
-            pasteControl.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            pasteControl.centerYAnchor.constraint(equalTo: view.centerYAnchor)
-        ])
+
+        view.addSubview(pasteControl)
+      
     }
     
     

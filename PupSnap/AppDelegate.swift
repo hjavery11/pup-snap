@@ -52,6 +52,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate, MessagingDelegate {
         application.registerForRemoteNotifications()
         
         let setupDone = UserDefaults.standard.bool(forKey: PersistenceManager.Keys.setupComplete)
+        //uncomment these 2 lines to force branch install
+//        LaunchManager.shared.branchPasteboardInstall = true
+//        UIPasteboard.general.url = URL(string:"https://pupsnap-alternate.app.link/iYSReGVhjLb?__branch_flow_type=viewapp&__branch_flow_id=1345084269039655716&__branch_mobile_deepview_type=1&nl_opt_in=1&_cpts=1721931307629")!
         
         if !setupDone {
             print("first launch-!setupDone - 2nd")

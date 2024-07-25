@@ -70,7 +70,7 @@ class FeedVC: UIViewController, FullScreenPhotoVCDelegate {
     func configureNavigationBar() {
         navigationController?.navigationBar.tintColor = .systemPurple
             navigationController?.navigationBar.titleTextAttributes = [
-                NSAttributedString.Key.font: UIFont(name: MyFonts.base.rawValue, size: 20)!,
+                NSAttributedString.Key.font: UIFont(name: MyFonts.base.rawValue, size: 18)!,
                 NSAttributedString.Key.foregroundColor: UIColor.systemPurple
             ]
          
@@ -227,7 +227,7 @@ class FeedVC: UIViewController, FullScreenPhotoVCDelegate {
         snapshot.appendItems(photoArray)
         dataSource?.apply(snapshot, animatingDifferences: true)
         if photoArray.isEmpty {
-            configureEmptyView()
+            configureEmptyView()            
         }
     }
     
@@ -246,12 +246,13 @@ class FeedVC: UIViewController, FullScreenPhotoVCDelegate {
         guard let image = cell.thumbnailImageView.image else { return }
         let fullScreenVC = FullScreenPhotoVC(photo: photo, indexPath: indexPath, image: image)
         fullScreenVC.delegate = self
-        if let navController = self.navigationController {
-            navController.pushViewController(fullScreenVC, animated: true)
-        } else {
-            self.present(fullScreenVC, animated: true)
+        if cell.thumbnailImageView.sd_currentDownloadTask == nil {
+            if let navController = self.navigationController {
+                navController.pushViewController(fullScreenVC, animated: true)
+            } else {
+                self.present(fullScreenVC, animated: true)
+            }
         }
-        
     }
     
     func tabSelected() {
@@ -357,8 +358,7 @@ class FeedVC: UIViewController, FullScreenPhotoVCDelegate {
         
         // Create a new image view for the prior image
         let newImageView = UIImageView(image: priorImage)
-        newImageView.contentMode = .scaleAspectFit
-        newImageView.frame = currentImageView.bounds
+        newImageView.frame = currentImageView.frame
         newImageView.frame.origin.x = -currentImageView.frame.width
         
         currentImageView.superview?.addSubview(newImageView)
@@ -400,8 +400,7 @@ class FeedVC: UIViewController, FullScreenPhotoVCDelegate {
         
         // Create a new image view for the next image
         let newImageView = UIImageView(image: nextImage)
-        newImageView.contentMode = .scaleAspectFit
-        newImageView.frame = currentImageView.bounds
+        newImageView.frame = currentImageView.frame
         newImageView.frame.origin.x = currentImageView.frame.width
         
         currentImageView.superview?.addSubview(newImageView)
