@@ -116,17 +116,17 @@ class PhotoVC: UIViewController, UINavigationControllerDelegate, UIImagePickerCo
         // Assuming the original image size is available, use its aspect ratio.
         if let image = dogImage.image {
             let aspectRatio = image.size.width / image.size.height
-            var targetWidth: CGFloat = 300
+            var targetWidth: CGFloat = view.bounds.width
             var targetHeight = targetWidth / aspectRatio
 
-            // Check if the calculated height exceeds 400
-            if targetHeight > 350 {
-                targetHeight = 350
-                targetWidth = targetHeight * aspectRatio
-            }
+//            // Check if the calculated height exceeds 400
+//            if targetHeight > 350 {
+//                targetHeight = 350
+//                targetWidth = targetHeight * aspectRatio
+//            }
             print("width:\(targetWidth), height: \(targetHeight)")
             NSLayoutConstraint.activate([
-                dogImage.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor),
+                dogImage.centerXAnchor.constraint(equalTo: view.safeAreaLayoutGuide.centerXAnchor),
                 dogImage.centerYAnchor.constraint(equalTo: view.safeAreaLayoutGuide.centerYAnchor),
                 dogImage.widthAnchor.constraint(equalToConstant: targetWidth),
                 dogImage.heightAnchor.constraint(equalToConstant: targetHeight)
@@ -158,23 +158,11 @@ class PhotoVC: UIViewController, UINavigationControllerDelegate, UIImagePickerCo
         
         NSLayoutConstraint.activate([
             hostingController.view.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -padding),
-            hostingController.view.bottomAnchor.constraint(equalTo: dogImage.topAnchor, constant: -padding)
+            hostingController.view.bottomAnchor.constraint(equalTo: dogImage.topAnchor, constant: -30)
         ])
         
         hostingController.didMove(toParent: self)
         self.speechBubbleHostingController = hostingController
-        
-     
-        
-    }
-    
-    func setNavigationBarTitle() {
-        navigationController?.navigationBar.prefersLargeTitles = true
-        navigationController?.navigationBar.largeTitleTextAttributes = [
-            NSAttributedString.Key.font: UIFont(name: MyFonts.bold.rawValue, size: largeTitleFontSize ?? 12)!,
-            NSAttributedString.Key.foregroundColor: UIColor.systemPurple
-        ]
-     
     }
     
     func setupConnector() {
@@ -193,6 +181,17 @@ class PhotoVC: UIViewController, UINavigationControllerDelegate, UIImagePickerCo
             ])
         }
     }
+    
+    func setNavigationBarTitle() {
+        navigationController?.navigationBar.prefersLargeTitles = true
+        navigationController?.navigationBar.largeTitleTextAttributes = [
+            NSAttributedString.Key.font: UIFont(name: MyFonts.bold.rawValue, size: largeTitleFontSize ?? 12)!,
+            NSAttributedString.Key.foregroundColor: UIColor.systemPurple
+        ]
+     
+    }
+    
+    
     
     func setFontSize() {
         // set font size based off width of screen
