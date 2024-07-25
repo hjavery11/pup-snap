@@ -57,21 +57,20 @@ class AppDelegate: UIResponder, UIApplicationDelegate, MessagingDelegate {
             print("first launch-!setupDone - 2nd")
             BNCPasteboard.sharedInstance().checkOnInstall = true
             if BNCPasteboard.sharedInstance().isUrlOnPasteboard() {
-                DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
-                    AppDelegate.branchPasteBoardTesting.send(())
-                }
-                runOnboardingSetup()
-                return true
+                LaunchManager.shared.branchPasteboardInstall = true
+            } else {
+                LaunchManager.shared.launchOnboarding()              
             }
         } else {
             runStandardSetup()
         }
         
-        // This version of `initSession` includes the source UIScene in the callback
+        if !LaunchManager.shared.branchPasteboardInstall {
+            // This version of `initSession` includes the source UIScene in the callback
             BranchScene.shared().initSession(launchOptions: launchOptions, registerDeepLinkHandler: { (params, error, scene) in
-                LaunchManager.shared.checkBranchParams(params)                
+                LaunchManager.shared.checkBranchParams(params)
             })
-
+        }
         
      
         return true
@@ -109,12 +108,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, MessagingDelegate {
             }
         }
     }
-    
-    private func runOnboardingSetup() {
-        Task {
-            LaunchManager.shared.launchOnboarding()
-        }
-    }
+
     
    
     

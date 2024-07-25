@@ -32,11 +32,11 @@ struct PairingView: View {
                                 .onTapGesture {
                                     viewModel.showingChangeKey = true
                                 }
-                                .opacity(LaunchManager.shared.launchingFromBranchLink ? 0:1)
+                                .opacity(LaunchManager.shared.launchingFromBranchLink || LaunchManager.shared.branchPasteboardInstall ? 0:1)
                         }
                         
                         ShareLink(item: URL(string: LaunchManager.shared.shareURL ?? "https://pupsnapapp.com")!, subject: Text("Join me on PupSnap!"))
-                            .opacity(LaunchManager.shared.launchingFromBranchLink ? 0:1)
+                            .opacity(LaunchManager.shared.launchingFromBranchLink || LaunchManager.shared.branchPasteboardInstall ? 0:1)
                         
                     } header: {
                         Text("Pairing")

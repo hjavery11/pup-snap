@@ -34,6 +34,8 @@ class LaunchManager {
     
     var shareURL: String?
     
+    var branchPasteboardInstall: Bool = false
+    
     private init() {}
     
     func branchSetup() {
@@ -84,11 +86,10 @@ class LaunchManager {
             if newKey != 0 {
                 self.onboardingPairingKey = newKey
             }
-        }
+        }        
         
-        AppDelegate.regularFirstTimeLaunch.send(())
     }
-    
+
     func finishOnboarding(with dog: Dog) async throws {
         guard let pairingKey = self.onboardingPairingKey else {
             print("No onboarding pairing key found, cant finish onboarding")
@@ -133,16 +134,18 @@ class LaunchManager {
     }
     
     func initializePasteboardBranch() {
-        // Initialize Branch session
-        Branch.getInstance().initSession() { (params, error) in
-            if let params = params as? [String: AnyObject], let pairingKeyValue = params["pairingKey"] {
-               print(params)
-                    if let sharedPairingKey = pairingKeyValue as? Int {
-                        print("handling pairing key branch param as Int: \(sharedPairingKey)")
-                    } else if let pairingKeyString = pairingKeyValue as? String, let sharedPairingKey = Int(pairingKeyString) {
-                        print("handling pairing key branch param as String: \(sharedPairingKey)")
-                        LaunchManager.shared.firstTimeLaunch = true
-                        AppDelegate.branchFirstTimeLaunch.send(sharedPairingKey)
+
+            Branch.getInstance().initSession() { (params, error) in
+                if let params = params as? [String: AnyObject], let pairingKeyValue = params["pairingKey"] {
+                    if !UserDefaults.standard.bool(forKey: PersistenceManager.Keys.setupComplete) {
+                        if let sharedPairingKey = pairingKeyValue as? Int {
+                            print("handling pairing key branch param as Int: \(sharedPairingKey)")
+                            AppDelegate.branchFirstTimeLaunch.send(sharedPairingKey)
+                        } else if let pairingKeyString = pairingKeyValue as? String, let sharedPairingKey = Int(pairingKeyString) {
+                            print("handling pairing key branch param as String: \(sharedPairingKey)")
+                            AppDelegate.branchFirstTimeLaunch.send(sharedPairingKey)
+                            
+                        }
                     }
             }
         }
@@ -161,17 +164,18 @@ class LaunchManager {
     }
     
     func checkBranchParams(_ params: [AnyHashable: Any]?) {
-        guard let params = params else { return }
-        if let pairingKey = params["pairingKey"] {
-            print("Found pairing key from branch: \(pairingKey)")
-            print(params)
-            if let pairingKeyInt = pairingKey as? Int {
-                self.sharedPairingKey = pairingKeyInt
-            } else if let pairingKeyString = pairingKey as? String {
-                self.sharedPairingKey = Int(pairingKeyString)
+        guard let params = params else { return }       
+            if let pairingKey = params["pairingKey"] {
+                print("Found pairing key from branch: \(pairingKey)")
+                print(params)
+                if let pairingKeyInt = pairingKey as? Int {
+                    self.sharedPairingKey = pairingKeyInt
+                } else if let pairingKeyString = pairingKey as? String {
+                    self.sharedPairingKey = Int(pairingKeyString)
+                }
+                self.launchingFromBranchLink = true
+                branchSetup()
             }
-            self.launchingFromBranchLink = true
-            branchSetup()
-        }
+    
     }
 }

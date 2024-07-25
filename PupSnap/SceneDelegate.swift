@@ -76,6 +76,13 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate, UITabBarControllerDeleg
             }
             .store(in: &cancellables)
         
+        let setupDone = UserDefaults.standard.bool(forKey: PersistenceManager.Keys.setupComplete)
+        
+        if LaunchManager.shared.branchPasteboardInstall {
+            AppDelegate.branchPasteBoardTesting.send(())
+        } else if !setupDone {
+            AppDelegate.regularFirstTimeLaunch.send(())
+        }
     }
     
     private func setupBranchPasteboard() {
@@ -99,8 +106,8 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate, UITabBarControllerDeleg
 //        //check to see if push notification setup is needed now that scene is ready
 //        LaunchManager.shared.showPushPhoto()
 //        
-//        //create share link so its ready
-//        LaunchManager.shared.createBranchLink()
+        //create share link so its ready
+        LaunchManager.shared.createBranchLink()
         
         
     }
@@ -132,7 +139,6 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate, UITabBarControllerDeleg
         let appear = UINavigationBarAppearance()
 
             let atters: [NSAttributedString.Key: Any] = [
-                .font: UIFont(name: MyFonts.bold.rawValue, size: 28) ?? UIFont.systemFont(ofSize: 28),
                 .foregroundColor: UIColor.systemPurple
             ]
 
