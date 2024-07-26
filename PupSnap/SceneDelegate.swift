@@ -91,14 +91,14 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate, UITabBarControllerDeleg
     
     private func setupBranchPasteboard() {
         let pasteVC = PasteModalVC()
-        let navigationController = UINavigationController(rootViewController: pasteVC)
-        navigationController.modalPresentationStyle = .fullScreen
-        window?.rootViewController?.present(navigationController, animated: false, completion: nil)
+        let nav = UINavigationController(rootViewController: pasteVC)
+        
+        window?.rootViewController = nav
         print("presented paste vc")
     }
           
     private func setupScene(connectionOptions: UIScene.ConnectionOptions, scene: UIScene) {
-        print("returning-setupScene-5th")
+        print("setup tabcontroller base scene")
         tabBarController = createTabbar()
         tabBarController?.delegate = self
  
@@ -155,7 +155,8 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate, UITabBarControllerDeleg
         
         UINavigationBar.appearance().standardAppearance = appear
         
-        window?.rootViewController?.present(hostingController, animated: true)
+        
+        window?.rootViewController = hostingController
     }
     
     

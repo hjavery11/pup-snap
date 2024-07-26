@@ -98,22 +98,21 @@ class PasteModalVC: UIViewController {
     
     
     override func paste(itemProviders: [NSItemProvider]) {
-        if #available(iOS 16.0, *) {
             DispatchQueue.main.async { [weak self] in
+                self?.navigationController?.dismiss(animated: true)
                 if let _ = BNCPasteboard.sharedInstance().checkForBranchLink() {
-                    self?.navigationController?.dismiss(animated: true)
-                    LaunchManager.shared.firstTimeLaunch = true
+                    print("found branch pasteboard link, sending to setup")
                     LaunchManager.shared.initializePasteboardBranch()
+                    Branch.getInstance().passPaste(itemProviders)
+                    LaunchManager.shared.firstTimeLaunch = true
+                  
                 } else {
-                    self?.navigationController?.dismiss(animated: true)
+                    print("found non branch link on pasteboard, sending to regular onboarding")
                     LaunchManager.shared.launchOnboarding()
                     AppDelegate.regularFirstTimeLaunch.send(())
                 }
             }
           //Branch.getInstance().passPaste(itemProviders)
-        } else {
-            // Fallback on earlier versions
-        }
     }
 
 
