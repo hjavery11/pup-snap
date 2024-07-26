@@ -97,9 +97,18 @@ class PasteModalVC: UIViewController {
     
     override func paste(itemProviders: [NSItemProvider]) {
         if #available(iOS 16.0, *) {
-            navigationController?.dismiss(animated: true)
-            LaunchManager.shared.firstTimeLaunch = true
-           LaunchManager.shared.initializePasteboardBranch()
+            for i in itemProviders {
+                print(i)
+            }
+            if let branchURL = BNCPasteboard.sharedInstance().checkForBranchLink() {
+                navigationController?.dismiss(animated: true)
+                LaunchManager.shared.firstTimeLaunch = true
+               LaunchManager.shared.initializePasteboardBranch()
+            } else {
+                LaunchManager.shared.launchOnboarding() 
+            }
+            
+            
           //Branch.getInstance().passPaste(itemProviders)
         } else {
             // Fallback on earlier versions

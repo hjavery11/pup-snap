@@ -30,12 +30,6 @@ struct SettingsView: View {
                         }
                         
                         HStack {
-                            NavigationLink("About") {
-                                Text("About")
-                            }
-                        }
-                        
-                        HStack {
                             Toggle("Push Notifications", isOn: $viewModel.pushNotifs)
                                 .onChange(of:viewModel.pushNotifs) { value in
                                     if value {

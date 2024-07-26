@@ -157,7 +157,8 @@ import Foundation
         try await changeKey()
         try await updateDog()
         LaunchManager.shared.showToast = true
-        LaunchManager.shared.launchingFromBranchLink = false        
+        LaunchManager.shared.launchingFromBranchLink = false      
+        LaunchManager.shared.branchPasteboardInstall = false
     }
     
    

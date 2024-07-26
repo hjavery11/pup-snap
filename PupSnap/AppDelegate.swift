@@ -58,9 +58,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate, MessagingDelegate {
         
         if !setupDone {
             print("first launch-!setupDone - 2nd")
-            BNCPasteboard.sharedInstance().checkOnInstall = true
             if BNCPasteboard.sharedInstance().isUrlOnPasteboard() {
-                LaunchManager.shared.branchPasteboardInstall = true
+                    LaunchManager.shared.branchPasteboardInstall = true
             } else {
                 LaunchManager.shared.launchOnboarding()              
             }

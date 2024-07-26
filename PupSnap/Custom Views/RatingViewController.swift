@@ -70,13 +70,7 @@ class RatingViewController: UIViewController {
         stackView.spacing = 15
         stackView.translatesAutoresizingMaskIntoConstraints = false
         
-        view.addSubview(stackView)
-        
-        // Calculate the width for each button
-        let totalWidth = view.bounds.width
-        let spacing: CGFloat = 15.0
-        let numberOfButtons: CGFloat = 5
-        let buttonWidth = (totalWidth - (spacing * (numberOfButtons - 1))) / numberOfButtons
+        view.addSubview(stackView)        
         
         for (index, button) in starButtons.enumerated() {
             button.tag = index + 1
