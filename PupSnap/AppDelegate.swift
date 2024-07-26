@@ -28,13 +28,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate, MessagingDelegate {
     static let branchPasteBoardTesting = PassthroughSubject<Void, Never>()
     
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
-        print("first launch-didFinishLaunching - 1st")
-        print("returning-didFinishLaunching  - 1st")
-        //set default font for app
-//        for family in UIFont.familyNames.sorted() {
-//            let names = UIFont.fontNames(forFamilyName: family)
-//            print("Family: \(family) Font names: \(names)")
-//        }
         
         // Override point for customization after application launch.
 #if DEBUG
@@ -57,7 +50,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate, MessagingDelegate {
 //        UIPasteboard.general.url = URL(string:"https://pupsnap-alternate.app.link/iYSReGVhjLb?__branch_flow_type=viewapp&__branch_flow_id=1345084269039655716&__branch_mobile_deepview_type=1&nl_opt_in=1&_cpts=1721931307629")!
         
         if !setupDone {
-            print("first launch-!setupDone - 2nd")
             if BNCPasteboard.sharedInstance().isUrlOnPasteboard() {
                     LaunchManager.shared.branchPasteboardInstall = true
             } else {
@@ -74,7 +66,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, MessagingDelegate {
             })
         }
         
-     
+        print("end of app delegate")
         return true
     }
     

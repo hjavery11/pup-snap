@@ -20,7 +20,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate, UITabBarControllerDeleg
     var notificationResponse = false
     
     func scene(_ scene: UIScene, willConnectTo session: UISceneSession, options connectionOptions: UIScene.ConnectionOptions) {
-        print("returning-scene first call-4th")
+        print("scene first call")
         
         guard let windowScene = (scene as? UIWindowScene) else { return }
         
@@ -32,10 +32,10 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate, UITabBarControllerDeleg
         window = UIWindow(frame: windowScene.coordinateSpace.bounds)
         window?.windowScene = windowScene
         
-        let loadingVC = LoadingVC(showText: LaunchManager.shared.firstTimeLaunch)
+       let loadingVC = LoadingVC()
         window?.rootViewController = loadingVC
         window?.makeKeyAndVisible()
-        
+        print("loading vc shown")
         // Trigger setupScene as soon as setupCompletionSubject is completed
         AppDelegate.setupCompletionSubject
             .sink { [weak self] in
@@ -61,6 +61,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate, UITabBarControllerDeleg
         AppDelegate.branchFirstTimeLaunch
             .sink { [weak self] key in
                 self?.setupBranchFirstLaunch(key)
+                print("did branchFirstTimeLaunch sink")
             }
             .store(in: &cancellables)
         
@@ -80,9 +81,12 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate, UITabBarControllerDeleg
         
         if LaunchManager.shared.branchPasteboardInstall {
             AppDelegate.branchPasteBoardTesting.send(())
+            print("sent branchPasteBoardTesting")
         } else if !setupDone {
             AppDelegate.regularFirstTimeLaunch.send(())
         }
+        
+        print("end of scene first function")
     }
     
     private func setupBranchPasteboard() {
@@ -90,12 +94,14 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate, UITabBarControllerDeleg
         let navigationController = UINavigationController(rootViewController: pasteVC)
         navigationController.modalPresentationStyle = .fullScreen
         window?.rootViewController?.present(navigationController, animated: false, completion: nil)
+        print("presented paste vc")
     }
-    
+          
     private func setupScene(connectionOptions: UIScene.ConnectionOptions, scene: UIScene) {
         print("returning-setupScene-5th")
         tabBarController = createTabbar()
         tabBarController?.delegate = self
+ 
         window?.rootViewController = tabBarController
         
         LaunchManager.shared.hasFinishedSceneLaunchSetup = true
@@ -120,6 +126,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate, UITabBarControllerDeleg
     private func setupBranchLink(key: Int) {
         let hostingController = UIHostingController(rootView: PairingView(viewModel: SettingsViewModel(pairingKey: key)))
         hostingController.modalPresentationStyle = .fullScreen
+        
         window?.rootViewController?.present(hostingController, animated: true)
         
     }
@@ -127,6 +134,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate, UITabBarControllerDeleg
     private func setupBranchFirstLaunch(_ key: Int) {
         let hostingController = UIHostingController(rootView: PairingView(viewModel: SettingsViewModel(pairingKey: key, firstTimeLaunch: true)))
         hostingController.modalPresentationStyle = .fullScreen
+        
         window?.rootViewController?.present(hostingController, animated: true) {
           
         }
@@ -227,6 +235,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate, UITabBarControllerDeleg
         newImageView.sd_setImage(with: reference, placeholderImage: UIImage(named: "placeholder_image"))
         let newImageVC = NotificationPhotoVC(imageView: newImageView, caption: caption)
         let navigationController = UINavigationController(rootViewController: newImageVC)
+        
         window?.rootViewController?.present(navigationController, animated: true, completion: nil)
     }
     

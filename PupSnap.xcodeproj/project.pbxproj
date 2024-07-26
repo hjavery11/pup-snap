@@ -38,7 +38,6 @@
 		FA80BCD82C507F9300CE7C50 /* StoreKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FA80BCD72C507F9300CE7C50 /* StoreKit.framework */; settings = {ATTRIBUTES = (Weak, ); }; };
 		FA80BCDA2C507F9A00CE7C50 /* CoreSpotlight.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FA80BCD92C507F9A00CE7C50 /* CoreSpotlight.framework */; settings = {ATTRIBUTES = (Weak, ); }; };
 		FA80BCDC2C507F9F00CE7C50 /* CoreServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FA80BCDB2C507F9F00CE7C50 /* CoreServices.framework */; settings = {ATTRIBUTES = (Weak, ); }; };
-		FA80BCDE2C507FA400CE7C50 /* WebKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FA80BCDD2C507FA400CE7C50 /* WebKit.framework */; settings = {ATTRIBUTES = (Weak, ); }; };
 		FA80BCE02C507FAC00CE7C50 /* CoreTelephony.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FA80BCDF2C507FAC00CE7C50 /* CoreTelephony.framework */; settings = {ATTRIBUTES = (Weak, ); }; };
 		FA80BCEE2C509EA000CE7C50 /* Roboto-Black.ttf in Resources */ = {isa = PBXBuildFile; fileRef = FA80BCE22C509EA000CE7C50 /* Roboto-Black.ttf */; };
 		FA80BCEF2C509EA000CE7C50 /* Roboto-Light.ttf in Resources */ = {isa = PBXBuildFile; fileRef = FA80BCE32C509EA000CE7C50 /* Roboto-Light.ttf */; };
@@ -145,7 +144,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				FA80BCE02C507FAC00CE7C50 /* CoreTelephony.framework in Frameworks */,
-				FA80BCDE2C507FA400CE7C50 /* WebKit.framework in Frameworks */,
 				FA80BCDC2C507F9F00CE7C50 /* CoreServices.framework in Frameworks */,
 				FA80BCDA2C507F9A00CE7C50 /* CoreSpotlight.framework in Frameworks */,
 				FA80BCD82C507F9300CE7C50 /* StoreKit.framework in Frameworks */,

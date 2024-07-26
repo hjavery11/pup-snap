@@ -22,6 +22,8 @@ class PasteModalVC: UIViewController {
         
     }
     
+    
+    
     func setupSophie() {
         let sophie = UIImageView(image: UIImage(named: "sophie-iso"))
         sophie.translatesAutoresizingMaskIntoConstraints = false
@@ -97,18 +99,17 @@ class PasteModalVC: UIViewController {
     
     override func paste(itemProviders: [NSItemProvider]) {
         if #available(iOS 16.0, *) {
-            for i in itemProviders {
-                print(i)
+            DispatchQueue.main.async { [weak self] in
+                if let _ = BNCPasteboard.sharedInstance().checkForBranchLink() {
+                    self?.navigationController?.dismiss(animated: true)
+                    LaunchManager.shared.firstTimeLaunch = true
+                    LaunchManager.shared.initializePasteboardBranch()
+                } else {
+                    self?.navigationController?.dismiss(animated: true)
+                    LaunchManager.shared.launchOnboarding()
+                    AppDelegate.regularFirstTimeLaunch.send(())
+                }
             }
-            if let branchURL = BNCPasteboard.sharedInstance().checkForBranchLink() {
-                navigationController?.dismiss(animated: true)
-                LaunchManager.shared.firstTimeLaunch = true
-               LaunchManager.shared.initializePasteboardBranch()
-            } else {
-                LaunchManager.shared.launchOnboarding() 
-            }
-            
-            
           //Branch.getInstance().passPaste(itemProviders)
         } else {
             // Fallback on earlier versions

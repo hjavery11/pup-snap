@@ -134,7 +134,6 @@ class LaunchManager {
     }
     
     func initializePasteboardBranch() {
-
             Branch.getInstance().initSession() { (params, error) in
                 if let params = params as? [String: AnyObject], let pairingKeyValue = params["pairingKey"] {
                     if !UserDefaults.standard.bool(forKey: PersistenceManager.Keys.setupComplete) {
