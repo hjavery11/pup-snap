@@ -13,6 +13,12 @@ class LaunchManager {
     
     static let shared = LaunchManager()
     
+    enum LaunchType {
+        case branchFirstLaunch,branchDeepLink,onboardingFirstLaunch,standardReturningLaunch
+    }
+    
+    var launchType: LaunchType?
+    
     let imageURL = "https://pupsnapapp.com/pupsnap-icon.png"
     
     var hasFinishedUserLaunchSetup: Bool = false
@@ -34,22 +40,25 @@ class LaunchManager {
     
     var shareURL: String?
     
-    var branchPasteboardInstall: Bool = false
-    
     private init() {}
     
-    func branchSetup() {
-        guard let sharedPairingKey = self.sharedPairingKey else { return }
-        if sharedPairingKey != PersistenceManager.retrieveKey() { // handling weird case where after app applies the change and is reopened, it still tries to change the key again
-            if hasFinishedUserLaunchSetup && launchingFromBranchLink && hasFinishedSceneLaunchSetup{
-                AppDelegate.branchLinkSubject.send(sharedPairingKey)
-            }
+    func determineLaunch() {
+        switch launchType {
+        case .branchFirstLaunch:
+            AppDelegate.branchPasteboardEvent.send(())
+        case .branchDeepLink:
+            print("branch returning launch")
+            //not sure about this one yet, will see if it gets called
+        case .onboardingFirstLaunch:
+            onboardingSetup()
+            AppDelegate.regularFirstTimeLaunch.send(())
+        case .standardReturningLaunch:
+            AppDelegate.standardSceneSetup.send(())
+          
+        case nil:
+            print("should never be nil, but launch type was nil")
+            AppDelegate.standardSceneSetup.send(())
         }
-    }
-    
-    func cleanup() {
-        self.firstTimeLaunch = false
-        UIPasteboard.remove(withName: .general)
     }
     
     func showPushPhoto() {
@@ -74,8 +83,7 @@ class LaunchManager {
         }
     }
     
-    
-    func launchOnboarding() {
+    func onboardingSetup() {
         Task {
             // do user setup
            try await Auth.auth().signInAnonymously()
@@ -114,7 +122,7 @@ class LaunchManager {
         print("Onboarding complete for key: \(pairingKey) and dog \(dog)")
         
         DispatchQueue.main.async {
-            AppDelegate.setupCompletionSubject.send(())
+            AppDelegate.standardSceneSetup.send(())
             self.dogChanged = true
         }
     }
@@ -133,23 +141,6 @@ class LaunchManager {
             }
     }
     
-    func initializePasteboardBranch() {
-            Branch.getInstance().initSession() { (params, error) in
-                if let params = params as? [String: AnyObject], let pairingKeyValue = params["pairingKey"] {
-                    if !UserDefaults.standard.bool(forKey: PersistenceManager.Keys.setupComplete) {
-                        if let sharedPairingKey = pairingKeyValue as? Int {
-                            print("handling pairing key branch param as Int: \(sharedPairingKey)")
-                            AppDelegate.branchFirstTimeLaunch.send(sharedPairingKey)
-                        } else if let pairingKeyString = pairingKeyValue as? String, let sharedPairingKey = Int(pairingKeyString) {
-                            print("handling pairing key branch param as String: \(sharedPairingKey)")
-                            AppDelegate.branchFirstTimeLaunch.send(sharedPairingKey)
-                            
-                        }
-                    }
-            }
-        }
-    }
-    
     func createBranchLink() {
         let key = PersistenceManager.retrieveKey()
         let buo = BranchUniversalObject(canonicalIdentifier: "pairing/\(key)")
@@ -166,15 +157,46 @@ class LaunchManager {
         guard let params = params else { return }       
             if let pairingKey = params["pairingKey"] {
                 print("Found pairing key from branch: \(pairingKey)")
-                print(params)
                 if let pairingKeyInt = pairingKey as? Int {
                     self.sharedPairingKey = pairingKeyInt
                 } else if let pairingKeyString = pairingKey as? String {
                     self.sharedPairingKey = Int(pairingKeyString)
                 }
-                self.launchingFromBranchLink = true
-                branchSetup()
+                self.launchType = .branchDeepLink
+                showBranchPairingView()
             }
+    }
     
+    func showBranchPairingView() {
+        guard let sharedPairingKey = self.sharedPairingKey else { return }
+        if sharedPairingKey != PersistenceManager.retrieveKey() { // handling weird case where after app applies the change and is reopened, it still tries to change the key again
+            AppDelegate.branchDeepLinkEvent.send(sharedPairingKey)
+        }
+    }
+    
+    func runStandardSetup() async throws{
+        print("returning-runStandardsetup")
+        do {
+            try await returningLaunchSetup()
+            
+            LaunchManager.shared.hasFinishedUserLaunchSetup = true
+            print("launchSetup done, sending to scene setup")
+            
+        } catch PSError.authError(let error){
+            print("Auth error")
+            print(error?.localizedDescription ?? "no localized description for auth error")
+        } catch PSError.fetchDogError(let error){
+            print("fetch dog error")
+            print(error?.localizedDescription ?? "no localized description for fetch dog error")
+        }
+        
+        // Remote config setup
+        print("returning-remote config-3rd")
+        do {
+            try await RemoteConfigManager.shared.fetchAndActivate()
+            print("remote config done")
+        } catch {
+            print("Error on remote config setup: \(error)")
+        }
     }
 }

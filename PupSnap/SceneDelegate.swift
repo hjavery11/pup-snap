@@ -36,17 +36,18 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate, UITabBarControllerDeleg
         window?.rootViewController = loadingVC
         window?.makeKeyAndVisible()
         print("loading vc shown")
+        
         // Trigger setupScene as soon as setupCompletionSubject is completed
-        AppDelegate.setupCompletionSubject
+        AppDelegate.standardSceneSetup
             .sink { [weak self] in
                 self?.setupScene(connectionOptions: connectionOptions, scene: scene)
             }
             .store(in: &cancellables)
         
         // Trigger setupBranchLink only when branchLinkSubject emits a value
-        AppDelegate.branchLinkSubject
+        AppDelegate.branchDeepLinkEvent
             .sink { [weak self] key in
-                self?.setupBranchLink(key: key)
+                self?.showPairingViewForBranchDeepLink(key: key)
             }
             .store(in: &cancellables)
         
@@ -71,20 +72,13 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate, UITabBarControllerDeleg
             }
             .store(in: &cancellables)
         
-        AppDelegate.branchPasteBoardTesting
+        AppDelegate.branchPasteboardEvent
             .sink { [weak self] key in
                 self?.setupBranchPasteboard()
             }
             .store(in: &cancellables)
         
-        let setupDone = UserDefaults.standard.bool(forKey: PersistenceManager.Keys.setupComplete)
-        
-        if LaunchManager.shared.branchPasteboardInstall {
-            AppDelegate.branchPasteBoardTesting.send(())
-            print("sent branchPasteBoardTesting")
-        } else if !setupDone {
-            AppDelegate.regularFirstTimeLaunch.send(())
-        }
+        LaunchManager.shared.determineLaunch()
         
         print("end of scene first function")
     }
@@ -98,23 +92,21 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate, UITabBarControllerDeleg
     }
           
     private func setupScene(connectionOptions: UIScene.ConnectionOptions, scene: UIScene) {
-        print("setup tabcontroller base scene")
-        tabBarController = createTabbar()
-        tabBarController?.delegate = self
- 
-        window?.rootViewController = tabBarController
         
-        LaunchManager.shared.hasFinishedSceneLaunchSetup = true
-        
-//        //check to see if branch key setup is needed now that scene is ready
-        LaunchManager.shared.branchSetup()
-//        
-//        //check to see if push notification setup is needed now that scene is ready
-//        LaunchManager.shared.showPushPhoto()
-//        
+        Task { @MainActor in
+            print("setup tabcontroller base scene")
+            if LaunchManager.shared.launchType == .standardReturningLaunch {
+                try await LaunchManager.shared.runStandardSetup()
+            }
+            tabBarController = createTabbar()
+            tabBarController?.delegate = self
+            window?.rootViewController = tabBarController
+            
+         
+        }
+       
         //create share link so its ready
         LaunchManager.shared.createBranchLink()
-        
         
     }
     
@@ -123,16 +115,16 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate, UITabBarControllerDeleg
         presentFullScreenPhotoVC(userInfo: userInfo)
     }
     
-    private func setupBranchLink(key: Int) {
+    private func showPairingViewForBranchDeepLink(key: Int) {
         let hostingController = UIHostingController(rootView: PairingView(viewModel: SettingsViewModel(pairingKey: key)))
         hostingController.modalPresentationStyle = .fullScreen
         
-        window?.rootViewController?.present(hostingController, animated: true)
+        window?.rootViewController = hostingController
         
     }
     
     private func setupBranchFirstLaunch(_ key: Int) {
-        let hostingController = UIHostingController(rootView: PairingView(viewModel: SettingsViewModel(pairingKey: key, firstTimeLaunch: true)))
+        let hostingController = UIHostingController(rootView: PairingView(viewModel: SettingsViewModel(pairingKey: key)))
         hostingController.modalPresentationStyle = .fullScreen
         
         window?.rootViewController?.present(hostingController, animated: true) {
@@ -251,7 +243,8 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate, UITabBarControllerDeleg
         // Called when the scene has moved from an inactive state to an active state.
         // Use this method to restart any tasks that were paused (or not yet started) when the scene was inactive.
         // Access the stored Branch link data
-        //Enable tab bar
+       print("scenedidbecomeactive")
+        print(LaunchManager.shared.launchType ?? "no launch type")
         
     }
     

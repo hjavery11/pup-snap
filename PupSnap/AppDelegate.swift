@@ -20,12 +20,12 @@ import Combine
 class AppDelegate: UIResponder, UIApplicationDelegate, MessagingDelegate {
     
     var window: UIWindow?
-    static let setupCompletionSubject = PassthroughSubject<Void, Never>()
-    static let branchLinkSubject = PassthroughSubject<Int, Never>()
+    static let standardSceneSetup = PassthroughSubject<Void, Never>()
+    static let branchDeepLinkEvent = PassthroughSubject<Int, Never>()
     static let notificationSubject = PassthroughSubject<Void, Never>()
     static let branchFirstTimeLaunch = PassthroughSubject<Int, Never>()
     static let regularFirstTimeLaunch = PassthroughSubject<Void, Never>()
-    static let branchPasteBoardTesting = PassthroughSubject<Void, Never>()
+    static let branchPasteboardEvent = PassthroughSubject<Void, Never>()
     
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         
@@ -44,67 +44,34 @@ class AppDelegate: UIResponder, UIApplicationDelegate, MessagingDelegate {
         Messaging.messaging().delegate = self
         application.registerForRemoteNotifications()
         
-        let setupDone = UserDefaults.standard.bool(forKey: PersistenceManager.Keys.setupComplete)
+        let setupDone = PersistenceManager.setupStatus()
         //uncomment these 2 lines to force branch install
-//        LaunchManager.shared.branchPasteboardInstall = true
-//        UIPasteboard.general.url = URL(string:"https://pupsnap-alternate.app.link/iYSReGVhjLb?__branch_flow_type=viewapp&__branch_flow_id=1345084269039655716&__branch_mobile_deepview_type=1&nl_opt_in=1&_cpts=1721931307629")!
+        //        LaunchManager.shared.branchPasteboardInstall = true
+        //        UIPasteboard.general.url = URL(string:"https://pupsnap-alternate.app.link/iYSReGVhjLb?__branch_flow_type=viewapp&__branch_flow_id=1345084269039655716&__branch_mobile_deepview_type=1&nl_opt_in=1&_cpts=1721931307629")!
         
         if !setupDone {
             if BNCPasteboard.sharedInstance().isUrlOnPasteboard() {
-                    LaunchManager.shared.branchPasteboardInstall = true
+                print("url was on pasteboard")
+                LaunchManager.shared.launchType = .branchFirstLaunch
             } else {
-                LaunchManager.shared.launchOnboarding()              
+                print("launch type onboarding")
+                LaunchManager.shared.launchType = .onboardingFirstLaunch
             }
         } else {
-            runStandardSetup()
+            LaunchManager.shared.launchType = .standardReturningLaunch
+            // Request notification permissions
+           requestNotificationPermissions()
         }
         
-        if !LaunchManager.shared.branchPasteboardInstall {
-            // This version of `initSession` includes the source UIScene in the callback
-            BranchScene.shared().initSession(launchOptions: launchOptions, registerDeepLinkHandler: { (params, error, scene) in
-                LaunchManager.shared.checkBranchParams(params)
-            })
-        }
+        
+        BranchScene.shared().initSession(launchOptions: launchOptions, registerDeepLinkHandler: { (params, error, scene) in
+            print("checking branch params")
+            LaunchManager.shared.checkBranchParams(params)
+        })
         
         print("end of app delegate")
         return true
     }
-    
-    private func runStandardSetup() {
-        print("returning-runStandardsetup - 2nd")
-        Task {
-            do {
-                try await LaunchManager.shared.returningLaunchSetup()               
-              
-                // Request notification permissions
-                requestNotificationPermissions()
-                LaunchManager.shared.hasFinishedUserLaunchSetup = true
-                print("launchSetup done, sending to scene setup")
-                AppDelegate.setupCompletionSubject.send(())
-                
-            } catch PSError.authError(let error){
-                print("Auth error")
-                print(error?.localizedDescription ?? "no localized description for auth error")
-            } catch PSError.fetchDogError(let error){
-                print("fetch dog error")
-                print(error?.localizedDescription ?? "no localized description for fetch dog error")
-            }
-        }
-        
-        // Remote config setup
-        Task {
-            print("returning-remote config-3rd")
-            do {
-                try await RemoteConfigManager.shared.fetchAndActivate()
-                print("remote config done")
-            } catch {
-                print("Error on remote config setup: \(error)")
-            }
-        }
-    }
-
-    
-   
     
     func requestNotificationPermissions() {
         let center = UNUserNotificationCenter.current()

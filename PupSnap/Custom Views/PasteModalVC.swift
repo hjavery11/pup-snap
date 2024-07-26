@@ -102,13 +102,10 @@ class PasteModalVC: UIViewController {
                 self?.navigationController?.dismiss(animated: true)
                 if let _ = BNCPasteboard.sharedInstance().checkForBranchLink() {
                     print("found branch pasteboard link, sending to setup")
-                    LaunchManager.shared.initializePasteboardBranch()
-                    Branch.getInstance().passPaste(itemProviders)
-                    LaunchManager.shared.firstTimeLaunch = true
-                  
+                    Branch.getInstance().passPaste(itemProviders)                  
                 } else {
                     print("found non branch link on pasteboard, sending to regular onboarding")
-                    LaunchManager.shared.launchOnboarding()
+                    LaunchManager.shared.onboardingSetup()
                     AppDelegate.regularFirstTimeLaunch.send(())
                 }
             }

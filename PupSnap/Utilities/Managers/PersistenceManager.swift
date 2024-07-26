@@ -121,5 +121,9 @@ enum PersistenceManager {
     static func setupDone() {
         defaults.set(true, forKey: Keys.setupComplete)
     }
+    
+    static func setupStatus() -> Bool {
+        defaults.bool(forKey: Keys.setupComplete)
+    }
   
 }

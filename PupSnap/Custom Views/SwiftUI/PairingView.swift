@@ -32,11 +32,11 @@ struct PairingView: View {
                                 .onTapGesture {
                                     viewModel.showingChangeKey = true
                                 }
-                                .opacity(LaunchManager.shared.launchingFromBranchLink || LaunchManager.shared.branchPasteboardInstall ? 0:1)
+                                .opacity(viewModel.hideShare ? 0:1)
                         }
                         
                         ShareLink(item: URL(string: LaunchManager.shared.shareURL ?? "https://pupsnapapp.com")!, subject: Text("Join me on PupSnap!"))
-                            .opacity(LaunchManager.shared.launchingFromBranchLink || LaunchManager.shared.branchPasteboardInstall ? 0:1)
+                            .opacity(viewModel.hideShare ? 0:1)
                         
                     } header: {
                         Text("Pairing")
@@ -60,9 +60,17 @@ struct PairingView: View {
                 Task { @MainActor in
                     do {
                         viewModel.isLoading = true
-                        try await viewModel.updateAppForNewKey()
+                        
+                        if (viewModel.firstTimeLaunch) {
+                            print("changing key for first time launch in pairing view")
+                            try await viewModel.setupBranchKeyFirstLaunch()
+                        } else {
+                            print("changing key for returning launch in pairing view")
+                            try await viewModel.changeKeytoBranchKey()
+                        }
+                        
                         viewModel.isLoading = false
-                        presentationMode.wrappedValue.dismiss()                     
+                        viewModel.hideShare = false
                       
                     } catch {
                         viewModel.isLoading = false
@@ -77,27 +85,6 @@ struct PairingView: View {
             Text(text)
           
         }
-        .alert("PupSnap", isPresented: $viewModel.firstTimeLaunch) {
-            Button("Ok", role: .none) {
-                Task {
-                    do {
-                        viewModel.isLoading = true
-                        try await viewModel.subscribeToBranchKey()
-                        viewModel.isLoading = false
-                        presentationMode.wrappedValue.dismiss()
-                    } catch {
-                        viewModel.isLoading = false
-                        viewModel.showingChangeKeyError = true
-                    }
-                    
-                }
-                
-            }
-        } message: {
-            let text = "You are joining the feed of the person who shared this app with you."
-            Text(text)
-          
-        }
         .alert("Something went wrong", isPresented: $viewModel.showingChangeKeyError) {
             Button("Ok") {viewModel.showingChangeKeyError = false}
         } message: {
@@ -109,7 +96,7 @@ struct PairingView: View {
                 Task {
                     do {
                         viewModel.isLoading = true
-                        try await viewModel.updateAppForNewKey()
+                        try await viewModel.changeKeytoBranchKey()
                         viewModel.isLoading = false
                         presentationMode.wrappedValue.dismiss()
                     } catch {

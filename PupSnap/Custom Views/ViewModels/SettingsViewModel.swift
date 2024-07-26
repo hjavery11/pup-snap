@@ -42,6 +42,8 @@ import Foundation
     @Published var pushNotifs: Bool
     @Published var isLoading: Bool = false
     
+    @Published var hideShare: Bool = false
+    
     //dog view
     @Published var showIconConfirmation: Bool = false
     @Published var showPhotoChangeSuccess: Bool = false
@@ -78,18 +80,10 @@ import Foundation
         self.newDogName = dogName
         self.newKey = String(pairingKey)
         self.comingFromBranchLink = true
-    }
-    
-    init(pairingKey: Int, firstTimeLaunch: Bool) {
-        self.pushNotifs = PersistenceManager.notificationStatus()
-        self.dog = LaunchManager.shared.dog
         
-        self.selectedPhoto = dog?.photo
-        self.dogName = dog?.name ?? "Default"
-        self.newDogName = dogName
+        self.hideShare = true
         
-        self.newKey = String(pairingKey)
-        self.firstTimeLaunch = firstTimeLaunch
+        self.firstTimeLaunch = !PersistenceManager.setupStatus()
     }
     
     func changeKey() async throws {
@@ -117,7 +111,7 @@ import Foundation
     }
 
     
-    func subscribeToBranchKey() async throws {
+    func setupBranchKeyFirstLaunch() async throws {
         guard let newKey = Int(self.newKey) else {
             self.alertMessage = PSError.invalidKey(underlyingError: nil).localizedDescription
             throw PSError.invalidKey(underlyingError: nil)
@@ -130,7 +124,7 @@ import Foundation
         LaunchManager.shared.showToast = true
         PersistenceManager.setupDone()
         firstTimeLaunch = false
-        AppDelegate.setupCompletionSubject.send(())
+        AppDelegate.standardSceneSetup.send(())
     }
     
     func updateDog() async throws {
@@ -153,13 +147,11 @@ import Foundation
         }
     }
     
-    func updateAppForNewKey() async throws {
+    func changeKeytoBranchKey() async throws {
         try await changeKey()
         try await updateDog()
         LaunchManager.shared.showToast = true
-        LaunchManager.shared.launchingFromBranchLink = false      
-        LaunchManager.shared.branchPasteboardInstall = false
+        AppDelegate.standardSceneSetup.send(())
     }
-    
    
 }
