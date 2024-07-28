@@ -58,6 +58,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, MessagingDelegate {
                 LaunchManager.shared.launchType = .onboardingFirstLaunch
             }
         } else {
+            print("launch type was standard returning")
             LaunchManager.shared.launchType = .standardReturningLaunch
             // Request notification permissions
            requestNotificationPermissions()
@@ -165,8 +166,12 @@ extension AppDelegate: UNUserNotificationCenterDelegate {
         
         // Print full message.
         // print("printing from  last app delegate function : \(userInfo)")
-        LaunchManager.shared.openFromPush = true
-        LaunchManager.shared.pushUserInfo = userInfo
-        LaunchManager.shared.showPushPhoto()
+        print("app delegate rceived notification")
+
+
+            LaunchManager.shared.pushUserInfo = userInfo
+            LaunchManager.shared.openFromPush = true
+        
+       
     }
 }

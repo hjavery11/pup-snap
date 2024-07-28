@@ -7,8 +7,10 @@
 import UIKit
 import SwiftUI
 import FirebaseStorage
+import PhotosUI
+import Photos
 
-class PhotoVC: UIViewController, UINavigationControllerDelegate, UIImagePickerControllerDelegate, PhotoEditorVCDelegate, ObservableObject {
+class PhotoVC: UIViewController, UINavigationControllerDelegate, UIImagePickerControllerDelegate, PhotoEditorVCDelegate, ObservableObject, PHPickerViewControllerDelegate {
     
     let hintText = UILabel()
     let dogImage = UIImageView()
@@ -44,26 +46,30 @@ class PhotoVC: UIViewController, UINavigationControllerDelegate, UIImagePickerCo
     private let successToastVC = UIHostingController(rootView: SuccessToast())
     private var topConstant: NSLayoutConstraint?
     
+    let actionSheet = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
+    
+    var activePhotoOption:String = ""
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .systemGray6
         
-      
-
         // set font size depending on screen width to fit title and hint text
-            setDogInfo()
-            setupDogPhoto()
-            
-            setFontSize()
-            setNavigationBarTitle()
-            
-            // views
-            setupCameraView()
-            setupSpeechBubble()
-            
-            configureSuccessToast()
-        }
-  
+        setDogInfo()
+        setupDogPhoto()
+        
+        setFontSize()
+        setNavigationBarTitle()
+        
+        // views
+        setupCameraView()
+        setupSpeechBubble()
+        
+        configureSuccessToast()
+        
+        configureActionSheet()
+    }
+    
     
     override func viewDidAppear(_ animated: Bool) {
         if LaunchManager.shared.showToast {
@@ -118,12 +124,12 @@ class PhotoVC: UIViewController, UINavigationControllerDelegate, UIImagePickerCo
             //let aspectRatio = image.size.width / image.size.height
             let targetWidth: CGFloat = view.bounds.width
             //var targetHeight = targetWidth / aspectRatio
-
-//            // Check if the calculated height exceeds 400
-//            if targetHeight > 350 {
-//                targetHeight = 350
-//                targetWidth = targetHeight * aspectRatio
-//            }
+            
+            //            // Check if the calculated height exceeds 400
+            //            if targetHeight > 350 {
+            //                targetHeight = 350
+            //                targetWidth = targetHeight * aspectRatio
+            //            }
             NSLayoutConstraint.activate([
                 dogImage.centerXAnchor.constraint(equalTo: view.safeAreaLayoutGuide.centerXAnchor),
                 dogImage.centerYAnchor.constraint(equalTo: view.safeAreaLayoutGuide.centerYAnchor),
@@ -187,7 +193,7 @@ class PhotoVC: UIViewController, UINavigationControllerDelegate, UIImagePickerCo
             NSAttributedString.Key.font: UIFont(name: MyFonts.bold.rawValue, size: largeTitleFontSize ?? 12)!,
             NSAttributedString.Key.foregroundColor: UIColor.systemPurple
         ]
-     
+        
     }
     
     
@@ -217,6 +223,10 @@ class PhotoVC: UIViewController, UINavigationControllerDelegate, UIImagePickerCo
     }
     
     @objc func dogClicked(sender: UITapGestureRecognizer) {
+        present(actionSheet, animated: true, completion: nil)
+    }
+    
+    func showCamera() {
         if UIImagePickerController.isSourceTypeAvailable(.camera) {
             present(cameraVC, animated: true)
         } else {
@@ -224,6 +234,52 @@ class PhotoVC: UIViewController, UINavigationControllerDelegate, UIImagePickerCo
             alert.addAction(UIAlertAction(title: "Ok", style: .default, handler: nil))
             self.present(alert, animated: true, completion: nil)
         }
+    }
+    
+    
+    func pickPhotos()
+    {
+        var config = PHPickerConfiguration()
+        config.selectionLimit = 1
+        config.filter = PHPickerFilter.images
+        
+        let pickerViewController = PHPickerViewController(configuration: config)
+        pickerViewController.delegate = self
+        self.present(pickerViewController, animated: true, completion: nil)
+    }
+    
+    // MARK: PHPickerViewControllerDelegate
+    
+    func picker(_ picker: PHPickerViewController, didFinishPicking results: [PHPickerResult]) {
+        picker.dismiss(animated: true, completion: nil)
+        
+        for result in results {
+            result.itemProvider.loadObject(ofClass: UIImage.self, completionHandler: { (object, error) in
+                if let image = object as? UIImage {
+                    DispatchQueue.main.async {
+                        self.displayImage(image)
+                    }
+                }
+            })
+        }
+    }
+    
+    func configureActionSheet() {
+        
+        let cameraOption = UIAlertAction(title: "Take new photo", style: .default) { _ in
+            self.showCamera()
+            self.activePhotoOption = "camera"
+        }
+        let libraryOption = UIAlertAction(title: "Upload from library", style: .default) { _ in
+            self.pickPhotos()
+            self.activePhotoOption = "library"
+        }
+        
+        let cancel = UIAlertAction(title: "Cancel", style: .cancel)
+        
+        actionSheet.addAction(cameraOption)
+        actionSheet.addAction(libraryOption)
+        actionSheet.addAction(cancel)
     }
     
     func setupCameraView() {
@@ -258,25 +314,30 @@ class PhotoVC: UIViewController, UINavigationControllerDelegate, UIImagePickerCo
             displayImage(emulatorPhoto!)
             return
         }
-        
-        
     }
     
-    func photoEditorDidRequestCamera(_ editor: PhotoEditorVC) {
-        if UIImagePickerController.isSourceTypeAvailable(.camera) {
-            editor.dismiss(animated: true)
-            present(cameraVC, animated: true, completion: nil)
+    func photoEditorDidRequestBack(_ editor: PhotoEditorVC) {
+        if activePhotoOption == "camera" {
+            if UIImagePickerController.isSourceTypeAvailable(.camera) {
+                editor.dismiss(animated: true)
+                present(cameraVC, animated: true, completion: nil)
+            } else {
+                let alert = UIAlertController(title: "No Camera", message: "Camera is not available on this device", preferredStyle: .alert)
+                alert.addAction(UIAlertAction(title: "OK", style: .default, handler: nil))
+                present(alert, animated: true, completion: nil)
+            }
+        } else if activePhotoOption == "library" {
+            editor.dismiss(animated: true)            
         } else {
-            let alert = UIAlertController(title: "No Camera", message: "Camera is not available on this device", preferredStyle: .alert)
-            alert.addAction(UIAlertAction(title: "OK", style: .default, handler: nil))
-            present(alert, animated: true, completion: nil)
+            print("no active photo option set, cant present back")
+            editor.dismiss(animated: true)
         }
     }
     
     func photoEditorDidUpload(_ editor: PhotoEditorVC) {
         showSpinner()
         
-        Task {
+        Task { @MainActor in
             do {
                 let isWithinLimit = try await NetworkManager.shared.checkPhotoLimit()
                 
@@ -386,4 +447,3 @@ class PhotoVC: UIViewController, UINavigationControllerDelegate, UIImagePickerCo
     }
     
 }
-

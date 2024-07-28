@@ -10,6 +10,7 @@ import BranchSDK
 import Combine
 import SwiftUI
 import FirebaseStorage
+import SDWebImage
 
 class SceneDelegate: UIResponder, UIWindowSceneDelegate, UITabBarControllerDelegate {
     
@@ -101,8 +102,10 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate, UITabBarControllerDeleg
             tabBarController = createTabbar()
             tabBarController?.delegate = self
             window?.rootViewController = tabBarController
-            
-         
+
+            if LaunchManager.shared.openFromPush {
+                handleNotification()
+            }
         }
        
         //create share link so its ready
@@ -112,7 +115,27 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate, UITabBarControllerDeleg
     
     private func handleNotification() {
         let userInfo = LaunchManager.shared.pushUserInfo
-        presentFullScreenPhotoVC(userInfo: userInfo)
+        
+        guard let caption = userInfo["caption"] as? String,
+              let ratingsString = userInfo["ratings"] as? String,
+              let timestampString = userInfo["timestamp"] as? String,
+              let id = userInfo["id"] as? String,
+              let ratingsData = ratingsString.data(using: .utf8),
+              let _ = try? JSONSerialization.jsonObject(with: ratingsData, options: []) as? [String: Int],
+              let _ = Int(timestampString) else { return }
+        
+        let userKey = PersistenceManager.retrieveKey()
+        
+        let storageRef = Storage.storage().reference().child("images")
+        let reference = storageRef.child(String(userKey)).child(id + ".jpg")
+        let newImageView = UIImageView()
+        
+        newImageView.sd_imageIndicator = SDWebImageProgressIndicator.bar
+        newImageView.sd_setImage(with: reference, placeholderImage: UIImage(named: "placeholder_image"))
+        let newImageVC = NotificationPhotoVC(imageView: newImageView, caption: caption)
+        
+        window?.rootViewController?.present(newImageVC, animated: true, completion: nil)
+        LaunchManager.shared.openFromPush = false
     }
     
     private func showPairingViewForBranchDeepLink(key: Int) {
@@ -209,29 +232,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate, UITabBarControllerDeleg
             }
         }
     }
-    
-    private func presentFullScreenPhotoVC(userInfo: [AnyHashable: Any]) {
-        guard let caption = userInfo["caption"] as? String,
-              let ratingsString = userInfo["ratings"] as? String,
-              let timestampString = userInfo["timestamp"] as? String,
-              let id = userInfo["id"] as? String,
-              let ratingsData = ratingsString.data(using: .utf8),
-              let _ = try? JSONSerialization.jsonObject(with: ratingsData, options: []) as? [String: Int],
-              let _ = Int(timestampString) else { return }
-        
-        let userKey = PersistenceManager.retrieveKey()
-        
-        let storageRef = Storage.storage().reference().child("images")
-        let reference = storageRef.child(String(userKey)).child(id + ".jpg")
-        let newImageView = UIImageView()
-        
-        newImageView.sd_setImage(with: reference, placeholderImage: UIImage(named: "placeholder_image"))
-        let newImageVC = NotificationPhotoVC(imageView: newImageView, caption: caption)
-        let navigationController = UINavigationController(rootViewController: newImageVC)
-        
-        window?.rootViewController?.present(navigationController, animated: true, completion: nil)
-    }
-    
+  
     func sceneDidDisconnect(_ scene: UIScene) {
         // Called as the scene is being released by the system.
         // This occurs shortly after the scene enters the background, or when its session is discarded.
@@ -256,12 +257,17 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate, UITabBarControllerDeleg
     func sceneWillEnterForeground(_ scene: UIScene) {
         // Called as the scene transitions from the background to the foreground.
         // Use this method to undo the changes made on entering the background.
+
+        if LaunchManager.shared.openFromPush {
+            handleNotification()
+        }
     }
     
     func sceneDidEnterBackground(_ scene: UIScene) {
         // Called as the scene transitions from the foreground to the background.
         // Use this method to save data, release shared resources, and store enough scene-specific state information
         // to restore the scene back to its current state.
+        
     }
     
     func scene(_ scene: UIScene, willContinueUserActivityWithType userActivityType: String) {

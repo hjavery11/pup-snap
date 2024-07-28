@@ -8,7 +8,7 @@
 import UIKit
 
 protocol PhotoEditorVCDelegate: AnyObject {
-    func photoEditorDidRequestCamera(_ editor: PhotoEditorVC)
+    func photoEditorDidRequestBack(_ editor: PhotoEditorVC)
     func photoEditorDidUpload(_ editor: PhotoEditorVC)
 }
 
@@ -59,15 +59,27 @@ class PhotoEditorVC: UIViewController, UITextFieldDelegate {
         //draw borderes
         setupDividers()
         
+        calculateImageViewHeight()
+        
         // Add tap gesture recognizer to dismiss keyboard
         let tapGesture = UITapGestureRecognizer(target: self, action: #selector(dismissKeyboard))
         view.addGestureRecognizer(tapGesture)
     }
     
-    
-    
     @objc func dismissKeyboard() {
         view.endEditing(true)
+    }
+    
+    func calculateImageViewHeight() {
+        let captionHeight = captionField.frame.height
+        let ratingHeight = cuteScale.view.frame.height
+        let bottomBarHeight = bottomBar.frame.height
+        let topBarHeight = topBar.frame.height
+        let currentImageHeight = imageView.frame.height
+        
+        print("current screen height is: \(view.frame.height) with image height: \(currentImageHeight), captionHeight: \(captionHeight), rating height: \(ratingHeight), top bar height: \(topBarHeight), botto mbar height: \(bottomBarHeight)")
+        
+        
     }
     
     func setupImageView() {
@@ -82,10 +94,17 @@ class PhotoEditorVC: UIViewController, UITextFieldDelegate {
         
         view.addSubview(imageView)
         
+        let maxHeight: CGFloat = 350
         let padding: CGFloat = 80
         let aspectRatio = image.size.width / image.size.height
         let imageWidth = view.bounds.width - (padding * 2)
-        let imageHeight = imageWidth / aspectRatio
+        var imageHeight = imageWidth / aspectRatio
+        
+        print("pre-update: image width: \(imageWidth) by height: \(imageHeight)")
+        
+        if imageHeight > maxHeight {
+            imageHeight = maxHeight
+        }
         
         NSLayoutConstraint.activate([
             imageView.topAnchor.constraint(equalTo: topBar.bottomAnchor, constant: 30),
@@ -190,7 +209,7 @@ class PhotoEditorVC: UIViewController, UITextFieldDelegate {
         submitButton.addTarget(self, action: #selector(addPhoto), for: .touchUpInside)
         
         retakeButton.translatesAutoresizingMaskIntoConstraints = false
-        retakeButton.setTitle("Retake", for: .normal)
+        retakeButton.setTitle("Back", for: .normal)
         retakeButton.backgroundColor = .systemGray
         retakeButton.layer.cornerRadius = 25
         retakeButton.tintColor = .white
@@ -226,7 +245,7 @@ class PhotoEditorVC: UIViewController, UITextFieldDelegate {
     }
     
     @objc func showCamera() {
-        delegate?.photoEditorDidRequestCamera(self)
+        delegate?.photoEditorDidRequestBack(self)
     }
     
     func setupTopActionItems() {

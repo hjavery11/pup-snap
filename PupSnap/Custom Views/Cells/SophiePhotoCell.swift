@@ -47,7 +47,12 @@ class SophiePhotoCell: UICollectionViewCell {
         let userKey = PersistenceManager.retrieveKey()
         self.photo = photo
         let reference = self.storageRef.child(String(userKey)).child(photo.id + ".jpg")
+        
+        thumbnailImageView.sd_imageIndicator = SDWebImageProgressIndicator.bar
+    
+        thumbnailImageView.sd_setImage(with: reference, placeholderImage: UIImage(named: "placeholder_image"))
+        
 
-        self.thumbnailImageView.sd_setImage(with: reference, placeholderImage: UIImage(named: "placeholder_image"))
+    
     }
 }

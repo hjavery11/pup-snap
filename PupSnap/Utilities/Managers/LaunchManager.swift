@@ -26,7 +26,9 @@ class LaunchManager {
     var launchingFromBranchLink: Bool = false
     var launchingFromPushNotification: Bool = false
     var firstTimeLaunch: Bool = false
+    
     var openFromPush: Bool = false
+    
     var pushUserInfo = [AnyHashable: Any]()
     
     var dogChanged: Bool = false
@@ -54,18 +56,13 @@ class LaunchManager {
             AppDelegate.regularFirstTimeLaunch.send(())
         case .standardReturningLaunch:
             AppDelegate.standardSceneSetup.send(())
-          
         case nil:
             print("should never be nil, but launch type was nil")
             AppDelegate.standardSceneSetup.send(())
         }
-    }
+      
+    }   
     
-    func showPushPhoto() {
-        if hasFinishedUserLaunchSetup && hasFinishedSceneLaunchSetup && openFromPush {
-            AppDelegate.notificationSubject.send(())
-        }
-    }
     
     func returningLaunchSetup() async throws {
         // do things here for returning users
