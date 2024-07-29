@@ -169,21 +169,11 @@ class FullScreenPhotoVC: UIViewController, RatingViewControllerDelegate {
     
     func setUserRating() {
         let userID = PersistenceManager.retrieveID()
-        if let userRating = photo.ratings[userID], userRating > 0{
+        if let userRating = photo.ratings[userID] {
             ratingView.rating = userRating
-            print("user rating is \(userRating)")
-            for button in ratingView.starButtons {
-                button.isUserInteractionEnabled = false
-            }
         } else {
             ratingView.rating = 0
-            for button in ratingView.starButtons {
-                button.isUserInteractionEnabled = true
-            }
         }
-        
-        delegate?.ratingChange = true
-       
     }
     
     
@@ -203,17 +193,17 @@ class FullScreenPhotoVC: UIViewController, RatingViewControllerDelegate {
         photo.addRating(user: PersistenceManager.retrieveID(), rating: rating)
         setUserRating()
         
+        delegate?.ratingChange = true
+        
         Task {
             do {
                 try await NetworkManager.shared.updatePhotoRating(photo: self.photo)
-                ratingView.view.removeFromSuperview()
-                view.addSubview(ratingView.view)
-                layoutRatingView()
-                
             } catch {
                 print("Error updating photo rating: \(error.localizedDescription)")
             }
         }
+        
+        
         
     }
    
