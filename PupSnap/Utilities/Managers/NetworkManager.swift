@@ -26,9 +26,6 @@ class NetworkManager {
     }
     
     func uploadPhoto(photo: Photo, progressHandler: @escaping (Double) -> Void, successHandler: @escaping () -> Void, failureHandler: @escaping (Error) -> Void) -> StorageUploadTask? {
-        Task {
-            try await DatabaseHelper().addPhotoToDB(photo: photo)
-        }
         return storageHelper.uploadImage(photo: photo, progressHandler: progressHandler, successHandler: successHandler, failureHandler: failureHandler)
     }
     

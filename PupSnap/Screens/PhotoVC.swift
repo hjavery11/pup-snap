@@ -384,6 +384,10 @@ class PhotoVC: UIViewController, UINavigationControllerDelegate, UIImagePickerCo
                             guard let self = self else { return }
                             self.hideSpinner()
                             print("Upload completed successfully")
+                            Task{
+                                try await DatabaseHelper().addPhotoToDB(photo: photo)
+                            }
+                            
                             DispatchQueue.main.async {
                                 let alert = UIAlertController(title: "Upload Successful", message: "Your photo has been uploaded successfully.", preferredStyle: .alert)
                                 let okAction = UIAlertAction(title: "OK", style: .default)
