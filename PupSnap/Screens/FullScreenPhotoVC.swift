@@ -31,10 +31,17 @@ class FullScreenPhotoVC: UIViewController, RatingViewControllerDelegate {
     var indexPath: IndexPath?
     
     
-    init(photo: Photo, indexPath: IndexPath?, image: UIImage) {
+    init(photo: Photo, indexPath: IndexPath, image: UIImage) {
         self.photo = photo
         self.indexPath = indexPath
         imageView.image = image      
+        
+        super.init(nibName: nil, bundle: nil)
+    }
+    
+    init (photo: Photo, imageView: UIImageView) {
+        self.photo = photo
+        self.imageView = imageView
         
         super.init(nibName: nil, bundle: nil)
     }
@@ -54,8 +61,9 @@ class FullScreenPhotoVC: UIViewController, RatingViewControllerDelegate {
             // only show nav bar if coming from feed view, otherwise its a push notification without nav bar
             configureNavBar()
             //dont show rating view if no indexPath
-            configureRatingView()
+           
         }
+        configureRatingView()
         setupLoading()
         addGestures()
     }
@@ -67,7 +75,6 @@ class FullScreenPhotoVC: UIViewController, RatingViewControllerDelegate {
     
     func configureImageView() {
         imageView.translatesAutoresizingMaskIntoConstraints = false
-        //imageView.contentMode = .scaleAspectFit
         
         view.addSubview(imageView)
         

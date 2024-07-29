@@ -104,13 +104,7 @@ class RatingViewController: UIViewController {
             lastClickedButton = button
         }
         
-        if let viewControllers = navigationController?.viewControllers {
-            for viewController in viewControllers {
-                if viewController.isKind(of: FullScreenPhotoVC.self) {
-                    delegate?.updateRating(rating: rating)
-                }
-            }
-        }
+        delegate?.updateRating(rating: rating)
     }
     
     func updateStarSelectionStates() {

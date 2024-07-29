@@ -121,10 +121,12 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate, UITabBarControllerDeleg
               let timestampString = userInfo["timestamp"] as? String,
               let id = userInfo["id"] as? String,
               let ratingsData = ratingsString.data(using: .utf8),
-              let _ = try? JSONSerialization.jsonObject(with: ratingsData, options: []) as? [String: Int],
-              let _ = Int(timestampString) else { return }
+              let ratings = try? JSONSerialization.jsonObject(with: ratingsData, options: []) as? [String: Int],
+              let timestamp = Int(timestampString) else { return }
         
         let userKey = PersistenceManager.retrieveKey()
+        
+        let newPhoto = Photo(caption: caption, ratings: ratings, timestamp: timestamp, id: id)
         
         let storageRef = Storage.storage().reference().child("images")
         let reference = storageRef.child(String(userKey)).child(id + ".jpg")
@@ -132,9 +134,12 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate, UITabBarControllerDeleg
         
         newImageView.sd_imageIndicator = SDWebImageProgressIndicator.bar
         newImageView.sd_setImage(with: reference, placeholderImage: UIImage(named: "placeholder_image"))
-        let newImageVC = NotificationPhotoVC(imageView: newImageView, caption: caption)
+        let newImageVC = FullScreenPhotoVC(photo: newPhoto, imageView: newImageView)
+       
         
-        window?.rootViewController?.present(newImageVC, animated: true, completion: nil)
+        DispatchQueue.main.async { [weak self] in
+            self?.window?.rootViewController?.present(newImageVC, animated: true, completion: nil)
+        }
         LaunchManager.shared.openFromPush = false
     }
     
