@@ -26,6 +26,7 @@ class LaunchManager {
     var launchingFromBranchLink: Bool = false
     var launchingFromPushNotification: Bool = false
     var firstTimeLaunch: Bool = false
+    var launchFromBackground: Bool = false
     
     var openFromPush: Bool = false
     

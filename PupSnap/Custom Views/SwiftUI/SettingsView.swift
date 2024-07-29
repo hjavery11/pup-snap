@@ -45,7 +45,7 @@ struct SettingsView: View {
                 } header: {
                     Text("Settings")
                 } footer: {
-                    Text("To share photos with another user, go to Pairing -> Share My Key")
+                    Text("To share photos with another user, go to \nPairing -> Share")
                 }
                 
             }

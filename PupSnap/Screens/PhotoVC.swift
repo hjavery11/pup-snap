@@ -245,7 +245,9 @@ class PhotoVC: UIViewController, UINavigationControllerDelegate, UIImagePickerCo
         
         let pickerViewController = PHPickerViewController(configuration: config)
         pickerViewController.delegate = self
-        self.present(pickerViewController, animated: true, completion: nil)
+        DispatchQueue.main.async {
+            self.present(pickerViewController, animated: true, completion: nil)
+        }
     }
     
     // MARK: PHPickerViewControllerDelegate

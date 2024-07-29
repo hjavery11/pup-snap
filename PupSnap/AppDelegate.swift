@@ -171,6 +171,9 @@ extension AppDelegate: UNUserNotificationCenterDelegate {
 
             LaunchManager.shared.pushUserInfo = userInfo
             LaunchManager.shared.openFromPush = true
+        if LaunchManager.shared.launchFromBackground {
+            AppDelegate.notificationSubject.send(())
+        }
         
        
     }
