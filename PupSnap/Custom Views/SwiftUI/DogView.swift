@@ -44,16 +44,17 @@ struct DogView: View {
         ScrollView{
             LazyVGrid(columns: [GridItem(.adaptive(minimum: 100))], spacing: 30) {
                 ForEach(viewModel.dogPhotos, id: \.self) { dog in
-                    if dog != viewModel.selectedPhoto {
                         Image(dog)
                             .resizable()
                             .scaledToFit()
                             .frame(width:100, height: 100)
                             .onTapGesture {
-                                viewModel.newPhoto = dog
-                                viewModel.showIconConfirmation = true
+                                if dog != viewModel.selectedPhoto{
+                                    viewModel.newPhoto = dog
+                                    viewModel.showIconConfirmation = true
+                                }
                             }
-                    }
+                        .border(Color.purple, width: dog == viewModel.selectedPhoto ? 2:0)
                 }
             }
         }

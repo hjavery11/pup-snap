@@ -135,6 +135,7 @@ import Foundation
         if newPhoto != "" {
             NetworkManager.shared.changeDogPhoto(to: newPhoto)
             showPhotoChangeSuccess = true
+            selectedPhoto = newPhoto
             await LaunchManager.shared.setDog()
         }
     }
