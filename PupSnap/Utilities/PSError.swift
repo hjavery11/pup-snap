@@ -22,6 +22,8 @@ enum PSError: Error {
     case unsubscribeError(underlyingError: Error? = nil)
     case remoteConfigError(underlyingError: Error? = nil)
     case fetchDogError(underlyingError: Error? = nil )
+    case imageSize(underlyingError: Error? = nil)
+    case imageData(underlyingError: Error? = nil)
     
     var localizedDescription: String {
         switch self {
@@ -53,6 +55,11 @@ enum PSError: Error {
             return "Error setting up remote config: \(underlyingError?.localizedDescription ?? "")"
         case .fetchDogError(underlyingError: let underlyingError):
             return "Error fetching user's dog: \(underlyingError?.localizedDescription ?? "")"
+        case .imageSize(_):
+            return "Image file size was too large. Maximim size allowed is 5 MB"
+        case .imageData(_):
+            return "Error calculating image data"
         }
+    
     }
 }

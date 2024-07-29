@@ -336,14 +336,36 @@ class PhotoVC: UIViewController, UINavigationControllerDelegate, UIImagePickerCo
         }
     }
     
+    func checkPhotoSize(for image: UIImage) throws -> Bool {
+        guard let imageData = image.jpegData(compressionQuality: 0.7) else {
+            print("Failed to get image data")
+            throw NSError(domain: "PhotoVC", code: 0, userInfo: [NSLocalizedDescriptionKey: "Unable to get image data"])
+        }
+        
+        let imageSizeInBytes = imageData.count
+        let imageSizeinMB = Double(imageSizeInBytes) / 1048576.0
+        
+        let maxFileSizeinMB = Double(5.0)
+        
+        print("file size is \(imageSizeinMB)")
+        
+        if imageSizeinMB > maxFileSizeinMB {
+            print("file size exceed maximum file size of \(maxFileSizeinMB) mb")
+            throw NSError(domain: "PhotoVC", code: 1, userInfo: [NSLocalizedDescriptionKey: "Image file exceeds maximum allowable size of \(maxFileSizeinMB) MB"])
+        }
+        
+        return true
+    }
+    
     func photoEditorDidUpload(_ editor: PhotoEditorVC) {
         showSpinner()
-        
         Task { @MainActor in
             do {
                 let isWithinLimit = try await NetworkManager.shared.checkPhotoLimit()
                 
-                if isWithinLimit {
+                let isWithinSize = try self.checkPhotoSize(for: editor.image)
+                
+                if isWithinLimit && isWithinSize {
                     let image = editor.image
                     let caption = editor.captionField.text ?? ""
                     let user = PersistenceManager.retrieveID()
@@ -386,6 +408,8 @@ class PhotoVC: UIViewController, UINavigationControllerDelegate, UIImagePickerCo
                                 print("User canceled the upload")
                             case .unknown:
                                 print("Unknown error occurred, inspect the server response")
+                            case .downloadSizeExceeded:
+                                print("Image size exceeded maximum image size of 5 mb")
                             default:
                                 print("A separate error occurred, retry the upload")
                             }
@@ -400,6 +424,7 @@ class PhotoVC: UIViewController, UINavigationControllerDelegate, UIImagePickerCo
                     self.present(alert, animated: true, completion: nil)
                 }
             }
+            
         }
     }
     

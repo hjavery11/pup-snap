@@ -75,8 +75,9 @@ class StorageHelper {
         guard let imageData = photo.image?.jpegData(compressionQuality: 0.7) else {
             print("Failed to get image data")
             return nil
-        }
-        
+        }       
+    
+    
         // create a reference to the file
         let imageRef = storageRef.child(String(userKey)).child(photo.id + ".jpg")
         
