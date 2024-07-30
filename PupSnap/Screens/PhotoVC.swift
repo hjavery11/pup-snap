@@ -68,8 +68,8 @@ class PhotoVC: UIViewController, UINavigationControllerDelegate, UIImagePickerCo
         configureSuccessToast()
         
         configureActionSheet()
-    }
-    
+        
+    }    
     
     override func viewDidAppear(_ animated: Bool) {
         if LaunchManager.shared.showToast {

@@ -9,6 +9,7 @@ import UIKit
 import FirebaseStorage
 import FirebaseFunctions
 import FirebaseAuth
+import FirebaseCrashlytics
 
 class NetworkManager {
     static let shared = NetworkManager()
@@ -68,7 +69,9 @@ class NetworkManager {
             }
         } catch {
             print("Error fethcing unqiue key from serveR: \(error)")
-            return 0
+            Crashlytics.crashlytics().log("Error during getNewKey in network manager with error: \(error)")
+            Crashlytics.crashlytics().record(error: error)
+            throw error
             
         }        
     }
@@ -80,6 +83,8 @@ class NetworkManager {
                 print(message)
             }
         } catch {
+            Crashlytics.crashlytics().log("Error during initializeKey in networkmanager with error: \(error)")
+            Crashlytics.crashlytics().record(error: error)
             throw PSError.initializeKey(underlyingError: error)
         }
         
@@ -95,6 +100,8 @@ class NetworkManager {
             print(result.data)
           
         } catch {
+            Crashlytics.crashlytics().log("Error during setClaims in network manager with error: \(error)")
+            Crashlytics.crashlytics().record(error: error)
             throw PSError.setClaims(underlyingError: error)
         }
     }

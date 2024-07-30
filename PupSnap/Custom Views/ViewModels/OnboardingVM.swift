@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import FirebaseCrashlytics
 
 class OnboardingVM: ObservableObject {
     
@@ -43,7 +44,12 @@ class OnboardingVM: ObservableObject {
     
     func finishOnboarding() async throws {
         let newDog = Dog(photo: selectedDog, name: dogName)
-        try await LaunchManager.shared.finishOnboarding(with: newDog)
+        do {
+            try await LaunchManager.shared.finishOnboarding(with: newDog)
+        } catch {
+            Crashlytics.crashlytics().log("Error during finishOnboarding in OnboardingVM. Error thrown was: \(error)")
+            Crashlytics.crashlytics().record(error: error)
+        }
     }
     
 }

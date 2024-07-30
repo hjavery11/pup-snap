@@ -8,6 +8,7 @@
 import UIKit
 import FirebaseAuth
 import BranchSDK
+import FirebaseCrashlytics
 
 class LaunchManager {
     
@@ -45,7 +46,7 @@ class LaunchManager {
     
     private init() {}
     
-    func determineLaunch() {
+    func determineLaunch() {        
         switch launchType {
         case .branchFirstLaunch:
             AppDelegate.branchPasteboardEvent.send(())
@@ -56,7 +57,12 @@ class LaunchManager {
             onboardingSetup()
             AppDelegate.regularFirstTimeLaunch.send(())
         case .standardReturningLaunch:
-            AppDelegate.standardSceneSetup.send(())
+            if verifyReturningLaunch() {
+                AppDelegate.standardSceneSetup.send(())
+            } else {
+                onboardingSetup()
+                AppDelegate.regularFirstTimeLaunch.send(())
+            }
         case nil:
             print("should never be nil, but launch type was nil")
             AppDelegate.standardSceneSetup.send(())
@@ -64,6 +70,16 @@ class LaunchManager {
       
     }   
     
+    func verifyReturningLaunch() -> Bool {
+        let userKey = PersistenceManager.retrieveKey()
+        if userKey == 0 {
+            //key was 0 during returning launch which is bad, so reset to onboarding flow
+            PersistenceManager.unsetKey()
+            return false
+        } else {
+            return true
+        }
+    }
     
     func returningLaunchSetup() async throws {
         // do things here for returning users
@@ -77,6 +93,8 @@ class LaunchManager {
         do {
             self.dog = try await NetworkManager.shared.fetchDog()
         } catch {
+            Crashlytics.crashlytics().log("Error during returningLaunchSetup in launch mannager with error: \(error)")
+            Crashlytics.crashlytics().record(error: error)
             throw PSError.fetchDogError(underlyingError: error)
         }
     }
@@ -84,15 +102,25 @@ class LaunchManager {
     func onboardingSetup() {
         Task {
             // do user setup
-           try await Auth.auth().signInAnonymously()
+            do {
+                try await Auth.auth().signInAnonymously()
+            } catch {
+                Crashlytics.crashlytics().log("Error during onboardingSetup in Launchmanager during auth sign in with error: \(error)")
+                Crashlytics.crashlytics().record(error: error)
+            }
         }
         //get a key in background
         Task {
-            let newKey = try await NetworkManager.shared.getNewKey()
-            if newKey != 0 {
-                self.onboardingPairingKey = newKey
+            do {
+                let newKey = try await NetworkManager.shared.getNewKey()
+                if newKey != 0 {
+                    self.onboardingPairingKey = newKey
+                }
+            } catch {
+                Crashlytics.crashlytics().log("Error during onboardingSetup in Launchmanager during get new key with error: \(error)")
+                Crashlytics.crashlytics().record(error: error)
             }
-        }        
+        }
         
     }
 
@@ -104,9 +132,16 @@ class LaunchManager {
         
         // initalize the key which is a firebase function that creates an empty object in the datbaase so the user has access to it
         PersistenceManager.setKey(to: pairingKey)
-        try await NetworkManager.shared.initializeKey(pairingKey: pairingKey)
-        try await NetworkManager.shared.setClaims(with: pairingKey)
-        try await PersistenceManager.subscribeToPairingKey(pairingKey: pairingKey)
+        
+        do {
+            try await NetworkManager.shared.initializeKey(pairingKey: pairingKey)
+            try await NetworkManager.shared.setClaims(with: pairingKey)
+            try await PersistenceManager.subscribeToPairingKey(pairingKey: pairingKey)
+        } catch {
+            Crashlytics.crashlytics().log("Issue in finishOnboarding in LaunchManager during the onboarding setup process. Error returned was \(error)")
+            Crashlytics.crashlytics().record(error: error)
+        }
+        
         do {
             try await self.refreshToken()
         } catch {
@@ -136,6 +171,8 @@ class LaunchManager {
                 
             } catch {
                 print("Error fetching and setting dog in launch manager: \(error)")
+                Crashlytics.crashlytics().log("Error during setDog in Launchmanager during auth sign in with error: \(error)")
+                Crashlytics.crashlytics().record(error: error)
             }
     }
     
@@ -183,9 +220,11 @@ class LaunchManager {
         } catch PSError.authError(let error){
             print("Auth error")
             print(error?.localizedDescription ?? "no localized description for auth error")
+            Crashlytics.crashlytics().log("Error during standardSetup in Launchmanager during auth sign in")
         } catch PSError.fetchDogError(let error){
             print("fetch dog error")
             print(error?.localizedDescription ?? "no localized description for fetch dog error")
+            Crashlytics.crashlytics().log("Error during onboardingSetup in Launchmanager during fetch dog")
         }
         
         // Remote config setup
@@ -195,6 +234,8 @@ class LaunchManager {
             print("remote config done")
         } catch {
             print("Error on remote config setup: \(error)")
+            Crashlytics.crashlytics().log("Error during fetch of remote config in launch config with error: \(error)")
+            Crashlytics.crashlytics().record(error: error)
         }
     }
 }
