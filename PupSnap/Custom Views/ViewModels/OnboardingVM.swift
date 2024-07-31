@@ -43,6 +43,10 @@ class OnboardingVM: ObservableObject {
     
     @Published var termsAgree: Bool = false
     
+    var errorMessage = ""
+    
+    @Published var showAlert: Bool = false
+    
     
     func finishOnboarding() async throws {
         let newDog = Dog(photo: selectedDog, name: dogName)
@@ -51,6 +55,8 @@ class OnboardingVM: ObservableObject {
         } catch {
             Crashlytics.crashlytics().log("Error during finishOnboarding in OnboardingVM. Error thrown was: \(error)")
             Crashlytics.crashlytics().record(error: error)
+            self.errorMessage = "Something went wrong during setup. Please try again. If the issue persists, close and reopen the app.\n Error returned from server was: \(error.localizedDescription)"
+            throw error
         }
     }
     

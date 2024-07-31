@@ -54,13 +54,11 @@ class LaunchManager {
             print("branch returning launch")
             //not sure about this one yet, will see if it gets called
         case .onboardingFirstLaunch:
-            onboardingSetup()
             AppDelegate.regularFirstTimeLaunch.send(())
         case .standardReturningLaunch:
             if verifyReturningLaunch() {
                 AppDelegate.standardSceneSetup.send(())
             } else {
-                onboardingSetup()
                 AppDelegate.regularFirstTimeLaunch.send(())
             }
         case nil:
@@ -98,36 +96,33 @@ class LaunchManager {
             throw PSError.fetchDogError(underlyingError: error)
         }
     }
-    
-    func onboardingSetup() {
-        Task {
-            // do user setup
-            do {
-                try await Auth.auth().signInAnonymously()
-            } catch {
-                Crashlytics.crashlytics().log("Error during onboardingSetup in Launchmanager during auth sign in with error: \(error)")
-                Crashlytics.crashlytics().record(error: error)
-            }
-        }
-        //get a key in background
-        Task {
-            do {
-                let newKey = try await NetworkManager.shared.getNewKey()
-                if newKey != 0 {
-                    self.onboardingPairingKey = newKey
-                }
-            } catch {
-                Crashlytics.crashlytics().log("Error during onboardingSetup in Launchmanager during get new key with error: \(error)")
-                Crashlytics.crashlytics().record(error: error)
-            }
-        }
-        
-    }
 
     func finishOnboarding(with dog: Dog) async throws {
+        //first get new key and auth
+        do {
+           let authResult = try await Auth.auth().signInAnonymously()
+        } catch {
+            Crashlytics.crashlytics().log("Error during onboardingSetup in Launchmanager during auth sign in with error: \(error)")
+            Crashlytics.crashlytics().record(error: error)
+            throw PSError.onboardingError(underlyingError: error)
+        }
+        
+        do {
+            let newKey = try await NetworkManager.shared.getNewKey()
+            if newKey != 0 {
+                self.onboardingPairingKey = newKey
+            } else {
+                throw PSError.onboardingError(underlyingError: nil)
+            }
+        } catch {
+            Crashlytics.crashlytics().log("Error during onboardingSetup in Launchmanager during get new key with error: \(error)")
+            Crashlytics.crashlytics().record(error: error)
+            throw PSError.onboardingError(underlyingError: error)
+        }
+        
         guard let pairingKey = self.onboardingPairingKey else {
             print("No onboarding pairing key found, cant finish onboarding")
-            return
+            throw PSError.onboardingError(underlyingError: nil)
         }
         
         // initalize the key which is a firebase function that creates an empty object in the datbaase so the user has access to it
@@ -140,6 +135,7 @@ class LaunchManager {
         } catch {
             Crashlytics.crashlytics().log("Issue in finishOnboarding in LaunchManager during the onboarding setup process. Error returned was \(error)")
             Crashlytics.crashlytics().record(error: error)
+            throw PSError.onboardingError(underlyingError: error)
         }
         
         do {
@@ -148,8 +144,12 @@ class LaunchManager {
             print("Error refreshing onbaording token")
         }
       
+        do {
+            try await NetworkManager.shared.setDog(to: dog)
+        } catch {
+            throw PSError.onboardingError(underlyingError: error)
+        }
         
-        try await NetworkManager.shared.setDog(to: dog)
         self.dog = dog
         
         print("Onboarding complete for key: \(pairingKey) and dog \(dog)")
@@ -161,10 +161,18 @@ class LaunchManager {
     }
     
     func refreshToken() async throws {
-       try await Auth.auth().currentUser?.getIDTokenResult(forcingRefresh: true)
+        print("attempting to refresh token")
+        do {
+            let tokenResult = try await Auth.auth().currentUser?.getIDTokenResult(forcingRefresh: true)
+            print(tokenResult?.token.count ?? "token.count returned  nil")
+            print("refreshed token")
+        } catch {
+            print("error occured during token refresh")
+            throw PSError.authError(underlyingError: error)
+        }
     }
     
-    func setDog() async {
+    func setDog() async throws{
             do {
                 self.dog = try await NetworkManager.shared.fetchDog()
                 self.dogChanged = true
@@ -173,6 +181,7 @@ class LaunchManager {
                 print("Error fetching and setting dog in launch manager: \(error)")
                 Crashlytics.crashlytics().log("Error during setDog in Launchmanager during auth sign in with error: \(error)")
                 Crashlytics.crashlytics().record(error: error)
+                throw PSError.fetchDogError(underlyingError: error)
             }
     }
     

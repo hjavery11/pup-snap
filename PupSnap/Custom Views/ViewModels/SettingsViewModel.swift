@@ -128,23 +128,23 @@ import Foundation
     }
     
     func updateDog() async throws {
-        await LaunchManager.shared.setDog()
+        try await LaunchManager.shared.setDog()
     }
     
-    func updateDogPhoto() async {
+    func updateDogPhoto() async throws{
         if newPhoto != "" {
             NetworkManager.shared.changeDogPhoto(to: newPhoto)
             showPhotoChangeSuccess = true
             selectedPhoto = newPhoto
-            await LaunchManager.shared.setDog()
+            try await LaunchManager.shared.setDog()
         }
     }
     
-    func updateDogName() async {
+    func updateDogName() async throws {
         if newDogName != "" {
             NetworkManager.shared.changeDogName(to: newDogName)
             dogNameSuccess = true
-            await LaunchManager.shared.setDog()
+            try await LaunchManager.shared.setDog()
         }
     }
     

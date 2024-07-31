@@ -84,20 +84,20 @@ struct OnboardingView: View {
                                 .bold()
                                 .font(.system(size: 16))
                                 .multilineTextAlignment(.center)
-                                .foregroundColor(.white)
                                 .frame(width: 345, height: 52)
-                                .background(Color(red: 0.56, green: 0.35, blue: 1))
                                 .cornerRadius(10)
+                                .buttonStyle(PlainButtonStyle())
+                                .padding(.horizontal, 40)
+                                .padding(.vertical, 19)
+                                .frame(width: 345, height: 52, alignment: .center)
+                                .background(Color.appPurple)
+                                .cornerRadius(10)
+                                .foregroundColor(viewModel.dogName.isBlank ? Color(white: 0.80):.white)
                         }
                         .disabled(viewModel.dogName.isBlank)
-                        .buttonStyle(PlainButtonStyle())
+                      
                     }
-                    .padding(.horizontal, 40)
-                    .padding(.vertical, 19)
-                    .frame(width: 345, height: 52, alignment: .center)
-                    .background(Color.appPurple)
-                    .cornerRadius(10)
-                }           
+                }
                 .navigationTitle("PupSnap")
                 .padding([.leading, .trailing], 15)
                 Spacer()

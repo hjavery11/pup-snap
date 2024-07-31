@@ -63,7 +63,7 @@ struct DogView: View {
             Button("Cancel", role: .cancel) { viewModel.newPhoto = "" }
             Button("Yes") { 
                 Task {
-                    await viewModel.updateDogPhoto()
+                    try await viewModel.updateDogPhoto()
                 }
             }
         } message: {
@@ -79,7 +79,7 @@ struct DogView: View {
             Button("Cancel", role: .cancel) { viewModel.newDogName = "" }
             Button("Yes") {
                 Task {
-                    await viewModel.updateDogName()
+                    try await viewModel.updateDogName()
                 }
             }
         } message: {

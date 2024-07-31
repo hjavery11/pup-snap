@@ -24,6 +24,7 @@ enum PSError: Error {
     case fetchDogError(underlyingError: Error? = nil )
     case imageSize(underlyingError: Error? = nil)
     case imageData(underlyingError: Error? = nil)
+    case onboardingError(underlyingError: Error? = nil)
     
     var localizedDescription: String {
         switch self {
@@ -59,6 +60,8 @@ enum PSError: Error {
             return "Image file size was too large. Maximim size allowed is 5 MB"
         case .imageData(_):
             return "Error calculating image data"
+        case .onboardingError(let underlyingError):
+            return "Error occured during onboarding with error: \(underlyingError?.localizedDescription ?? "")"
         }
     
     }

@@ -105,7 +105,6 @@ class PasteModalVC: UIViewController {
                     Branch.getInstance().passPaste(itemProviders)                  
                 } else {
                     print("found non branch link on pasteboard, sending to regular onboarding")
-                    LaunchManager.shared.onboardingSetup()
                     AppDelegate.regularFirstTimeLaunch.send(())
                 }
             }
