@@ -27,11 +27,7 @@ class PhotoVC: UIViewController, UINavigationControllerDelegate, UIImagePickerCo
     let imageHeight: CGFloat = 85 * 4
     
     let buttonFont: CGFloat = 16
-    let largeConfig = UIImage.SymbolConfiguration(pointSize: 44, weight: .bold, scale: .default)
-    
-    var fontType: UIFont?
-    
-    var largeTitleFontSize: CGFloat?
+
     let deviceWidth = UIScreen.main.bounds.width
     
     var placeholderImage = UIImage(systemName: "photo")
@@ -57,8 +53,7 @@ class PhotoVC: UIViewController, UINavigationControllerDelegate, UIImagePickerCo
         // set font size depending on screen width to fit title and hint text
         setDogInfo()
         setupDogPhoto()
-        
-        setFontSize()
+
         setNavigationBarTitle()
         
         // views
@@ -163,7 +158,7 @@ class PhotoVC: UIViewController, UINavigationControllerDelegate, UIImagePickerCo
         
         NSLayoutConstraint.activate([
             hostingController.view.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -padding),
-            hostingController.view.bottomAnchor.constraint(equalTo: dogImage.topAnchor, constant: -30)
+            hostingController.view.bottomAnchor.constraint(equalTo: dogImage.topAnchor, constant: -20)
         ])
         
         hostingController.didMove(toParent: self)
@@ -190,23 +185,10 @@ class PhotoVC: UIViewController, UINavigationControllerDelegate, UIImagePickerCo
     func setNavigationBarTitle() {
         navigationController?.navigationBar.prefersLargeTitles = true
         navigationController?.navigationBar.largeTitleTextAttributes = [
-            NSAttributedString.Key.font: UIFont(name: AppFonts.bold.rawValue, size: largeTitleFontSize ?? 12)!,
-            NSAttributedString.Key.foregroundColor: UIColor.systemPurple
+            NSAttributedString.Key.font: UIFont(name: AppFonts.bold.rawValue, size: 35)!,
+            NSAttributedString.Key.foregroundColor: AppColors.appPurple
         ]
         
-    }
-    
-    
-    
-    func setFontSize() {
-        // set font size based off width of screen
-        if deviceWidth > 375 {
-            largeTitleFontSize = 34
-            fontType = UIFont.systemFont(ofSize: 12)
-        } else {
-            largeTitleFontSize = 28
-            fontType = UIFont.systemFont(ofSize: 10)
-        }
     }
     
     func showSpinner() {
