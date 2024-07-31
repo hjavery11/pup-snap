@@ -177,7 +177,7 @@ class PhotoEditorVC: UIViewController, UITextFieldDelegate {
         let title = UILabel()
         
         title.translatesAutoresizingMaskIntoConstraints = false
-        title.font = UIFont(name: MyFonts.bold.rawValue, size: 18)
+        title.font = UIFont(name: AppFonts.bold.rawValue, size: 18)
         //title.font = UIFont.boldSystemFont(ofSize: 18)
         title.text = titleText
         title.textAlignment = .center

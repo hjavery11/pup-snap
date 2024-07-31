@@ -99,7 +99,7 @@ class FullScreenPhotoVC: UIViewController, RatingViewControllerDelegate {
         view.addSubview(captionView)
         captionView.translatesAutoresizingMaskIntoConstraints = false
         captionView.text = photo.caption
-        captionView.font = UIFont(name: MyFonts.base.rawValue, size: 24)
+        captionView.font = UIFont(name: AppFonts.base.rawValue, size: 24)
         captionView.textColor = .label
         
         

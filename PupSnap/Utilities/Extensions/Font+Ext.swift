@@ -8,7 +8,9 @@
 import UIKit
 
 
-enum MyFonts: String {
-    case base = "Roboto"
-    case bold = "Roboto-Bold"
+enum AppFonts: String {
+    case base = "ReemKufi-Regular"
+    case bold = "ReemKufi-Bold"
+    case medium = "ReemKufi-Medium"
+    case semibold = "ReemKufi-SemiBold"
 }

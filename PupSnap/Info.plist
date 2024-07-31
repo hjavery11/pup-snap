@@ -30,6 +30,10 @@
 		<string>Roboto-Regular.ttf</string>
 		<string>Roboto-Thin.ttf</string>
 		<string>Roboto-ThinItalic.ttf</string>
+		<string>ReemKufi-Bold.ttf</string>
+		<string>ReemKufi-Medium.ttf</string>
+		<string>ReemKufi-Regular.ttf</string>
+		<string>ReemKufi-SemiBold.ttf</string>
 	</array>
 	<key>UIApplicationSceneManifest</key>
 	<dict>

@@ -190,7 +190,7 @@ class PhotoVC: UIViewController, UINavigationControllerDelegate, UIImagePickerCo
     func setNavigationBarTitle() {
         navigationController?.navigationBar.prefersLargeTitles = true
         navigationController?.navigationBar.largeTitleTextAttributes = [
-            NSAttributedString.Key.font: UIFont(name: MyFonts.bold.rawValue, size: largeTitleFontSize ?? 12)!,
+            NSAttributedString.Key.font: UIFont(name: AppFonts.bold.rawValue, size: largeTitleFontSize ?? 12)!,
             NSAttributedString.Key.foregroundColor: UIColor.systemPurple
         ]
         

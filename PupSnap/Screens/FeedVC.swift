@@ -70,7 +70,7 @@ class FeedVC: UIViewController, FullScreenPhotoVCDelegate {
     func configureNavigationBar() {
         navigationController?.navigationBar.tintColor = .systemPurple
             navigationController?.navigationBar.titleTextAttributes = [
-                NSAttributedString.Key.font: UIFont(name: MyFonts.base.rawValue, size: 18)!,
+                NSAttributedString.Key.font: UIFont(name: AppFonts.base.rawValue, size: 18)!,
                 NSAttributedString.Key.foregroundColor: UIColor.systemPurple
             ]
          

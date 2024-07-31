@@ -28,6 +28,14 @@ class AppDelegate: UIResponder, UIApplicationDelegate, MessagingDelegate {
     static let branchPasteboardEvent = PassthroughSubject<Void, Never>()
     
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
+        //list all fonts available
+        for family: String in UIFont.familyNames {
+            print(family)
+            for names: String in UIFont.fontNames(forFamilyName: family) {
+                print("== \(names)")
+            }
+        }
+        
         
         // Override point for customization after application launch.
 #if DEBUG

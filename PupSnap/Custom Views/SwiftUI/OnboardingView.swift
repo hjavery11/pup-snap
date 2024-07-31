@@ -10,87 +10,123 @@ struct OnboardingView: View {
     @Environment(\.presentationMode) private var presentationMode
     
     @StateObject var viewModel = OnboardingVM()
-
-    var body: some View {
-        ZStack {
-            NavigationStack {
-                VStack {
-                    HStack{
-                        Text("Enter your dog's name:")
-                            .font(.custom(MyFonts.base.rawValue, size: 22))
-                        Spacer()
-                    }
-                    .padding()
-                    HStack {
-                        TextField("Enter Dog Name", text: $viewModel.dogName)
-                            .textFieldStyle(.roundedBorder)
-                            .frame(width: 250)
-                            .padding()
-                        Image(systemName: viewModel.dogName.isEmpty ? "circle":"checkmark.diamond.fill")
-                            .imageScale(.large)
-                        Spacer()
-                    }
-                    HStack{
-                        Text("Then choose your dog!")
-                        .font(.custom(MyFonts.base.rawValue, size: 22))
-                         
-                        Spacer()
-                    }
-                    .padding()
-                    
-                    ScrollView{
-                        LazyVGrid(columns: [GridItem(.adaptive(minimum: 100))], spacing: 30) {
-                            ForEach(viewModel.dogPhotos, id: \.self) { dog in
-                                Image(dog)
-                                    .resizable()
-                                    .scaledToFit()
-                                    .frame(width:100, height: 100)
-                                    .border(Color.purple, width: dog == viewModel.selectedDog ? 2:0)
-                                    .onTapGesture {
-                                        viewModel.selectedDog = dog
-                                    }
-                            }
-                        }
-                    }
-                    HStack {
-                        Spacer()
-                        Button {
-                            Task {
-                                viewModel.isLoading = true
-                                try await viewModel.finishOnboarding()
-                                PersistenceManager.setupDone()
-                                viewModel.isLoading = false
-                                presentationMode.wrappedValue.dismiss()
-                            }
-                        } label: {
-                            Text("Get Started")
-                            Image(systemName: "arrow.right")
-                            
-                        }
-                        .bold()
-                        .tint(Color(.systemPurple))
-                        .padding(.trailing, 25)
-                        .buttonStyle(BorderedProminentButtonStyle())
-                        .foregroundStyle(Color(.white))
-                        .disabled(viewModel.dogName.isEmpty || viewModel.selectedDog == "")
-                    }
-                }
-                .navigationTitle("Welcome to PupSnap")      
-            }
-            .foregroundStyle(Color(.systemPurple))
-            .opacity(viewModel.isLoading ? 0.1:1)
-            
-            if viewModel.isLoading {
-                ProgressView("Setting up...")
-                    .tint(Color(.systemPurple))
-                    .controlSize(.large)
-            }
-            
-        }
+    @FocusState private var focusedField: Field?
+    
+    enum Field: Hashable {
+        case dogName
     }
+
+    init() {
+     // Large Navigation Title
+        UINavigationBar.appearance().largeTitleTextAttributes = [.foregroundColor: AppColors.appPurple, 
+                                                                .font: UIFont(name: AppFonts.bold.rawValue, size: 35) ?? UIFont.systemFont(ofSize: 35)]
+    
+   }
+    
+    var body: some View {
+            NavigationStack {
+                VStack(spacing:0) {
+                    Spacer()
+                        .frame(height:92)
+                    
+                    HStack {
+                        Text("Create your pup")
+                            .font(Font.custom(AppFonts.medium.rawValue, size: 30))
+                            .foregroundColor(Color(.label))
+                            .padding(.bottom, 20)
+                        Spacer()
+                    }
+                    
+                    HStack{
+                        Text("Enter your dog's name")
+                            .font(.custom(AppFonts.base.rawValue, size: 14))
+                            .opacity(0.65)
+                        Spacer()
+                    }
+                    .padding(.bottom,35)
+                    
+                    ZStack(alignment: .leading) {
+                        RoundedRectangle(cornerRadius: 8)
+                            .strokeBorder(Color.gray, lineWidth: 1)
+                        
+                        HStack {
+                            Image(systemName: "pawprint")
+                                .padding(.leading, 28)
+                                .frame(width: 17, height: 17)
+                            TextField("Dog's name", text: $viewModel.dogName)
+                                .padding(EdgeInsets(top: 0, leading: 18, bottom: 0, trailing: 0))
+                                .focused($focusedField, equals: .dogName)
+                            Spacer()
+                        }
+                        
+                    }
+                    .frame(height:52)
+                    .padding(.bottom, 35)
+                    
+                    HStack {
+                        Toggle(isOn: $viewModel.termsAgree) {
+                            Text("I agree to the Terms and Conditions")
+                                .font(.system(size: 14))
+                                .foregroundStyle(Color(.label))
+                                .opacity(0.7)
+                        }
+                        .toggleStyle(iOSCheckboxToggleStyle())
+                        .tint(Color(.systemPurple))
+                        
+                        Spacer()
+                    }
+                    
+                    Spacer()
+                    
+                    HStack(alignment: .center, spacing: 10) {
+                        NavigationLink(destination: OnboardingDogView(viewModel: viewModel)) {
+                            Text("Next")
+                                .bold()
+                                .font(.system(size: 16))
+                                .multilineTextAlignment(.center)
+                                .foregroundColor(.white)
+                                .frame(width: 345, height: 52)
+                                .background(Color(red: 0.56, green: 0.35, blue: 1))
+                                .cornerRadius(10)
+                        }
+                        .disabled(viewModel.dogName.isBlank)
+                        .buttonStyle(PlainButtonStyle())
+                    }
+                    .padding(.horizontal, 40)
+                    .padding(.vertical, 19)
+                    .frame(width: 345, height: 52, alignment: .center)
+                    .background(Color.appPurple)
+                    .cornerRadius(10)
+                }           
+                .navigationTitle("PupSnap")
+                .padding([.leading, .trailing], 15)
+                Spacer()
+                    .frame(height:50)
+                   
+            }
+           
+        }
 }
 
 #Preview {
     OnboardingView()
 }
 
+struct iOSCheckboxToggleStyle: ToggleStyle {
+    func makeBody(configuration: Configuration) -> some View {
+        // 1
+        Button(action: {
+
+            // 2
+            configuration.isOn.toggle()
+
+        }, label: {
+            HStack {
+                // 3
+                Image(systemName: configuration.isOn ? "checkmark.square.fill" : "square")
+
+                configuration.label
+            }
+        })
+    }
+}

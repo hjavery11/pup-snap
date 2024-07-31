@@ -164,18 +164,6 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate, UITabBarControllerDeleg
         let hostingController = UIHostingController(rootView: OnboardingView())
         hostingController.modalPresentationStyle = .fullScreen
         
-        let appear = UINavigationBarAppearance()
-
-            let atters: [NSAttributedString.Key: Any] = [
-                .foregroundColor: UIColor.systemPurple
-            ]
-
-            appear.largeTitleTextAttributes = atters
-            appear.titleTextAttributes = atters
-        
-        UINavigationBar.appearance().standardAppearance = appear
-        
-        
         window?.rootViewController = hostingController
     }
     

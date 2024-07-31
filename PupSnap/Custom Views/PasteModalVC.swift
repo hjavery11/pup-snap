@@ -48,14 +48,14 @@ class PasteModalVC: UIViewController {
         helper.text = "You are joining a feed that was shared with you."
         helper.translatesAutoresizingMaskIntoConstraints = false
         helper.textColor = .label
-        helper.font = UIFont(name: MyFonts.base.rawValue, size: 20)
+        helper.font = UIFont(name: AppFonts.base.rawValue, size: 20)
         helper.numberOfLines = 2
         view.addSubview(helper)
         
         
         let instructions = UILabel()
         instructions.text = "Click the button to get started!"
-        instructions.font = UIFont(name: MyFonts.base.rawValue, size: 20)
+        instructions.font = UIFont(name: AppFonts.base.rawValue, size: 20)
         instructions.translatesAutoresizingMaskIntoConstraints = false
         instructions.textColor = .label
         view.addSubview(instructions)

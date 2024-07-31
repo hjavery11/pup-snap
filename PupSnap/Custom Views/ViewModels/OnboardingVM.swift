@@ -41,6 +41,8 @@ class OnboardingVM: ObservableObject {
     
     @Published var isLoading: Bool = false
     
+    @Published var termsAgree: Bool = false
+    
     
     func finishOnboarding() async throws {
         let newDog = Dog(photo: selectedDog, name: dogName)

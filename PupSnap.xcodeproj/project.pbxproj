@@ -50,7 +50,13 @@
 		FA80BCFB2C50A0F500CE7C50 /* ShadowsIntoLight-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = FA80BCFA2C50A0F500CE7C50 /* ShadowsIntoLight-Regular.ttf */; };
 		FA80BCFF2C50A4D000CE7C50 /* Font+Ext.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA80BCFE2C50A4D000CE7C50 /* Font+Ext.swift */; };
 		FA80BD012C50A82100CE7C50 /* Handlee-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = FA80BD002C50A82000CE7C50 /* Handlee-Regular.ttf */; };
-		FA80BD042C5408DB00CE7C50 /* Navigator.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA80BD032C5408DB00CE7C50 /* Navigator.swift */; };
+		FA962EC82C5AAF8D00F95205 /* ReemKufi-Medium.ttf in Resources */ = {isa = PBXBuildFile; fileRef = FA962EC42C5AAF8C00F95205 /* ReemKufi-Medium.ttf */; };
+		FA962EC92C5AAF8D00F95205 /* ReemKufi-Bold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = FA962EC52C5AAF8D00F95205 /* ReemKufi-Bold.ttf */; };
+		FA962ECA2C5AAF8D00F95205 /* ReemKufi-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = FA962EC62C5AAF8D00F95205 /* ReemKufi-Regular.ttf */; };
+		FA962ECB2C5AAF8D00F95205 /* ReemKufi-SemiBold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = FA962EC72C5AAF8D00F95205 /* ReemKufi-SemiBold.ttf */; };
+		FA962ECD2C5AC07400F95205 /* UIColor+Ext.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA962ECC2C5AC07400F95205 /* UIColor+Ext.swift */; };
+		FA962ECF2C5ACC2200F95205 /* String+Ext.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA962ECE2C5ACC2200F95205 /* String+Ext.swift */; };
+		FA962ED12C5ACCBC00F95205 /* OnboardingDogView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA962ED02C5ACCBC00F95205 /* OnboardingDogView.swift */; };
 		FAD07D3A2C45C9B900A3ECBF /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAD07D392C45C9B900A3ECBF /* SettingsView.swift */; };
 		FAD07D3C2C45C9E300A3ECBF /* SettingsVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAD07D3B2C45C9E300A3ECBF /* SettingsVC.swift */; };
 		FAD07D3E2C45CE9100A3ECBF /* PairingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAD07D3D2C45CE9100A3ECBF /* PairingView.swift */; };
@@ -120,7 +126,13 @@
 		FA80BCFA2C50A0F500CE7C50 /* ShadowsIntoLight-Regular.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "ShadowsIntoLight-Regular.ttf"; sourceTree = "<group>"; };
 		FA80BCFE2C50A4D000CE7C50 /* Font+Ext.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Font+Ext.swift"; sourceTree = "<group>"; };
 		FA80BD002C50A82000CE7C50 /* Handlee-Regular.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Handlee-Regular.ttf"; sourceTree = "<group>"; };
-		FA80BD032C5408DB00CE7C50 /* Navigator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Navigator.swift; sourceTree = "<group>"; };
+		FA962EC42C5AAF8C00F95205 /* ReemKufi-Medium.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "ReemKufi-Medium.ttf"; sourceTree = "<group>"; };
+		FA962EC52C5AAF8D00F95205 /* ReemKufi-Bold.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "ReemKufi-Bold.ttf"; sourceTree = "<group>"; };
+		FA962EC62C5AAF8D00F95205 /* ReemKufi-Regular.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "ReemKufi-Regular.ttf"; sourceTree = "<group>"; };
+		FA962EC72C5AAF8D00F95205 /* ReemKufi-SemiBold.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "ReemKufi-SemiBold.ttf"; sourceTree = "<group>"; };
+		FA962ECC2C5AC07400F95205 /* UIColor+Ext.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIColor+Ext.swift"; sourceTree = "<group>"; };
+		FA962ECE2C5ACC2200F95205 /* String+Ext.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "String+Ext.swift"; sourceTree = "<group>"; };
+		FA962ED02C5ACCBC00F95205 /* OnboardingDogView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingDogView.swift; sourceTree = "<group>"; };
 		FAD07D392C45C9B900A3ECBF /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
 		FAD07D3B2C45C9E300A3ECBF /* SettingsVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsVC.swift; sourceTree = "<group>"; };
 		FAD07D3D2C45CE9100A3ECBF /* PairingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PairingView.swift; sourceTree = "<group>"; };
@@ -191,7 +203,6 @@
 		FA35904C2C33B2AC00E417B1 /* PupSnap */ = {
 			isa = PBXGroup;
 			children = (
-				FA80BD022C5408D100CE7C50 /* Navigator */,
 				FA80BCE12C509E8E00CE7C50 /* Fonts */,
 				FAD07D942C49664900A3ECBF /* remote_config_defaults.plist */,
 				FA3590842C350A7800E417B1 /* PupSnap.entitlements */,
@@ -276,6 +287,7 @@
 				FAD07D442C46571400A3ECBF /* DogView.swift */,
 				FA80BCCF2C4B711000CE7C50 /* Toast.swift */,
 				FA80BCD12C4F072E00CE7C50 /* OnboardingView.swift */,
+				FA962ED02C5ACCBC00F95205 /* OnboardingDogView.swift */,
 			);
 			path = SwiftUI;
 			sourceTree = "<group>";
@@ -286,6 +298,8 @@
 				FA80BCFE2C50A4D000CE7C50 /* Font+Ext.swift */,
 				FA63FFB42C37519F0070165E /* UIImageView+Ext.swift */,
 				FAD07D752C46F9A200A3ECBF /* UIApplication+Ext.swift */,
+				FA962ECC2C5AC07400F95205 /* UIColor+Ext.swift */,
+				FA962ECE2C5ACC2200F95205 /* String+Ext.swift */,
 			);
 			path = Extensions;
 			sourceTree = "<group>";
@@ -293,6 +307,10 @@
 		FA80BCE12C509E8E00CE7C50 /* Fonts */ = {
 			isa = PBXGroup;
 			children = (
+				FA962EC52C5AAF8D00F95205 /* ReemKufi-Bold.ttf */,
+				FA962EC42C5AAF8C00F95205 /* ReemKufi-Medium.ttf */,
+				FA962EC62C5AAF8D00F95205 /* ReemKufi-Regular.ttf */,
+				FA962EC72C5AAF8D00F95205 /* ReemKufi-SemiBold.ttf */,
 				FA80BD002C50A82000CE7C50 /* Handlee-Regular.ttf */,
 				FA80BCFA2C50A0F500CE7C50 /* ShadowsIntoLight-Regular.ttf */,
 				FA80BCE22C509EA000CE7C50 /* Roboto-Black.ttf */,
@@ -309,14 +327,6 @@
 				FA80BCE72C509EA000CE7C50 /* Roboto-ThinItalic.ttf */,
 			);
 			path = "\U0010Fonts";
-			sourceTree = "<group>";
-		};
-		FA80BD022C5408D100CE7C50 /* Navigator */ = {
-			isa = PBXGroup;
-			children = (
-				FA80BD032C5408DB00CE7C50 /* Navigator.swift */,
-			);
-			path = Navigator;
 			sourceTree = "<group>";
 		};
 		FAD07D412C46097800A3ECBF /* ViewModels */ = {
@@ -412,6 +422,7 @@
 			files = (
 				FA80BCF32C509EA000CE7C50 /* Roboto-ThinItalic.ttf in Resources */,
 				FA80BCF52C509EA000CE7C50 /* Roboto-Italic.ttf in Resources */,
+				FA962ECA2C5AAF8D00F95205 /* ReemKufi-Regular.ttf in Resources */,
 				FA80BCF92C509EA000CE7C50 /* Roboto-LightItalic.ttf in Resources */,
 				FA80BCF62C509EA000CE7C50 /* Roboto-MediumItalic.ttf in Resources */,
 				FA80BCF42C509EA000CE7C50 /* Roboto-BoldItalic.ttf in Resources */,
@@ -422,8 +433,11 @@
 				FAD07D702C46E42100A3ECBF /* GoogleService-Info.plist in Resources */,
 				FA80BCF22C509EA000CE7C50 /* Roboto-BlackItalic.ttf in Resources */,
 				FA80BCEF2C509EA000CE7C50 /* Roboto-Light.ttf in Resources */,
+				FA962ECB2C5AAF8D00F95205 /* ReemKufi-SemiBold.ttf in Resources */,
 				FA80BCF72C509EA000CE7C50 /* Roboto-Medium.ttf in Resources */,
 				FA80BCFB2C50A0F500CE7C50 /* ShadowsIntoLight-Regular.ttf in Resources */,
+				FA962EC82C5AAF8D00F95205 /* ReemKufi-Medium.ttf in Resources */,
+				FA962EC92C5AAF8D00F95205 /* ReemKufi-Bold.ttf in Resources */,
 				FA80BCEE2C509EA000CE7C50 /* Roboto-Black.ttf in Resources */,
 				FA80BCF82C509EA000CE7C50 /* Roboto-Regular.ttf in Resources */,
 				FAD07D952C49664900A3ECBF /* remote_config_defaults.plist in Resources */,
@@ -506,6 +520,7 @@
 				FAD07D912C483AD900A3ECBF /* PasteModalVC.swift in Sources */,
 				FA63FFC72C390E9C0070165E /* AppCheckProviderFactory.swift in Sources */,
 				FAD07D742C46EA7D00A3ECBF /* RemoteConfigManager.swift in Sources */,
+				FA962ECF2C5ACC2200F95205 /* String+Ext.swift in Sources */,
 				FA80BCD42C4F335200CE7C50 /* OnboardingVM.swift in Sources */,
 				FAD07D932C48C2EA00A3ECBF /* LoadingVC.swift in Sources */,
 				FA3590762C34D95C00E417B1 /* StorageHelper.swift in Sources */,
@@ -524,10 +539,11 @@
 				FAD07D3C2C45C9E300A3ECBF /* SettingsVC.swift in Sources */,
 				FA63FFCD2C39231B0070165E /* PersistenceManager.swift in Sources */,
 				FA63FFCB2C391DB80070165E /* PSError.swift in Sources */,
-				FA80BD042C5408DB00CE7C50 /* Navigator.swift in Sources */,
 				FA63FFBF2C37E2710070165E /* RatingViewController.swift in Sources */,
 				FA63FFC92C3916B00070165E /* Photo.swift in Sources */,
+				FA962ECD2C5AC07400F95205 /* UIColor+Ext.swift in Sources */,
 				FA80BCFF2C50A4D000CE7C50 /* Font+Ext.swift in Sources */,
+				FA962ED12C5ACCBC00F95205 /* OnboardingDogView.swift in Sources */,
 				FA3590522C33B2AC00E417B1 /* PhotoVC.swift in Sources */,
 				FA35904E2C33B2AC00E417B1 /* AppDelegate.swift in Sources */,
 				FAD07D3E2C45CE9100A3ECBF /* PairingView.swift in Sources */,
