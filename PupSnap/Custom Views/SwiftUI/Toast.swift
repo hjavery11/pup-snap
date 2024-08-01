@@ -12,11 +12,11 @@ struct SuccessToast: View {
     
     var body: some View {
         HStack {
-            Image(systemName: "exclamationmark.triangle")
+            Image(systemName: "checkmark")
             Text(keyChanged)
         }
         .padding(10)
-        .background(Color(.systemCyan))
+        .background(Color(.systemGreen))
         .cornerRadius(10)
     }
 }

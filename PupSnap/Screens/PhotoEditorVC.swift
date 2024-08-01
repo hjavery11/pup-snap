@@ -317,11 +317,11 @@ class PhotoEditorVC: UIViewController, UITextFieldDelegate {
         cuteScale.didMove(toParent: self)
         
         // Auto layout, variables, and unit scale are not yet supported
-        var cuteTitle = UILabel()
+        let cuteTitle = UILabel()
         cuteTitle.frame = CGRect(x: 0, y: 0, width: 129, height: 19)
         cuteTitle.textColor = UIColor.label
         cuteTitle.font = UIFont(name: AppFonts.bold.rawValue, size: 15)
-        cuteTitle.text = "Cuteness measure"
+        cuteTitle.text = "Cuteness"
         cuteTitle.sizeToFit()
 
         view.addSubview(cuteTitle)

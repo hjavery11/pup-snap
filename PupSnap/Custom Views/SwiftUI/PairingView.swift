@@ -97,8 +97,7 @@ struct PairingView: View {
                     do {
                         viewModel.isLoading = true
                         try await viewModel.changeKeytoBranchKey()
-                        viewModel.isLoading = false
-                        presentationMode.wrappedValue.dismiss()
+                        viewModel.isLoading = false                       
                     } catch {
                         viewModel.isLoading = false
                         viewModel.showingChangeKeyError = true

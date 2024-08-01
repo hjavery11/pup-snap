@@ -40,7 +40,7 @@ class PhotoVC: UIViewController, UINavigationControllerDelegate, UIImagePickerCo
     
     //success toast
     private let successToastVC = UIHostingController(rootView: SuccessToast())
-    private var topConstant: NSLayoutConstraint?
+    private var bottomConstant: NSLayoutConstraint?
     
     let actionSheet = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
     
@@ -440,17 +440,18 @@ class PhotoVC: UIViewController, UINavigationControllerDelegate, UIImagePickerCo
         
         successToastVC.view.backgroundColor = .clear
         
-        topConstant = successToastVC.view.topAnchor.constraint(equalTo: view.topAnchor, constant: -500)
+        bottomConstant = successToastVC.view.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: 500)
         
         NSLayoutConstraint.activate([
-            topConstant!,
+            bottomConstant!,
             successToastVC.view.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -15),
             successToastVC.view.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 15)
         ])
     }
     
     private func showSwiftUIToast() {
-        topConstant?.constant = 10
+        bottomConstant?.constant = -100
+        
         
         UIView.animateKeyframes(withDuration: 4, delay: 0, options: .calculationModeLinear, animations: {
             UIView.addKeyframe(withRelativeStartTime: 0.1, relativeDuration: 0.1) {
@@ -458,7 +459,7 @@ class PhotoVC: UIViewController, UINavigationControllerDelegate, UIImagePickerCo
             }
             
             UIView.addKeyframe(withRelativeStartTime: 0.9, relativeDuration: 0.1) {
-                self.topConstant?.constant = -500
+                self.bottomConstant?.constant = 500
                 self.view.layoutIfNeeded()
             }
         })
