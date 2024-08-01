@@ -160,6 +160,13 @@ class NetworkManager {
             throw NSError(domain: "InvalidResponse", code: -1, userInfo: [NSLocalizedDescriptionKey: "Invalid response from server"])
         }
     }
+    
+    func logError(_ message: String, error: Error? = nil) {
+        Crashlytics.crashlytics().log(message)
+        if let error = error {
+            Crashlytics.crashlytics().record(error: error)
+        }
+    }
 
 }
 

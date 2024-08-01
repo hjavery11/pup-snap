@@ -179,8 +179,7 @@ class LaunchManager {
                 
             } catch {
                 print("Error fetching and setting dog in launch manager: \(error)")
-                Crashlytics.crashlytics().log("Error during setDog in Launchmanager during auth sign in with error: \(error)")
-                Crashlytics.crashlytics().record(error: error)
+                NetworkManager.shared.logError("Error during setDog in Launchmanager during auth sign in with error: \(error)", error: error)
                 throw PSError.fetchDogError(underlyingError: error)
             }
     }
