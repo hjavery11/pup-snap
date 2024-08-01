@@ -86,15 +86,30 @@ class PhotoVC: UIViewController, UINavigationControllerDelegate, UIImagePickerCo
             return
         }
         
-        updateSpeechBubbleText("Hi, I'm \(currentDog.name).\nTap on me to add a photo!")
-        dogImage.image = UIImage(named: currentDog.photo)
+        dogImage.removeFromSuperview()
+        bubbleConnect.removeFromSuperview()
+        speechBubbleHostingController?.view.removeFromSuperview()
+        
+        setDogInfo()
+        setupDogPhoto()
+        setupSpeechBubble()
     }
+    
     func setDogInfo() {
         guard let currentDog = LaunchManager.shared.dog else {
             print("Could not find current dog in launch manager")
             return
         }
-        let text = "Hi, I'm \(currentDog.name).\nTap on me to add a photo!"
+        
+        var text: String
+        
+        if currentDog.name.count < 21 {
+            text = "Hi, I'm \(currentDog.name).\nTap on me to add a photo!"
+        } else {
+            let shortName = currentDog.name[0..<18]
+           text = "Hi, I'm \(shortName)...\nTap on me to add a photo!"
+        }
+     
         
         dogImage.image = UIImage(named: currentDog.photo)
         self.speechBubbleText = text
@@ -116,15 +131,8 @@ class PhotoVC: UIViewController, UINavigationControllerDelegate, UIImagePickerCo
         
         // Assuming the original image size is available, use its aspect ratio.
         if let _ = dogImage.image {
-            //let aspectRatio = image.size.width / image.size.height
             let targetWidth: CGFloat = view.bounds.width
-            //var targetHeight = targetWidth / aspectRatio
-            
-            //            // Check if the calculated height exceeds 400
-            //            if targetHeight > 350 {
-            //                targetHeight = 350
-            //                targetWidth = targetHeight * aspectRatio
-            //            }
+          
             NSLayoutConstraint.activate([
                 dogImage.centerXAnchor.constraint(equalTo: view.safeAreaLayoutGuide.centerXAnchor),
                 dogImage.centerYAnchor.constraint(equalTo: view.safeAreaLayoutGuide.centerYAnchor),
@@ -144,7 +152,6 @@ class PhotoVC: UIViewController, UINavigationControllerDelegate, UIImagePickerCo
     
     func updateDogPhoto(newDog: UIImage) {
         dogImage.image = newDog
-        
     }
     
     func setupSpeechBubble() {
@@ -155,14 +162,13 @@ class PhotoVC: UIViewController, UINavigationControllerDelegate, UIImagePickerCo
         view.addSubview(hostingController.view)
         
         let padding: CGFloat = 10
-        
-        NSLayoutConstraint.activate([
-            hostingController.view.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -padding),
-            hostingController.view.bottomAnchor.constraint(equalTo: dogImage.topAnchor, constant: -20)
-        ])
-        
-        hostingController.didMove(toParent: self)
-        self.speechBubbleHostingController = hostingController
+           NSLayoutConstraint.activate([
+               hostingController.view.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -padding),
+               hostingController.view.bottomAnchor.constraint(equalTo: dogImage.topAnchor, constant: -20),
+           ])
+           
+           hostingController.didMove(toParent: self)
+           self.speechBubbleHostingController = hostingController
     }
     
     func setupConnector() {
@@ -271,7 +277,6 @@ class PhotoVC: UIViewController, UINavigationControllerDelegate, UIImagePickerCo
         cameraVC.allowsEditing = false
         cameraVC.delegate = self
         cameraVC.cameraFlashMode = .off
-        
     }
     
     func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey: Any]) {

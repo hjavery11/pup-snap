@@ -23,13 +23,15 @@ class PhotoEditorVC: UIViewController, UITextFieldDelegate {
     
     let captionField = UITextField()
     
-    let retakeButton = UIButton()
-    let submitButton = UIButton()
+    let backButton = UIButton()
+    let uploadButton = UIButton()
     let closeButton = UIButton(type: .system)
     // Create a UIImage.SymbolConfiguration with the desired point size
     let configuration = UIImage.SymbolConfiguration(pointSize: 20, weight: .medium)
     let buttonPadding: CGFloat = 18
     let topNavPadding: CGFloat = 15
+    
+    let bgColor: UIColor = .systemGray6
     
     let pageFont = "Avenir"
     
@@ -45,16 +47,20 @@ class PhotoEditorVC: UIViewController, UITextFieldDelegate {
     override func viewDidLoad() {
         super.viewDidLoad()
         hidesBottomBarWhenPushed = true
-        view.backgroundColor = .systemGray6
+        view.backgroundColor = bgColor
         
-        setupBottomActionBar()
         setupTopActionBar()
-        setupBottomActionItems()
         setupTopActionItems()
         setupImageView()
         setupTitle()
         setupCaptionField()
         setupRatingsViewController()
+        //Bottom Action buttons
+        setupUploadButton()
+        setupBackButton()
+        setupButtonConstraints()
+        
+        
         setupCuteScale()
         //draw borderes
         setupDividers()
@@ -173,7 +179,7 @@ class PhotoEditorVC: UIViewController, UITextFieldDelegate {
     }
     
     func setupTitle() {
-        let titleText = "Add Photo"
+        let titleText = "New Photo"
         let title = UILabel()
         
         title.translatesAutoresizingMaskIntoConstraints = false
@@ -195,43 +201,43 @@ class PhotoEditorVC: UIViewController, UITextFieldDelegate {
     }
     
     func setupBottomActionItems() {
-        submitButton.translatesAutoresizingMaskIntoConstraints = false
-        submitButton.setTitle("Upload ", for: .normal)
-        submitButton.backgroundColor = .systemBlue
-        submitButton.layer.cornerRadius = 25
-        submitButton.setImage(UIImage(systemName: "arrow.right"), for: .normal)
-        submitButton.tintColor = .white
+        uploadButton.translatesAutoresizingMaskIntoConstraints = false
+        uploadButton.setTitle("Upload ", for: .normal)
+        uploadButton.backgroundColor = .systemBlue
+        uploadButton.layer.cornerRadius = 25
+        uploadButton.setImage(UIImage(systemName: "arrow.right"), for: .normal)
+        uploadButton.tintColor = .white
         
-        submitButton.transform = CGAffineTransform(scaleX: -1.0, y: 1.0)
-        submitButton.titleLabel?.transform = CGAffineTransform(scaleX: -1.0, y: 1.0)
-        submitButton.imageView?.transform = CGAffineTransform(scaleX: -1.0, y: 1.0)
+        uploadButton.transform = CGAffineTransform(scaleX: -1.0, y: 1.0)
+        uploadButton.titleLabel?.transform = CGAffineTransform(scaleX: -1.0, y: 1.0)
+        uploadButton.imageView?.transform = CGAffineTransform(scaleX: -1.0, y: 1.0)
         
-        submitButton.addTarget(self, action: #selector(addPhoto), for: .touchUpInside)
+        uploadButton.addTarget(self, action: #selector(addPhoto), for: .touchUpInside)
         
-        retakeButton.translatesAutoresizingMaskIntoConstraints = false
-        retakeButton.setTitle("Back", for: .normal)
-        retakeButton.backgroundColor = .systemGray
-        retakeButton.layer.cornerRadius = 25
-        retakeButton.tintColor = .white
+        backButton.translatesAutoresizingMaskIntoConstraints = false
+        backButton.setTitle("Back", for: .normal)
+        backButton.backgroundColor = .systemGray
+        backButton.layer.cornerRadius = 25
+        backButton.tintColor = .white
         
-        retakeButton.addTarget(self, action: #selector(showCamera), for: .touchUpInside)
+        backButton.addTarget(self, action: #selector(showCamera), for: .touchUpInside)
         
         
-        view.addSubview(submitButton)
-        view.addSubview(retakeButton)
+        view.addSubview(uploadButton)
+        view.addSubview(backButton)
         
         
         
         NSLayoutConstraint.activate([
-            submitButton.trailingAnchor.constraint(equalTo: bottomBar.trailingAnchor, constant: -buttonPadding),
-            submitButton.widthAnchor.constraint(equalToConstant: 110),
-            submitButton.bottomAnchor.constraint(equalTo: bottomBar.bottomAnchor),
-            submitButton.heightAnchor.constraint(equalTo: bottomBar.heightAnchor),
+            uploadButton.trailingAnchor.constraint(equalTo: bottomBar.trailingAnchor, constant: -buttonPadding),
+            uploadButton.widthAnchor.constraint(equalToConstant: 110),
+            uploadButton.bottomAnchor.constraint(equalTo: bottomBar.bottomAnchor),
+            uploadButton.heightAnchor.constraint(equalTo: bottomBar.heightAnchor),
             
-            retakeButton.leadingAnchor.constraint(equalTo: bottomBar.leadingAnchor, constant: buttonPadding),
-            retakeButton.widthAnchor.constraint(equalToConstant: 90),
-            retakeButton.bottomAnchor.constraint(equalTo: bottomBar.bottomAnchor),
-            retakeButton.heightAnchor.constraint(equalTo: bottomBar.heightAnchor)
+            backButton.leadingAnchor.constraint(equalTo: bottomBar.leadingAnchor, constant: buttonPadding),
+            backButton.widthAnchor.constraint(equalToConstant: 90),
+            backButton.bottomAnchor.constraint(equalTo: bottomBar.bottomAnchor),
+            backButton.heightAnchor.constraint(equalTo: bottomBar.heightAnchor)
         ])
     }
     
@@ -300,61 +306,81 @@ class PhotoEditorVC: UIViewController, UITextFieldDelegate {
     func setupCuteScale() {
         view.layoutIfNeeded()
         
-        let yConst = (bottomBar.frame.minY - imageView.frame.maxY) / 2 // calculate how to put rating scale in middle of caption and bottom bar
         
         NSLayoutConstraint.activate([
             cuteScale.view.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            cuteScale.view.centerYAnchor.constraint(equalTo: imageView.bottomAnchor, constant: yConst),
+            cuteScale.view.topAnchor.constraint(equalTo: captionField.bottomAnchor, constant: 80),
             cuteScale.view.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 40),
             cuteScale.view.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -40),
         ])
         
         cuteScale.didMove(toParent: self)
         
-        drawLabels()
+        // Auto layout, variables, and unit scale are not yet supported
+        var cuteTitle = UILabel()
+        cuteTitle.frame = CGRect(x: 0, y: 0, width: 129, height: 19)
+        cuteTitle.textColor = UIColor.label
+        cuteTitle.font = UIFont(name: AppFonts.bold.rawValue, size: 15)
+        cuteTitle.text = "Cuteness measure"
+        cuteTitle.sizeToFit()
+
+        view.addSubview(cuteTitle)
+        cuteTitle.translatesAutoresizingMaskIntoConstraints = false
+        
+        NSLayoutConstraint.activate([
+            cuteTitle.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 12),
+            cuteTitle.bottomAnchor.constraint(equalTo: cuteScale.view.topAnchor, constant: -17)
+        ])
+    
     }
     
-    func drawLabels() {
-        let labels = ["Derp", "Average", "Cutest"]
-        let positions = [0, 2, 4] // 1st, 3rd, and 5th star buttons
-        var labelViews: [UILabel] = []
-        var lineViews: [UIView] = []
+    func setupUploadButton() {
+        uploadButton.translatesAutoresizingMaskIntoConstraints = false
+        uploadButton.setTitle("Upload ", for: .normal)
+        uploadButton.titleLabel?.font = UIFont(name: AppFonts.semibold.rawValue, size: 14)
+        uploadButton.backgroundColor = AppColors.appPurple
+        uploadButton.layer.cornerRadius = 10
+        uploadButton.tintColor = .white
         
-        for (index, position) in positions.enumerated() {
-            guard position < cuteScale.starButtons.count else { continue }
-            let starButton = cuteScale.starButtons[position]
-            
-            // Label
-            let label = UILabel()
-            label.text = labels[index]
-            label.translatesAutoresizingMaskIntoConstraints = false
-            view.addSubview(label)
-            label.font = UIFont(name: pageFont, size: 20)
-            label.textColor = .label
-            label.layer.opacity = 0.7
-            labelViews.append(label)
-            
-            // Line
-            let line = UIView()
-            line.backgroundColor = .systemGray
-            line.translatesAutoresizingMaskIntoConstraints = false
-            view.addSubview(line)
-            line.layer.opacity = 0.5
-            lineViews.append(line)
-            
-            NSLayoutConstraint.activate([
-                // Label Constraints
-                label.bottomAnchor.constraint(equalTo: starButton.topAnchor, constant: -40),
-                label.centerXAnchor.constraint(equalTo: starButton.centerXAnchor),
-                
-                // Line Constraints
-                line.bottomAnchor.constraint(equalTo: starButton.topAnchor, constant: 10),
-                line.topAnchor.constraint(equalTo: label.bottomAnchor, constant: 5),
-                line.widthAnchor.constraint(equalToConstant: 1),
-                line.centerXAnchor.constraint(equalTo: starButton.centerXAnchor),
-            ])
-        }
+        uploadButton.addTarget(self, action: #selector(addPhoto), for: .touchUpInside)
+        
+        view.addSubview(uploadButton)
+    
     }
+    
+    func setupBackButton() {
+        backButton.translatesAutoresizingMaskIntoConstraints = false
+        backButton.setTitle("Retake", for: .normal)
+        backButton.backgroundColor = bgColor
+        backButton.layer.cornerRadius = 10
+        backButton.titleLabel?.font = UIFont(name: AppFonts.semibold.rawValue, size: 14)
+        backButton.setTitleColor(.secondaryLabel, for: .normal)
+        
+        backButton.addTarget(self, action: #selector(showCamera), for: .touchUpInside)
+        
+        view.addSubview(backButton)
+    }
+    
+    func setupButtonConstraints() {
+        let padding: CGFloat = 15
+        NSLayoutConstraint.activate([
+            backButton.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: padding),
+            backButton.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -padding),
+            backButton.heightAnchor.constraint(equalToConstant: 52),
+            backButton.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -5),
+            
+            uploadButton.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: padding),
+            uploadButton.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -padding),
+            uploadButton.heightAnchor.constraint(equalToConstant: 52),
+            uploadButton.bottomAnchor.constraint(equalTo:backButton.topAnchor, constant: -10)
+            
+           
+        
+        
+        ])
+    }
+    
+   
     
     
 }

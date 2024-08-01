@@ -26,6 +26,7 @@ struct SpeechBubbleView: View {
                 )
         }
         .shadow(color: colorScheme == .dark ? Color.white : Color.gray, radius: 9)
-
+        .background(Color(.systemGray6))
     }
+        
 }
