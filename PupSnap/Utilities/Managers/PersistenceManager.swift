@@ -106,7 +106,7 @@ enum PersistenceManager {
     
     static func enableNotifications() {
         defaults.set(true, forKey: Keys.notification)
-        UIApplication.shared.registerForRemoteNotifications()
+        LaunchManager.shared.requestNotificationPermissions()
     }
     
     static func disableNotifications() {

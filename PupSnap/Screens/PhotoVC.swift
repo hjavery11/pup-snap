@@ -63,7 +63,7 @@ class PhotoVC: UIViewController, UINavigationControllerDelegate, UIImagePickerCo
         configureSuccessToast()
         
         configureActionSheet()
-        
+      
     }    
     
     override func viewDidAppear(_ animated: Bool) {
@@ -78,6 +78,8 @@ class PhotoVC: UIViewController, UINavigationControllerDelegate, UIImagePickerCo
             setNewDog()
             LaunchManager.shared.dogChanged = false
         }
+        print("setting photo vc loaded to true")
+        LaunchManager.shared.photoVCLoaded = true
     }
     
     func setNewDog() {
@@ -86,15 +88,21 @@ class PhotoVC: UIViewController, UINavigationControllerDelegate, UIImagePickerCo
             return
         }
         
-        print("set new dog in photo VC")
+        print("checking for photo VC loaded in setNewDog")
         
-        dogImage.removeFromSuperview()
-        bubbleConnect.removeFromSuperview()
-        speechBubbleHostingController?.view.removeFromSuperview()
-        
-        setDogInfo()
-        setupDogPhoto()
-        setupSpeechBubble()
+        if LaunchManager.shared.photoVCLoaded {
+            
+            dogImage.removeFromSuperview()
+            bubbleConnect.removeFromSuperview()
+            speechBubbleHostingController?.view.removeFromSuperview()
+            
+            setDogInfo()
+            setupDogPhoto()
+            setupSpeechBubble()
+            
+            //Setting bg color again because of weird bug where it doesnt get set after re creating hosting controller
+            speechBubbleHostingController?.view.backgroundColor = .systemGray6
+        }
     }
     
     func setDogInfo() {

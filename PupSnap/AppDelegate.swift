@@ -45,7 +45,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, MessagingDelegate {
 #endif
         AppCheck.setAppCheckProviderFactory(providerFactory)
         
-        FirebaseApp.configure()    
+        FirebaseApp.configure()
         
         //FCM and APNS Messaging config
         UNUserNotificationCenter.current().delegate = self
@@ -71,7 +71,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, MessagingDelegate {
             print("launch type was standard returning")
             LaunchManager.shared.launchType = .standardReturningLaunch
             // Request notification permissions
-           requestNotificationPermissions()
+            LaunchManager.shared.requestNotificationPermissions()
         }
         
         
@@ -83,30 +83,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, MessagingDelegate {
         print("end of app delegate")
         return true
     }
-    
-    func requestNotificationPermissions() {
-        let center = UNUserNotificationCenter.current()
-        center.requestAuthorization(options: [.alert, .sound, .badge]) { granted, error in
-            if let error = error {
-                print("Error requesting notification permissions: \(error)")
-                return
-            }
-            
-            if granted {
-                DispatchQueue.main.async {
-                    UIApplication.shared.registerForRemoteNotifications()
-                    if UserDefaults.standard.object(forKey: PersistenceManager.Keys.notification) == nil {
-                        PersistenceManager.enableNotifications()
-                    }
-                }
-            } else {
-                print("Notification permissions denied.")
-                if UserDefaults.standard.object(forKey: PersistenceManager.Keys.notification) == nil {
-                    PersistenceManager.disableNotifications()
-                }
-            }
-        }
-    }
+   
     
     func application(_ app: UIApplication, open url: URL, options: [UIApplication.OpenURLOptionsKey : Any] = [:]) -> Bool {
         Branch.getInstance().application(app, open: url, options: options)

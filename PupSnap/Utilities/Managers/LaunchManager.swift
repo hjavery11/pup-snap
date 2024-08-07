@@ -28,6 +28,7 @@ class LaunchManager {
     var launchingFromPushNotification: Bool = false
     var firstTimeLaunch: Bool = false
     var launchFromBackground: Bool = false
+    var photoVCLoaded: Bool = false
     
     var openFromPush: Bool = false
     
@@ -94,6 +95,30 @@ class LaunchManager {
             Crashlytics.crashlytics().log("Error during returningLaunchSetup in launch mannager with error: \(error)")
             Crashlytics.crashlytics().record(error: error)
             throw PSError.fetchDogError(underlyingError: error)
+        }
+    }
+    
+    func requestNotificationPermissions() {
+        let center = UNUserNotificationCenter.current()
+        center.requestAuthorization(options: [.alert, .sound, .badge]) { granted, error in
+            if let error = error {
+                print("Error requesting notification permissions: \(error)")
+                return
+            }
+            
+            if granted {
+                DispatchQueue.main.async {
+                    UIApplication.shared.registerForRemoteNotifications()
+                    if UserDefaults.standard.object(forKey: PersistenceManager.Keys.notification) == nil {
+                        PersistenceManager.enableNotifications()
+                    }
+                }
+            } else {
+                print("Notification permissions denied.")
+                if UserDefaults.standard.object(forKey: PersistenceManager.Keys.notification) == nil {
+                    PersistenceManager.disableNotifications()
+                }
+            }
         }
     }
 
