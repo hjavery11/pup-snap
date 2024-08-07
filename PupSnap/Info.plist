@@ -69,5 +69,7 @@
 		<key>Item 1</key>
 		<string>pupsnap-alternate.app.link</string>
 	</dict>
+	<key>FirebaseAppDelegateProxyEnabled</key>
+	<false/>
 </dict>
 </plist>

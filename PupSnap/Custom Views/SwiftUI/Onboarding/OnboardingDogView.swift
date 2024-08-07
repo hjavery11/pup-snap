@@ -71,16 +71,14 @@ struct OnboardingDogView: View {
                             .multilineTextAlignment(.center)
                             .foregroundColor(.white)
                             .frame(width: 345, height: 52)
+                            .background(Color.appPurple)
                             .cornerRadius(10)
                     }
                     .disabled(viewModel.selectedDog == "")
                     .buttonStyle(PlainButtonStyle())
                 }
                 .padding(.horizontal, 40)
-                .padding(.vertical, 19)
-                .frame(width: 345, height: 52, alignment: .center)
-                .background(Color.appPurple)
-                .cornerRadius(10)
+                .padding(.vertical, 19)              
             }
             .opacity(viewModel.isLoading ? 0.3:1)
             .navigationBarBackButtonHidden(true)

@@ -50,7 +50,7 @@ class PasteModalVC: UIViewController {
         helper.textColor = .label
         helper.font = UIFont(name: AppFonts.base.rawValue, size: 20)
         helper.numberOfLines = 2
-        view.addSubview(helper)
+        //view.addSubview(helper)
         
         
         let instructions = UILabel()
@@ -63,11 +63,9 @@ class PasteModalVC: UIViewController {
         
         
         NSLayoutConstraint.activate([
-            helper.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 15),
-            helper.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 30),
-            helper.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -15),
             instructions.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 15),
-            instructions.topAnchor.constraint(equalTo: helper.bottomAnchor, constant: 25)
+            instructions.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 30),
+            instructions.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -15),
         ])
     }
     

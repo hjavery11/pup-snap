@@ -86,6 +86,8 @@ class PhotoVC: UIViewController, UINavigationControllerDelegate, UIImagePickerCo
             return
         }
         
+        print("set new dog in photo VC")
+        
         dogImage.removeFromSuperview()
         bubbleConnect.removeFromSuperview()
         speechBubbleHostingController?.view.removeFromSuperview()

@@ -55,7 +55,7 @@ class OnboardingVM: ObservableObject {
         } catch {
             Crashlytics.crashlytics().log("Error during finishOnboarding in OnboardingVM. Error thrown was: \(error)")
             Crashlytics.crashlytics().record(error: error)
-            self.errorMessage = "Something went wrong during setup. Please try again. If the issue persists, close and reopen the app.\n Error returned from server was: \(error.localizedDescription)"
+            self.errorMessage = "Something went wrong during setup. Please try again. If the issue persists, close and reopen the app.\n Error returned from server was: \(error)"
             throw error
         }
     }

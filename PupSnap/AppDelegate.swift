@@ -45,12 +45,14 @@ class AppDelegate: UIResponder, UIApplicationDelegate, MessagingDelegate {
 #endif
         AppCheck.setAppCheckProviderFactory(providerFactory)
         
-        FirebaseApp.configure()
+        FirebaseApp.configure()    
         
         //FCM and APNS Messaging config
         UNUserNotificationCenter.current().delegate = self
         Messaging.messaging().delegate = self
+        print("register for remote notifications call in app delegate")
         application.registerForRemoteNotifications()
+    
         
         let setupDone = PersistenceManager.setupStatus()
         //uncomment these 2 lines to force branch install
@@ -116,12 +118,23 @@ class AppDelegate: UIResponder, UIApplicationDelegate, MessagingDelegate {
         return true
     }
     
+    func application(_ application: UIApplication, didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data) {
+        print("didregisterforremnote notifications and set apns token")
+        Messaging.messaging().apnsToken = deviceToken
+    }
+    
+    func application(_ application: UIApplication, didFailToRegisterForRemoteNotificationsWithError error: any Error) {
+        print("failed to reegister for remote nofgiciations with error \(error)")
+    }
+    
+    
     func messaging(_ messaging: Messaging, didReceiveRegistrationToken fcmToken: String?) {
+        print("messaging didRecieveRegistrationToken")
         Messaging.messaging().token { token, error in
           if let error = error {
             print("Error fetching FCM registration token: \(error)")
           } else if let _ = token {
-            //print("FCM registration token: \(token)")
+            print("FCM registration token was succesful")
           }
         }
     }

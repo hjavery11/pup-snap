@@ -281,13 +281,10 @@
 		FA63FFAE2C373ECA0070165E /* SwiftUI */ = {
 			isa = PBXGroup;
 			children = (
-				FAD07D392C45C9B900A3ECBF /* SettingsView.swift */,
+				FAAD42C22C63F585009082ED /* Settings */,
+				FAAD42C12C63F571009082ED /* Onboarding */,
 				FA63FFAF2C373ED40070165E /* SpeechBubbleView.swift */,
-				FAD07D3D2C45CE9100A3ECBF /* PairingView.swift */,
-				FAD07D442C46571400A3ECBF /* DogView.swift */,
 				FA80BCCF2C4B711000CE7C50 /* Toast.swift */,
-				FA80BCD12C4F072E00CE7C50 /* OnboardingView.swift */,
-				FA962ED02C5ACCBC00F95205 /* OnboardingDogView.swift */,
 			);
 			path = SwiftUI;
 			sourceTree = "<group>";
@@ -327,6 +324,25 @@
 				FA80BCE72C509EA000CE7C50 /* Roboto-ThinItalic.ttf */,
 			);
 			path = "\U0010Fonts";
+			sourceTree = "<group>";
+		};
+		FAAD42C12C63F571009082ED /* Onboarding */ = {
+			isa = PBXGroup;
+			children = (
+				FA80BCD12C4F072E00CE7C50 /* OnboardingView.swift */,
+				FA962ED02C5ACCBC00F95205 /* OnboardingDogView.swift */,
+			);
+			path = Onboarding;
+			sourceTree = "<group>";
+		};
+		FAAD42C22C63F585009082ED /* Settings */ = {
+			isa = PBXGroup;
+			children = (
+				FAD07D442C46571400A3ECBF /* DogView.swift */,
+				FAD07D3D2C45CE9100A3ECBF /* PairingView.swift */,
+				FAD07D392C45C9B900A3ECBF /* SettingsView.swift */,
+			);
+			path = Settings;
 			sourceTree = "<group>";
 		};
 		FAD07D412C46097800A3ECBF /* ViewModels */ = {

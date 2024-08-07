@@ -100,7 +100,7 @@ class PhotoEditorVC: UIViewController, UITextFieldDelegate {
         
         view.addSubview(imageView)
         
-        let maxHeight: CGFloat = 350
+        let maxHeight: CGFloat = 300
         let padding: CGFloat = 80
         let aspectRatio = image.size.width / image.size.height
         let imageWidth = view.bounds.width - (padding * 2)

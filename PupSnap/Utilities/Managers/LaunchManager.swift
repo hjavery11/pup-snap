@@ -156,7 +156,6 @@ class LaunchManager {
         
         DispatchQueue.main.async {
             AppDelegate.standardSceneSetup.send(())
-            self.dogChanged = true
         }
     }
     
