@@ -180,7 +180,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate, UITabBarControllerDeleg
     
     func createPhotoVC() -> UINavigationController {
         let photoVC = PhotoVC()
-        photoVC.title = "📸 PupSnap"
+        photoVC.title = "PupSnap"
         photoVC.tabBarItem = UITabBarItem(title: "Camera", image: UIImage(systemName: "camera"), selectedImage: UIImage(systemName: "camera.fill"))
         let navController = UINavigationController(rootViewController: photoVC)
         let textAttributes = [NSAttributedString.Key.foregroundColor:UIColor.systemPurple]
@@ -194,6 +194,12 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate, UITabBarControllerDeleg
         let feedVC = FeedVC()
         let navController = UINavigationController(rootViewController: feedVC)
         feedVC.tabBarItem = UITabBarItem(title: "Feed", image: UIImage(systemName: "list.bullet.circle"), selectedImage: UIImage(systemName: "list.bullet.circle.fill"))
+        navController.navigationBar.prefersLargeTitles = false
+        navController.navigationBar.tintColor = .systemPurple
+        navController.navigationBar.titleTextAttributes = [
+                NSAttributedString.Key.font: UIFont(name: AppFonts.base.rawValue, size: 18)!,
+                NSAttributedString.Key.foregroundColor: UIColor.systemPurple
+            ]
         
         return navController
     }

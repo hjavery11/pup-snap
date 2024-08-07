@@ -83,7 +83,7 @@ class PhotoVC: UIViewController, UINavigationControllerDelegate, UIImagePickerCo
     }
     
     func setNewDog() {
-        guard let currentDog = LaunchManager.shared.dog else {
+        guard let _ = LaunchManager.shared.dog else {
             print("no current dog set")
             return
         }
@@ -91,7 +91,6 @@ class PhotoVC: UIViewController, UINavigationControllerDelegate, UIImagePickerCo
         print("checking for photo VC loaded in setNewDog")
         
         if LaunchManager.shared.photoVCLoaded {
-            
             dogImage.removeFromSuperview()
             bubbleConnect.removeFromSuperview()
             speechBubbleHostingController?.view.removeFromSuperview()

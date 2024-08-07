@@ -15,7 +15,7 @@ class FeedVC: UIViewController, FullScreenPhotoVCDelegate {
     }
     
     enum Sort {
-        case date, cuteness
+        case dateAsc, dateDesc, cuteDesc
     }
 
     var photoArray: [Photo] = []
@@ -30,19 +30,21 @@ class FeedVC: UIViewController, FullScreenPhotoVCDelegate {
     
     let actionSheet = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
     
-    var currentSort: Sort = .date
-    var dateSort = UIAlertAction()
-    var cuteSort = UIAlertAction()
+    var currentSort: Sort = .dateDesc
+    var dateSortAsc = UIAlertAction()
+    var dateSortDesc = UIAlertAction()
+    var cuteSortDesc = UIAlertAction()
+    
+    var filterView = UIView()
     
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .systemGray6
         setTitle()
-      
+        
         configureCollectionView()
         configureSort()
-        
-        configureNavigationBar()
+    
         createLoadingView()
     
         
@@ -62,18 +64,25 @@ class FeedVC: UIViewController, FullScreenPhotoVCDelegate {
     
     func setTitle() {
         let name = LaunchManager.shared.dog?.name ?? "Dog"
-        self.navigationItem.title = "🐶 \(name)'s Photos"
+        self.navigationItem.title = "\(name)'s Photos"
         
     }
-
     
-    func configureNavigationBar() {
-        navigationController?.navigationBar.tintColor = .systemPurple
-            navigationController?.navigationBar.titleTextAttributes = [
-                NSAttributedString.Key.font: UIFont(name: AppFonts.base.rawValue, size: 18)!,
-                NSAttributedString.Key.foregroundColor: UIColor.systemPurple
-            ]
-         
+    func configureFilterView() {
+        view.addSubview(filterView)
+        filterView.layer.borderColor = UIColor.red.cgColor
+        filterView.layer.borderWidth = 1
+        
+        filterView.translatesAutoresizingMaskIntoConstraints = false
+        
+        filterView.backgroundColor = .systemGray6
+        
+        NSLayoutConstraint.activate([
+            filterView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
+            filterView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            filterView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            filterView.heightAnchor.constraint(equalToConstant: 25)
+        ])
         
     }
     
@@ -94,25 +103,33 @@ class FeedVC: UIViewController, FullScreenPhotoVCDelegate {
     func configureSort() {
         let sortButton = UIBarButtonItem(title: "Sort by", style: .plain, target: self, action: #selector(sortPhotos))
         
-        dateSort = UIAlertAction(title: "Date added (selected)", style: .default) { _ in
-            self.currentSort = .date
+        dateSortDesc = UIAlertAction(title: "Newest", style: .default) { _ in
+            self.currentSort = .dateDesc
             self.applySort()
         }
         
-        dateSort.isEnabled = false // disable on launch since default is by time
-        
-        cuteSort = UIAlertAction(title: "Cuteness Rating", style: .default) { _ in
-            self.currentSort = .cuteness
+        dateSortAsc = UIAlertAction(title: "Oldest", style: .default) { _ in
+            self.currentSort = .dateAsc
             self.applySort()
         }
+        
+        dateSortDesc.isEnabled = false // disable on launch since default is by time
+        
+        cuteSortDesc = UIAlertAction(title: "Cutest", style: .default) { _ in
+            self.currentSort = .cuteDesc
+            self.applySort()
+        }
+       
         
         let cancel = UIAlertAction(title: "Cancel", style: .cancel)
        
-        actionSheet.addAction(dateSort)
-        actionSheet.addAction(cuteSort)
+        actionSheet.addAction(dateSortDesc)
+        actionSheet.addAction(dateSortAsc)
+        actionSheet.addAction(cuteSortDesc)
         actionSheet.addAction(cancel)
         
         navigationItem.rightBarButtonItem = sortButton
+        
     }
     
     @objc func sortPhotos() {
@@ -121,31 +138,32 @@ class FeedVC: UIViewController, FullScreenPhotoVCDelegate {
     
     func applySort() {
         switch currentSort {
-        case .date:
+        case .dateDesc:
             photoArray.sort {
                 $0.timestamp > $1.timestamp
             }
-            dateSort.setValue("Date added (selected)", forKey: "title")
-            cuteSort.setValue("Cuteness Rating", forKey: "title")
-        case .cuteness:
+            dateSortDesc.isEnabled = false
+            dateSortAsc.isEnabled = true
+            cuteSortDesc.isEnabled = true
+        case .cuteDesc:
             photoArray.sort {
                 $0.userRating > $1.userRating
-            }          
-            cuteSort.setValue("Cuteness Rating (selected)", forKey: "title")
-            dateSort.setValue("Date added", forKey: "title")
+            }
+            dateSortDesc.isEnabled = true
+            dateSortAsc.isEnabled = true
+            cuteSortDesc.isEnabled = false
+        case .dateAsc:
+            photoArray.sort {
+                $0.timestamp < $1.timestamp
+            }
+            dateSortDesc.isEnabled = true
+            dateSortAsc.isEnabled = false
+            cuteSortDesc.isEnabled = true
         }
-        
-        switch currentSort {
-        case .date:
-            dateSort.isEnabled = false
-            cuteSort.isEnabled = true
-        case .cuteness:
-            dateSort.isEnabled = true
-            cuteSort.isEnabled = false
-        }
-        
+       
         self.applySnapshot()
     }
+    
     func configureCollectionView() {
         collectionView = UICollectionView(frame: .zero, collectionViewLayout: createThreeColumnFlowLayout())
         view.addSubview(collectionView)
@@ -157,6 +175,7 @@ class FeedVC: UIViewController, FullScreenPhotoVCDelegate {
             collectionView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor),
             collectionView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor),
             collectionView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor)
+            
         ])
     }
     
