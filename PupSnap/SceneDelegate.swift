@@ -142,7 +142,8 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate, UITabBarControllerDeleg
        
         
         DispatchQueue.main.async { [weak self] in
-            self?.window?.rootViewController?.present(newImageVC, animated: true, completion: nil)
+            newImageVC.modalPresentationStyle = .fullScreen
+            self?.window?.rootViewController?.present(newImageVC, animated: true)
         }
         LaunchManager.shared.openFromPush = false
     }

@@ -30,6 +30,8 @@ class FullScreenPhotoVC: UIViewController, RatingViewControllerDelegate {
     var photo: Photo
     var indexPath: IndexPath?
     
+    var topBarHeight: CGFloat = 0
+    
     
     init(photo: Photo, indexPath: IndexPath, image: UIImage) {
         self.photo = photo
@@ -55,14 +57,17 @@ class FullScreenPhotoVC: UIViewController, RatingViewControllerDelegate {
         view.backgroundColor = .systemBackground
       
         configureImageView()
-        configureCaptionView()
+       
         
         if self.indexPath != nil {
             // only show nav bar if coming from feed view, otherwise its a push notification without nav bar
             configureNavBar()
-            //dont show rating view if no indexPath
-           
+        } else {
+            configureTopBar()
         }
+        
+        configureCaptionView()
+        
         configureRatingView()
         setupLoading()
         addGestures()
@@ -104,12 +109,67 @@ class FullScreenPhotoVC: UIViewController, RatingViewControllerDelegate {
         
         
         NSLayoutConstraint.activate([
-            captionView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
+            captionView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: topBarHeight),
             captionView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 10),
             captionView.bottomAnchor.constraint(equalTo: imageView.topAnchor),
             captionView.widthAnchor.constraint(equalTo: view.widthAnchor)
         ])
     }
+    
+    func configureTopBar() {
+        // Create a container view for the top bar
+               let topBarView = UIView()
+               topBarView.backgroundColor = .systemBackground
+               topBarView.translatesAutoresizingMaskIntoConstraints = false
+               view.addSubview(topBarView)
+               topBarView.tintColor = AppColors.appPurple
+        
+                topBarHeight = 44 // Set the top bar height
+               
+               // Add constraints to position the top bar at the top of the view
+               NSLayoutConstraint.activate([
+                   topBarView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
+                   topBarView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+                   topBarView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+                   topBarView.heightAnchor.constraint(equalToConstant: topBarHeight) 
+               ])
+               
+               // Create the delete button - unused for now
+//               let deleteButton = UIButton(type: .system)
+//               deleteButton.setImage(UIImage(systemName: "trash"), for: .normal)
+//               deleteButton.addTarget(self, action: #selector(userTappedDelete), for: .touchUpInside)
+//               deleteButton.translatesAutoresizingMaskIntoConstraints = false
+//               topBarView.addSubview(deleteButton)
+               
+               // Create the share button
+               let shareButton = UIButton(type: .system)
+               shareButton.setImage(UIImage(systemName: "square.and.arrow.down"), for: .normal)
+               shareButton.addTarget(self, action: #selector(userTappedShare), for: .touchUpInside)
+               shareButton.translatesAutoresizingMaskIntoConstraints = false
+               topBarView.addSubview(shareButton)
+        
+                // Create the close button
+               let closeButton = UIButton(type: .system)
+               closeButton.setImage(UIImage(systemName: "xmark"), for: .normal)
+               closeButton.addTarget(self, action: #selector(userTappedClose), for: .touchUpInside)
+               closeButton.translatesAutoresizingMaskIntoConstraints = false
+               topBarView.addSubview(closeButton)
+               
+               // Add constraints to position the buttons in the top bar
+               NSLayoutConstraint.activate([
+                closeButton.leadingAnchor.constraint(equalTo: topBarView.leadingAnchor, constant: 16),
+                closeButton.centerYAnchor.constraint(equalTo: topBarView.centerYAnchor),
+                closeButton.heightAnchor.constraint(equalTo: topBarView.heightAnchor, constant: 5),
+                
+                   shareButton.trailingAnchor.constraint(equalTo: topBarView.trailingAnchor, constant: -16),
+                   shareButton.centerYAnchor.constraint(equalTo: topBarView.centerYAnchor),
+               ])
+    }
+    
+    @objc func userTappedClose() {
+          // Handle close button tap
+          self.dismiss(animated: true, completion: nil)
+      }
     
     func configureNavBar() {
         let deleteButton = UIBarButtonItem(barButtonSystemItem: .trash, target: self, action: #selector(userTappedDelete))
