@@ -71,5 +71,7 @@
 	</dict>
 	<key>FirebaseAppDelegateProxyEnabled</key>
 	<false/>
+	<key>NSPhotoLibraryAddUsageDescription</key>
+	<string>Please allow access to save photos</string>
 </dict>
 </plist>

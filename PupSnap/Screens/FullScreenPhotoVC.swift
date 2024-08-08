@@ -113,8 +113,19 @@ class FullScreenPhotoVC: UIViewController, RatingViewControllerDelegate {
     
     func configureNavBar() {
         let deleteButton = UIBarButtonItem(barButtonSystemItem: .trash, target: self, action: #selector(userTappedDelete))
-        navigationItem.rightBarButtonItem = deleteButton
+        let shareButton = UIBarButtonItem(image: UIImage(systemName: "square.and.arrow.down"), style: .plain, target: self, action: #selector(userTappedShare))
+        
+        navigationItem.rightBarButtonItems = [shareButton, deleteButton]
     }
+    
+   @objc func userTappedShare(){
+       guard let image = imageView.image else { return }
+       
+       let ac = UIActivityViewController(activityItems: [image], applicationActivities: nil)
+       present(ac, animated: true)
+       
+    }
+    
     func addGestures() {
         let leftGesture = UISwipeGestureRecognizer(target: self, action: #selector(self.userDidSwipe))
         leftGesture.direction = [.left]
