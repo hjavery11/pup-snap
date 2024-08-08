@@ -57,8 +57,7 @@ struct OnboardingDogView: View {
                             do {
                                 try await viewModel.finishOnboarding()
                                 PersistenceManager.setupDone()
-                                viewModel.isLoading = false
-                                presentationMode.wrappedValue.dismiss()
+                                viewModel.isLoading = false                              
                             } catch {
                                 viewModel.isLoading = false
                                 viewModel.showAlert = true

@@ -58,6 +58,8 @@ import Foundation
     var comingFromBranchLink: Bool = false
     var firstTimeLaunch: Bool = false
     
+    var buildString: String = ""
+    
     var dog: Dog?
     
     
@@ -69,6 +71,7 @@ import Foundation
         self.selectedPhoto = dog?.photo
         self.dogName = dog?.name ?? "Default"
         self.newDogName = dogName
+        self.buildString = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? ""
     }
     
     init(pairingKey: Int) {
@@ -84,6 +87,8 @@ import Foundation
         self.hideShare = true
         
         self.firstTimeLaunch = !PersistenceManager.setupStatus()
+        
+        self.buildString = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? ""
     }
     
     func changeKey() async throws {

@@ -36,6 +36,9 @@ struct OnboardingView: View {
                             .padding(.bottom, 20)
                         Spacer()
                     }
+                    .onTapGesture {
+                        self.hideKeyboard()
+                    }
                     
                     HStack{
                         Text("Enter your dog's name")
@@ -44,6 +47,9 @@ struct OnboardingView: View {
                         Spacer()
                     }
                     .padding(.bottom,35)
+                    .onTapGesture {
+                        self.hideKeyboard()
+                    }
                     
                     ZStack(alignment: .leading) {
                         RoundedRectangle(cornerRadius: 8)
@@ -56,6 +62,14 @@ struct OnboardingView: View {
                             TextField("Dog's name", text: $viewModel.dogName)
                                 .padding(EdgeInsets(top: 0, leading: 18, bottom: 0, trailing: 0))
                                 .focused($focusedField, equals: .dogName)
+                                .toolbar {
+                                    ToolbarItemGroup(placement: .keyboard) {
+                                        Button("Dismiss") {
+                                            self.hideKeyboard()
+                                        }
+                                        Spacer()
+                                    }
+                                }
                             Spacer()
                         }
                         
@@ -63,18 +77,18 @@ struct OnboardingView: View {
                     .frame(height:52)
                     .padding(.bottom, 35)
                     
-                    HStack {
-                        Toggle(isOn: $viewModel.termsAgree) {
-                            Text("I agree to the Terms and Conditions")
-                                .font(.system(size: 14))
-                                .foregroundStyle(Color(.label))
-                                .opacity(0.7)
-                        }
-                        .toggleStyle(iOSCheckboxToggleStyle())
-                        .tint(Color(.systemPurple))
-                        
-                        Spacer()
-                    }
+//                    HStack {
+//                        Toggle(isOn: $viewModel.termsAgree) {
+//                            Text("I agree to the Terms and Conditions")
+//                                .font(.system(size: 14))
+//                                .foregroundStyle(Color(.label))
+//                                .opacity(0.7)
+//                        }
+//                        .toggleStyle(iOSCheckboxToggleStyle())
+//                        .tint(Color(.systemPurple))
+//                        
+//                        Spacer()
+//                    }
                     
                     Spacer()
                     
@@ -128,5 +142,11 @@ struct iOSCheckboxToggleStyle: ToggleStyle {
                 configuration.label
             }
         })
+    }
+}
+
+extension View {
+    func hideKeyboard() {
+        UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
     }
 }

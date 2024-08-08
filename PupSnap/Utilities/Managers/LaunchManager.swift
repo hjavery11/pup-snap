@@ -40,6 +40,7 @@ class LaunchManager {
     
     var sharedPairingKey: Int?
     var onboardingPairingKey: Int?
+    var mainVCLoaded: Bool = false
     
     var dog: Dog?
     
@@ -53,7 +54,7 @@ class LaunchManager {
             AppDelegate.branchPasteboardEvent.send(())
         case .branchDeepLink:
             print("branch returning launch")
-            //not sure about this one yet, will see if it gets called
+            showBranchPairingView()
         case .onboardingFirstLaunch:
             AppDelegate.regularFirstTimeLaunch.send(())
         case .standardReturningLaunch:
@@ -66,8 +67,8 @@ class LaunchManager {
             print("should never be nil, but launch type was nil")
             AppDelegate.standardSceneSetup.send(())
         }
-      
-    }   
+       
+    }
     
     func verifyReturningLaunch() -> Bool {
         let userKey = PersistenceManager.retrieveKey()
@@ -125,7 +126,7 @@ class LaunchManager {
     func finishOnboarding(with dog: Dog) async throws {
         //first get new key and auth
         do {
-           let authResult = try await Auth.auth().signInAnonymously()
+           let _ = try await Auth.auth().signInAnonymously()
         } catch {
             Crashlytics.crashlytics().log("Error during onboardingSetup in Launchmanager during auth sign in with error: \(error)")
             Crashlytics.crashlytics().record(error: error)
@@ -229,8 +230,11 @@ class LaunchManager {
                 } else if let pairingKeyString = pairingKey as? String {
                     self.sharedPairingKey = Int(pairingKeyString)
                 }
-                self.launchType = .branchDeepLink
-                showBranchPairingView()
+                
+                if mainVCLoaded || !PersistenceManager.setupStatus() {
+                    showBranchPairingView()
+                } 
+            
             }
     }
     

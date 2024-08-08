@@ -22,7 +22,7 @@ class FeedVC: UIViewController, FullScreenPhotoVCDelegate {
     var collectionView: UICollectionView!
     var dataSource: UICollectionViewDiffableDataSource<Section, Photo>?
     var currentImageIndex: Int?
-    let emptyView = UITextView()
+    let emptyView = UIView()
     
     var ratingChange: Bool = false
     
@@ -46,7 +46,6 @@ class FeedVC: UIViewController, FullScreenPhotoVCDelegate {
         configureSort()
     
         createLoadingView()
-    
         
         fetchPhotos()
         
@@ -68,24 +67,6 @@ class FeedVC: UIViewController, FullScreenPhotoVCDelegate {
         
     }
     
-    func configureFilterView() {
-        view.addSubview(filterView)
-        filterView.layer.borderColor = UIColor.red.cgColor
-        filterView.layer.borderWidth = 1
-        
-        filterView.translatesAutoresizingMaskIntoConstraints = false
-        
-        filterView.backgroundColor = .systemGray6
-        
-        NSLayoutConstraint.activate([
-            filterView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
-            filterView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-            filterView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            filterView.heightAnchor.constraint(equalToConstant: 25)
-        ])
-        
-    }
-    
     func createLoadingView() {
         // add spinner to view
         addChild(spinnerChild)
@@ -102,6 +83,10 @@ class FeedVC: UIViewController, FullScreenPhotoVCDelegate {
     
     func configureSort() {
         let sortButton = UIBarButtonItem(title: "Sort by", style: .plain, target: self, action: #selector(sortPhotos))
+        sortButton.setTitleTextAttributes([
+            NSAttributedString.Key.font: UIFont(name: AppFonts.base.rawValue, size: 18)!,
+            NSAttributedString.Key.foregroundColor: AppColors.appPurple
+        ], for: .normal)
         
         dateSortDesc = UIAlertAction(title: "Newest", style: .default) { _ in
             self.currentSort = .dateDesc
@@ -194,20 +179,117 @@ class FeedVC: UIViewController, FullScreenPhotoVCDelegate {
     }
     
     func configureEmptyView() {
-        emptyView.text = "No Photos 🐶"
+        emptyView.frame = CGRect(x: 0, y: 0, width: 330, height: 270)
         view.addSubview(emptyView)
+        let shadows = UIView()
+        shadows.frame = emptyView.frame
+        shadows.clipsToBounds = false
+        emptyView.addSubview(shadows)
+        
+        let shadowPath0 = UIBezierPath(roundedRect: shadows.bounds, cornerRadius: 14)
+        let layer0 = CALayer()
+        layer0.shadowPath = shadowPath0.cgPath
+        layer0.shadowColor = UIColor(red: 0, green: 0, blue: 0, alpha: 0.03).cgColor
+        layer0.shadowOpacity = 1
+        layer0.shadowRadius = 30
+        layer0.shadowOffset = CGSize(width: 10, height: 10)
+        layer0.bounds = shadows.bounds
+        layer0.position = shadows.center
+        shadows.layer.addSublayer(layer0)
+        let shapes = UIView()
+        shapes.frame = emptyView.frame
+        shapes.clipsToBounds = true
+        emptyView.addSubview(shapes)
+        let layer1 = CALayer()
+        layer1.backgroundColor = UIColor(red: 0.22, green: 0.224, blue: 0.259, alpha: 1).cgColor
+        layer1.bounds = shapes.bounds
+        layer1.position = shapes.center
+        shapes.layer.addSublayer(layer1)
+        shapes.layer.cornerRadius = 14
         emptyView.translatesAutoresizingMaskIntoConstraints = false
-        emptyView.font = UIFont.preferredFont(forTextStyle: .largeTitle)
-        emptyView.textAlignment = .center
-        emptyView.isUserInteractionEnabled = false
+        
+        
+        let emptyImage = UIImageView(image: UIImage(named:"sophie-iso"))
+        let titleText = UILabel()
+        titleText.text = "No pictures yet..."
+        let infoText = UILabel()
+        infoText.text = "Add pictures of your pup to see them in the feed"
+        let pictureButton = UIButton()
+       
+        emptyView.addSubview(emptyImage)
+        emptyImage.translatesAutoresizingMaskIntoConstraints = false
+        
+        emptyView.addSubview(titleText)
+        emptyView.addSubview(infoText)
+        emptyView.addSubview(pictureButton)
+        titleText.translatesAutoresizingMaskIntoConstraints = false
+        infoText.translatesAutoresizingMaskIntoConstraints = false
+        pictureButton.translatesAutoresizingMaskIntoConstraints = false
+        
+        titleText.font = UIFont(name: AppFonts.bold.rawValue, size: 16)
+        titleText.textColor = .white
+        infoText.font = UIFont(name: AppFonts.base.rawValue, size: 13)
+        infoText.textColor = UIColor(red: 1, green: 1, blue: 1, alpha: 0.8)
+        infoText.lineBreakMode = .byWordWrapping
+        infoText.numberOfLines = 3
+        infoText.textAlignment = .center
+        
+        pictureButton.backgroundColor = AppColors.appPurple
+        pictureButton.titleLabel?.font = UIFont(name: AppFonts.semibold.rawValue, size: 16)
+        pictureButton.titleLabel?.textColor = .white
+        pictureButton.layer.cornerRadius = 8
+        // create a NSMutableAttributedString with the text before the image
+        let beginning = NSMutableAttributedString(string: "")
+        let after = NSMutableAttributedString(string: "  Take Picture")
+
+        // create a NSTextAttachment with the image
+        let imageAttachment = NSTextAttachment()
+        imageAttachment.image = UIImage(systemName: "camera.fill")?.withTintColor(.white)
+
+        // create an NSMutableAttributedString with the image
+        let imageString = NSAttributedString(attachment: imageAttachment)
+
+        // add the image to the string
+        beginning.append(imageString)
+        beginning.append(after)
+        pictureButton.setAttributedTitle(beginning, for: .normal)
+        pictureButton.addTarget(self, action: #selector(addPhoto), for: .touchUpInside)
+
         
         NSLayoutConstraint.activate([
+            emptyView.widthAnchor.constraint(equalToConstant: 330),
+            emptyView.heightAnchor.constraint(equalToConstant: 270),
             emptyView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
             emptyView.centerYAnchor.constraint(equalTo: view.centerYAnchor),
-            emptyView.widthAnchor.constraint(equalTo: view.widthAnchor),
-            emptyView.heightAnchor.constraint(equalToConstant: 100)
+            
+            emptyImage.widthAnchor.constraint(equalToConstant: 82),
+            emptyImage.heightAnchor.constraint(equalToConstant: 82),
+            emptyImage.leadingAnchor.constraint(equalTo: emptyView.leadingAnchor, constant: 124),
+            emptyImage.topAnchor.constraint(equalTo: emptyView.topAnchor, constant: 28),     
+            
+            titleText.leadingAnchor.constraint(equalTo: emptyView.leadingAnchor, constant: 114),
+            titleText.topAnchor.constraint(equalTo: emptyImage.bottomAnchor, constant: 16),
+            
+            infoText.leadingAnchor.constraint(equalTo: emptyView.leadingAnchor, constant: 58),
+            infoText.topAnchor.constraint(equalTo: titleText.bottomAnchor, constant: 8),
+            infoText.widthAnchor.constraint(equalToConstant: 214),
+            
+            pictureButton.widthAnchor.constraint(equalToConstant: 150),
+            pictureButton.heightAnchor.constraint(equalToConstant: 35),
+            pictureButton.topAnchor.constraint(equalTo: infoText.bottomAnchor, constant: 16),
+            pictureButton.centerXAnchor.constraint(equalTo: emptyView.centerXAnchor)
+            
         ])
     }
+    
+    @objc func addPhoto() {
+          if let tabBarController = self.tabBarController {
+              tabBarController.selectedIndex = 0 // Switch to the first tab (index starts from 0)
+              if let photoVC = (tabBarController.viewControllers?[0] as? UINavigationController)?.topViewController as? PhotoVC {
+                  photoVC.dogClicked(sender: UITapGestureRecognizer())
+              }
+          }
+      }
     
     func createThreeColumnFlowLayout() -> UICollectionViewFlowLayout {
         let width = view.bounds.width
@@ -247,6 +329,8 @@ class FeedVC: UIViewController, FullScreenPhotoVCDelegate {
         dataSource?.apply(snapshot, animatingDifferences: true)
         if photoArray.isEmpty {
             configureEmptyView()            
+        } else{
+            emptyView.removeFromSuperview()
         }
     }
     
@@ -271,6 +355,8 @@ class FeedVC: UIViewController, FullScreenPhotoVCDelegate {
             } else {
                 self.present(fullScreenVC, animated: true)
             }
+        } else {
+           
         }
     }
     
@@ -297,13 +383,7 @@ class FeedVC: UIViewController, FullScreenPhotoVCDelegate {
         Task {
             do {
                 let deletedPhoto = photoArray[indexPath.item]
-                var last: Bool
-                if photoArray.count == 1 {
-                   last = true
-                } else {
-                    last = false
-                }
-                try await NetworkManager.shared.deletePhoto(photo: deletedPhoto, last: last)
+                try await NetworkManager.shared.deletePhoto(photo: deletedPhoto)
                 photoArray.remove(at: indexPath.item)
                
                 applySnapshot()
@@ -317,13 +397,8 @@ class FeedVC: UIViewController, FullScreenPhotoVCDelegate {
 //                present(alert, animated: true, completion: nil)
                 print("Error occured deleting photo: \(error)")
                 let deletedPhoto = photoArray[indexPath.item]
-                var last: Bool
-                if photoArray.count == 1 {
-                   last = true
-                } else {
-                    last = false
-                }
-                try await NetworkManager.shared.deletePhoto(photo: deletedPhoto, last: last)
+        
+                try await NetworkManager.shared.deletePhoto(photo: deletedPhoto)
                 photoArray.remove(at: indexPath.item)
                
                 applySnapshot()

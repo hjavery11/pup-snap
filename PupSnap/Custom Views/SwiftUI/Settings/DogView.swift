@@ -39,7 +39,8 @@ struct DogView: View {
                         }
                     }
             }
-            .padding()
+            .padding([.leading, .trailing], 12)
+          
             
         ScrollView{
             LazyVGrid(columns: [GridItem(.adaptive(minimum: 100))], spacing: 30) {
@@ -58,6 +59,7 @@ struct DogView: View {
                 }
             }
         }
+        .padding()
     }
         .alert("Are you sure?", isPresented: $viewModel.showIconConfirmation) {
             Button("Cancel", role: .cancel) { viewModel.newPhoto = "" }

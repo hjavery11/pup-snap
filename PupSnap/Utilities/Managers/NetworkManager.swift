@@ -39,9 +39,9 @@ class NetworkManager {
     }
   
 
-    func deletePhoto(photo: Photo, last: Bool) async throws {
+    func deletePhoto(photo: Photo) async throws {
         do {
-            try await dbHelper.deletePhotoFromDB(photo: photo, last: last)
+            try await dbHelper.deletePhotoFromDB(photo: photo)
             try await storageHelper.deleteImage(id: photo.id)
             print("deleted photo: \(photo.id)")
         } catch {

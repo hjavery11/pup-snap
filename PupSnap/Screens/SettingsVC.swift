@@ -15,7 +15,6 @@ class SettingsVC: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         navigationController?.navigationBar.prefersLargeTitles = true
-
         
         addChild(settingsView)
         view.addSubview(settingsView.view)

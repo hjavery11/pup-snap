@@ -19,23 +19,28 @@ struct PairingView: View {
                 List {
                     Section {
                         HStack {
-                            Text("My Key")
-                                .font(.title3)
+                            Text("My key")
+                                .font(.system(size: 16))
                             Spacer()
                             Text(String(viewModel.userKey))
-                                .font(.title3)
+                                .font(.system(size: 18))
                         }
+                   
                         HStack {
+                            Text("Change my key")
+                                .font(.system(size: 16))
                             Spacer()
-                            Text("Change Key")
-                                .font(.footnote)
-                                .onTapGesture {
-                                    viewModel.showingChangeKey = true
-                                }
-                                .opacity(viewModel.hideShare ? 0:1)
+                            Image(systemName: "chevron.right")
+                                
                         }
+                        .onTapGesture {
+                            viewModel.showingChangeKey = true
+                        }
+                        .opacity(viewModel.hideShare ? 0:1)
                         
-                        ShareLink(item: URL(string: LaunchManager.shared.shareURL ?? "https://pupsnapapp.com")!, subject: Text("Join me on PupSnap!"))
+//                        ShareLink("Share my key", item: URL(string: LaunchManager.shared.shareURL ?? "https://pupsnapapp.com")!, subject: Text("Join me on PupSnap!"))
+//                            .opacity(viewModel.hideShare ? 0:1)
+                        ShareLink("Share my key", item: URL(string: LaunchManager.shared.shareURL ?? "https://google.com")!, subject: Text("Join me on PupSnap!"))
                             .opacity(viewModel.hideShare ? 0:1)
                         
                     } header: {
@@ -151,4 +156,8 @@ struct PairingView: View {
     
     }
   
+}
+
+#Preview {
+    PairingView(viewModel: SettingsViewModel())
 }

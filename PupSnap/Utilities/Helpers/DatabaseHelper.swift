@@ -194,19 +194,10 @@ class DatabaseHelper {
         
     }
     
-    func deletePhotoFromDB(photo: Photo, last: Bool) async throws{
+    func deletePhotoFromDB(photo: Photo) async throws{
         let userKey = PersistenceManager.retrieveKey()
         let photosRef = ref.child(String(userKey)).child("photos")
-        
-        
-        if last {
-            try await ref.child(String(userKey)).setValue("")
-        } else {
-            try await photosRef.child(photo.id).removeValue()
-        }
-        
-        
-        
+        try await photosRef.child(photo.id).removeValue()
     }
     
 }

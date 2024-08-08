@@ -99,14 +99,26 @@ class PasteModalVC: UIViewController {
             DispatchQueue.main.async { [weak self] in
                 self?.navigationController?.dismiss(animated: true)
                 if let _ = BNCPasteboard.sharedInstance().checkForBranchLink() {
+                    print(itemProviders)
+                    for item in itemProviders {
+                                   print("NSItemProvider description: \(item)")
+                                   item.loadItem(forTypeIdentifier: UTType.url.identifier, options: nil) { (item, error) in
+                                       if let error = error {
+                                           print("Error loading item: \(error)")
+                                       } else if let url = item as? URL {
+                                           print("Loaded URL: \(url)")
+                                       } else {
+                                           print("Unexpected item type: \(String(describing: item))")
+                                       }
+                                   }
+                               }
                     print("found branch pasteboard link, sending to setup")
                     Branch.getInstance().passPaste(itemProviders)                  
                 } else {
                     print("found non branch link on pasteboard, sending to regular onboarding")
                     AppDelegate.regularFirstTimeLaunch.send(())
                 }
-            }
-          //Branch.getInstance().passPaste(itemProviders)
+            }      
     }
 
 

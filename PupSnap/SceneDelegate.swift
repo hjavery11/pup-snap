@@ -102,10 +102,14 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate, UITabBarControllerDeleg
             tabBarController = createTabbar()
             tabBarController?.delegate = self
             window?.rootViewController = tabBarController
+            LaunchManager.shared.mainVCLoaded = true
 
             if LaunchManager.shared.openFromPush {
                 handleNotification()
             }
+            
+        LaunchManager.shared.showBranchPairingView()
+            
         }
        
         //create share link so its ready
@@ -193,12 +197,12 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate, UITabBarControllerDeleg
     func createFeedVC() -> UINavigationController {
         let feedVC = FeedVC()
         let navController = UINavigationController(rootViewController: feedVC)
-        feedVC.tabBarItem = UITabBarItem(title: "Feed", image: UIImage(systemName: "list.bullet.circle"), selectedImage: UIImage(systemName: "list.bullet.circle.fill"))
+        feedVC.tabBarItem = UITabBarItem(title: "Feed", image: UIImage(systemName: "photo"), selectedImage: UIImage(systemName: "photo.fill"))
         navController.navigationBar.prefersLargeTitles = false
-        navController.navigationBar.tintColor = .systemPurple
+        navController.navigationBar.tintColor = AppColors.appPurple
         navController.navigationBar.titleTextAttributes = [
                 NSAttributedString.Key.font: UIFont(name: AppFonts.base.rawValue, size: 18)!,
-                NSAttributedString.Key.foregroundColor: UIColor.systemPurple
+                NSAttributedString.Key.foregroundColor: AppColors.appPurple
             ]
         
         return navController
