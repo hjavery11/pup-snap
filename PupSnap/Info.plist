@@ -72,6 +72,6 @@
 	<key>FirebaseAppDelegateProxyEnabled</key>
 	<false/>
 	<key>NSPhotoLibraryAddUsageDescription</key>
-	<string>Please allow access to save photos</string>
+	<string>Please allow access to save photos in order to download them from the app to your device</string>
 </dict>
 </plist>

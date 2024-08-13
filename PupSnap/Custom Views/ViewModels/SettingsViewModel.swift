@@ -18,6 +18,7 @@ import Foundation
         "chihuahua-brown",
         "cream-lab",
         "black-lab-1",
+        "yorkshire",
         "french-bulldog-black",
         "french-bulldog-brown",
         "french-bulldog-gray",

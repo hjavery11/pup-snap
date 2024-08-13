@@ -724,7 +724,7 @@
 				DEVELOPMENT_TEAM = 6P3ZM853J8;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = PupSnap/Info.plist;
-				INFOPLIST_KEY_NSCameraUsageDescription = "Please allow access to camera to use this app";
+				INFOPLIST_KEY_NSCameraUsageDescription = "PupSnap uses your camera in order to allow you to upload photos to the app";
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
@@ -766,7 +766,7 @@
 				DEVELOPMENT_TEAM = 6P3ZM853J8;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = PupSnap/Info.plist;
-				INFOPLIST_KEY_NSCameraUsageDescription = "Please allow access to camera to use this app";
+				INFOPLIST_KEY_NSCameraUsageDescription = "PupSnap uses your camera in order to allow you to upload photos to the app";
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";

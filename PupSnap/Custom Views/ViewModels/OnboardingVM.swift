@@ -11,6 +11,7 @@ import FirebaseCrashlytics
 class OnboardingVM: ObservableObject {
     
     var dogPhotos: [String] = [
+        "sophie-iso",
        "australian-shephard-1",
        "australian-shephard-2",
        "beagle-1",
@@ -30,7 +31,7 @@ class OnboardingVM: ObservableObject {
        "poodle-brown",
        "poodle-white",
        "rottweiler-1",
-       "sophie-iso"
+        "yorkshire"
    ]
     
     @Published var dogName: String = ""
