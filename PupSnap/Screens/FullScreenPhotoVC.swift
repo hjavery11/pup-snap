@@ -69,8 +69,14 @@ class FullScreenPhotoVC: UIViewController, RatingViewControllerDelegate {
         configureCaptionView()
         
         configureRatingView()
+        
         setupLoading()
         addGestures()
+        
+        if UIDevice.current.userInterfaceIdiom == .pad {
+            hideRatingForIPad()
+        }
+        
     }
     
     override func viewSafeAreaInsetsDidChange() {
@@ -265,6 +271,10 @@ class FullScreenPhotoVC: UIViewController, RatingViewControllerDelegate {
             ratingView.view.widthAnchor.constraint(equalTo: view.widthAnchor, multiplier: 0.75),
             ratingView.view.centerXAnchor.constraint(equalTo: view.centerXAnchor)
         ])
+    }
+    
+    func hideRatingForIPad() {
+        ratingView.view.layer.opacity = 0
     }
     
     func updateRating(rating: Int) {
